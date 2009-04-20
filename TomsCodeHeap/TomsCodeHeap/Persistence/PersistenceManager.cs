@@ -1,4 +1,8 @@
 ﻿//$Author$
+//$Id$
+//$LastChangedBy$
+//$LastChangedDate$
+//$Revision$
 //$Header$
 
 using System;
