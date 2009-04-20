@@ -2,7 +2,7 @@
 //File:     PersistenceManager.cs
 //
 //Author:   $Author$
-//Date:     $LastChangeDate$
+//Date:     $LastChangedDate$
 //Revision: $Revision$
 //========================================================================
 //Copyright [2009] [$Author$]
