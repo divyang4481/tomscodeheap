@@ -33,7 +33,7 @@ namespace ch.froorider.codeheap.Threading
     /// "timed - triggers". These triggers are executed, maintained and hosted by this class and signal back to a driver
     /// that one of his timeouts had been reached.
     /// </summary>
-    public class Scheduler : IDisposable
+    public class Scheduler : IScheduler, IDisposable
     {
         #region fields
 
@@ -211,6 +211,68 @@ namespace ch.froorider.codeheap.Threading
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        #endregion
+
+        #region IScheduler Members
+
+        public int Count
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public ISchedule this[int index]
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public ISchedule Add(TimeSpan period, bool enable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Contains(ISchedule schedule)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Remove(ISchedule schedule)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int IndexOf(ISchedule schedule)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IEnumerable<ISchedule> Members
+
+        public IEnumerator<ISchedule> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
