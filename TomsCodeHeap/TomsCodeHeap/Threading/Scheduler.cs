@@ -25,66 +25,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Collections;
 
 namespace ch.froorider.codeheap.Threading
 {
     /// <summary>
-    /// This class acts as an internal sheduler for the drivers. Each driver has his Metronom where he can register
-    /// "timed - triggers". These triggers are executed, maintained and hosted by this class and signal back to a driver
-    /// that one of his timeouts had been reached.
+    /// This class represents a scheduler. Cleints can register triggers at the scheduler which signals them
+    /// in a defined time interval to wake up.
+    /// The class is a singleton, so only one instance is running. The scheduler itself is using his own thread
+    /// and does not need a hosting thread.
     /// </summary>
     public class Scheduler : IScheduler, IDisposable
     {
         #region fields
 
         /// <summary>
-        /// Defines the values a sync point can have. Default is SYNC_FREE
+        /// The reference on the one and only instance of this class.
         /// </summary>
-        private enum SyncPoint
-        {
-            /// <summary>
-            /// Timer has been stopped. Elapsed event are not "desired" anymore.
-            /// </summary>
-            TIMER_STOPPED = -1,
-
-            /// <summary>
-            /// No "lock" on the timer. Free for use.
-            /// </summary>
-            SYNC_FREE = 0,
-
-            /// <summary>
-            /// The elapsed event of the timer has been raised and is "performed". Wait until it is finished.
-            /// </summary>
-            ELAPSED_EVENT_RUNNING = 1
-        };
+        private static volatile Scheduler instance;
 
         /// <summary>
-        /// This is the internal bookkeeping of the triggers.
+        /// Used to synchronize the creation of the scheduler.
+        /// </summary>
+        private static object instanceLocker = new object();
+
+        /// <summary>
+        /// This is the internal bookkeeping of the triggers. Contains a reference on all registered triggers.
         /// </summary>
         /// <remarks>
-        /// Key := The timer associated with the trigger.
-        /// Value := the AutoResetEvent to set, when the timer has been fired.
+        /// The list contains a reference on all created schedules and is periodically scanned to
+        /// look if a signal has to be set.
         /// </remarks>
-        private Dictionary<System.Timers.Timer, AutoResetEvent> triggerList = new Dictionary<System.Timers.Timer, AutoResetEvent>();
+        private static volatile List<ISchedule> triggerList = new List<ISchedule>();
 
-        /// <summary>
-        /// Bookkeeping of the timers and its sync objects. 
-        /// </summary>
-        /// <remarks>
-        /// Key := The timer to sync. Corresponds with the time in the trigger list
-        /// Value := The value used to sync the timer.
-        /// </remarks>
-        private Dictionary<System.Timers.Timer, int> timerSyncList = new Dictionary<System.Timers.Timer, int>();
-
-        /// <summary>
-        /// Reference to synchronize the different actions performed on a timer (stop, elapsed_event, ...)
-        /// </summary>
-        private int syncPoint = (int)SyncPoint.SYNC_FREE;
-
-        /// <summary>
-        /// Synchronizes the add / delete on the dictionaries
-        /// </summary>
-        private object dictionarySync = new object();
+        private static System.Timers.Timer timer;
 
         #endregion
 
@@ -93,63 +67,38 @@ namespace ch.froorider.codeheap.Threading
         /// <summary>
         /// Initializes a new instance of the <see cref="Scheduler"/> class. (Default constructor)
         /// </summary>
-        internal Scheduler()
+        private Scheduler()
         {
+            timer = new System.Timers.Timer();
+            timer.AutoReset = true;
+            timer.Elapsed += this.timer_Elapsed;
         }
 
         #endregion
 
-        #region internal methods
+        #region public methods
 
         /// <summary>
-        /// Registers the trigger in the sheduler. After registration the timer to the trigger is automatically started.
+        /// Gives you access on the <see cref="IScheduler"/> representation of the Scheduler.
         /// </summary>
-        /// <param name="signalToSet">The signal to set when the timer has elapsed.</param>
-        /// <param name="triggerTime">The time between two signalizations.</param>
-        internal void RegisterTrigger(AutoResetEvent signalToSet, TimeSpan triggerTime)
+        /// <remarks>
+        /// This singleton creator uses double-locking with explicit memory barries to ensure that
+        /// this is thread-safe in a multi-threaded and multi-core environment. 
+        /// </remarks>
+        /// <returns>An <see cref="IScheduler"/>. </returns>
+        public static IScheduler Instance()
         {
-            System.Timers.Timer timer = new System.Timers.Timer(triggerTime.TotalMilliseconds);
-            timer.AutoReset = false;
-            timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
-
-            lock (dictionarySync)
+            if (Scheduler.instance == null)
             {
-                this.timerSyncList.Add(timer, syncPoint);
-                this.triggerList.Add(timer, signalToSet);
-            }
-
-            timer.Enabled = true;
-        }
-
-        /// <summary>
-        /// Stop and deregisters a timer in the sheduler. The timer is "killed."
-        /// </summary>
-        /// <param name="signalToSet">The trigger which should be de-registered.</param>
-        internal void DeRegisterTrigger(AutoResetEvent signalToSet)
-        {
-            foreach (var pair in triggerList)
-            {
-                if (pair.Value.Equals(signalToSet))
+                lock (instanceLocker)
                 {
-                    int syncPointOfTimer = timerSyncList[pair.Key];
-                    //Wait as long as there is a pending timer_elapsed_Event
-                    while (Interlocked.CompareExchange(ref syncPointOfTimer, (int)SyncPoint.TIMER_STOPPED, (int)SyncPoint.SYNC_FREE) != (int)SyncPoint.SYNC_FREE)
+                    if (Scheduler.instance == null)
                     {
-                        Thread.Sleep(10);
+                        Scheduler.instance = new Scheduler();
                     }
-                    var currentTimer = pair.Key;
-                    currentTimer.Stop();
-
-                    lock (dictionarySync)
-                    {
-                        timerSyncList.Remove(pair.Key);
-                        triggerList.Remove(pair.Key);
-                    }
-
-                    currentTimer.Dispose();
-                    break;
                 }
             }
+            return Scheduler.instance;
         }
 
         #endregion
@@ -163,22 +112,142 @@ namespace ch.froorider.codeheap.Threading
         /// <param name="e">The <see cref="System.Timers.ElapsedEventArgs"/> instance containing the event data.</param>
         private void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            System.Timers.Timer senderTimer = sender as System.Timers.Timer;
-            int syncPointOfTimer = timerSyncList[senderTimer];
-            //Look if there is no previous called stop()
-            if (Interlocked.CompareExchange(ref syncPointOfTimer, (int)SyncPoint.ELAPSED_EVENT_RUNNING, (int)SyncPoint.SYNC_FREE) == (int)SyncPoint.SYNC_FREE)
-            {
-                //It is possible that .Dispose() was already called or the trigger is already removed (deregistered)
-                if (this.triggerList != null && this.triggerList.ContainsKey(senderTimer))
-                {
-                    this.triggerList[senderTimer].Set();
-                    senderTimer.Enabled = true;
-                }
+            throw new NotImplementedException();
+        }
 
-                //"Reset" the sync point -> Now someone else can do something with our sync point
-                syncPointOfTimer = (int)SyncPoint.SYNC_FREE;
+        #endregion
+
+        #region IScheduler Members
+
+        /// <summary>
+        /// Adds a new <see cref="IScheduler"/> with a specified period.
+        /// </summary>
+        /// <param name="period">The period of the new <see cref="ISchedule"/>.</param>
+        /// <param name="enable">If set to <see langword="true"/>, enables the new <see cref="ISchedule"/> immediately.</param>
+        /// <returns>
+        /// Returns the new <see cref="ISchedule"/>.
+        /// </returns>
+        public ISchedule Add(TimeSpan period, bool enable)
+        {
+            ISchedule trigger = new SignalSchedule(period,this);
+            trigger.Enabled = enable;
+            Scheduler.triggerList.Add(trigger);
+            
+            //Recalculation of the timer's period.
+            if (!timer.Enabled)
+            {
+                timer.Interval = period.Ticks;
+                timer.Enabled = true;
             }
-            //else don't trigger the event anymore
+            else
+            {
+                IEnumerable<ISchedule> orderedList = triggerList.OrderByDescending<ISchedule,long>(p => p.Period.Ticks);
+                timer.Interval = SortedList  .Period.Ticks;
+            }
+
+            return trigger;
+        }
+
+        /// <summary>
+        /// Removes and <see cref="IDisposable.Dispose"/>s the first occurrence of a specific <see cref="ISchedule"/>
+        /// from this <see cref="IScheduler"/>.
+        /// </summary>
+        /// <param name="schedule">The <see cref="ISchedule"/> to remove from this <see cref="IScheduler"/>.</param>
+        /// <returns>
+        /// 	<see langword="true"/> if <paramref name="schedule"/> was successfully removed from this <see cref="IScheduler"/>; otherwise, <see langword="false"/>.
+        /// This method also returns false if <paramref name="schedule"/> is not found in this <see cref="IScheduler"/>.
+        /// </returns>
+        public bool Remove(ISchedule schedule)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets the number of <see cref="ISchedule"/>s owned by this <see cref="IScheduler"/>.
+        /// </summary>
+        /// <value></value>
+        /// <returns>
+        /// The number of <see cref="ISchedule"/>s owned by this <see cref="IScheduler"/>
+        /// </returns>
+        public int Count
+        {
+            get { return Scheduler.triggerList.Count; }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="ISchedule"/> at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get.</param>
+        /// <value>The <see cref="ISchedule"/> at the specified index.</value>
+        public ISchedule this[int index]
+        {
+            get { return Scheduler.triggerList[index]; }
+        }
+
+        /// <summary>
+        /// Determines whether this <see cref="IScheduler"/> contains a specific <see cref="ISchedule"/>.
+        /// </summary>
+        /// <param name="schedule">The <see cref="ISchedule"/> to locate in this <see cref="IScheduler"/>.</param>
+        /// <returns>
+        /// 	<see langword="true"/> if <paramref name="schedule"/> is found in this <see cref="IScheduler"/>; otherwise, <see langword="false"/>.
+        /// </returns>
+        public bool Contains(ISchedule schedule)
+        {
+            return Scheduler.triggerList.Exists(p => p.Equals(schedule));
+        }
+
+        /// <summary>
+        /// Determines the index of a specific <see cref="ISchedule"/> in this <see cref="IScheduler"/>.
+        /// </summary>
+        /// <param name="schedule">The <see cref="ISchedule"/> to locate in this <see cref="IScheduler"/>.</param>
+        /// <returns>
+        /// The index of <paramref name="schedule"/> if found in this <see cref="IScheduler"/>; otherwise, -1.
+        /// </returns>
+        public int IndexOf(ISchedule schedule)
+        {
+            return Scheduler.triggerList.FindIndex(p => p.Equals(schedule));
+        }
+
+        /// <summary>
+        /// Removes the <see cref="ISchedule"/> at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index of the <see cref="ISchedule"/> to remove.</param>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">
+        /// 	<paramref name="index"/> is not a valid index in the <see cref="T:System.Collections.Generic.IList`1"/>.
+        /// </exception>
+        public void RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IEnumerable<ISchedule> Members
+
+        /// <summary>
+        /// Gibt einen Enumerator zurück, der die Auflistung durchläuft.
+        /// </summary>
+        /// <returns>
+        /// Ein <see cref="T:System.Collections.Generic.IEnumerator`1"/>, der zum Durchlaufen der Auflistung verwendet werden kann.
+        /// </returns>
+        public IEnumerator<ISchedule> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        /// <summary>
+        /// Gibt einen Enumerator zurück, der eine Auflistung durchläuft.
+        /// </summary>
+        /// <returns>
+        /// Ein <see cref="T:System.Collections.IEnumerator"/>-Objekt, das zum Durchlaufen der Auflistung verwendet werden kann.
+        /// </returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         #endregion
@@ -193,12 +262,7 @@ namespace ch.froorider.codeheap.Threading
         {
             if (disposing)
             {
-                //Because we perform an operation on an IEnumerable, we must copy it first.
-                List<AutoResetEvent> registeredTriggers = triggerList.Values.ToList<AutoResetEvent>();
-                foreach (AutoResetEvent currentTrigger in registeredTriggers)
-                {
-                    DeRegisterTrigger(currentTrigger);
-                }
+                throw new NotImplementedException();
             }
         }
 
@@ -211,68 +275,6 @@ namespace ch.froorider.codeheap.Threading
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
-        #region IScheduler Members
-
-        public int Count
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public ISchedule this[int index]
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public ISchedule Add(TimeSpan period, bool enable)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Contains(ISchedule schedule)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Remove(ISchedule schedule)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int IndexOf(ISchedule schedule)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveAt(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region IEnumerable<ISchedule> Members
-
-        public IEnumerator<ISchedule> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region IEnumerable Members
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
         }
 
         #endregion
