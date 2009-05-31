@@ -2,7 +2,7 @@
 //File:     ISchedule.cs
 //
 //Author:   $Author$
-//Date:     $LastChangeDate$
+//Date:     $LastChangedDate$
 //Revision: $Revision$
 //========================================================================
 //Copyright [2009] [$Author$]
@@ -40,9 +40,9 @@ namespace ch.froorider.codeheap.Threading
         #region Properties
 
         /// <summary>
-        /// Gets the <see cref="Scheduler"/> that this <see cref="ISchedule"/> belongs to.
+        /// Gets the <see cref="IScheduler"/> that this <see cref="ISchedule"/> belongs to.
         /// </summary>
-        Scheduler Owner
+        IScheduler Owner
         {
             get;
         }
@@ -59,7 +59,7 @@ namespace ch.froorider.codeheap.Threading
         /// Gets the signal that a client of this <see cref="ISchedule"/>
         /// waits for to be signaled periodically.
         /// </summary>
-        AutoResetEvent ScheduleEvent
+        AutoResetEvent ScheduleSignal
         {
             get;
         }
@@ -75,7 +75,7 @@ namespace ch.froorider.codeheap.Threading
         }
 
         /// <summary>
-        /// Gets the next time when <see cref="ScheduleEvent"/> will be <see cref="AutoResetEvent.Set"/>;
+        /// Gets the next time when <see cref="ScheduleSignal"/> will be <see cref="AutoResetEvent.Set"/>;
         /// or <see cref="DateTime.MaxValue"/> if <see cref="Enabled"/> is <see langword="false"/>.
         /// </summary>
         DateTime NextDueTime
