@@ -1,30 +1,26 @@
-﻿//========================================================================
-//File:     SignalSchedule.cs
-//
-//Author:   $Author$
-//Date:     
-//Revision: $Revision$
-//========================================================================
-//Copyright [2009] [$Author$]
-//
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
-//
-//http://www.apache.org/licenses/LICENSE-2.0
-//
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
-//========================================================================
+﻿// ========================================================================
+// File:     SignalSchedule.cs
+// 
+// Author:   $Author$
+// Date:     
+// Revision: $Revision$
+// ========================================================================
+// Copyright [2009] [$Author$]
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ========================================================================
           
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace ch.froorider.codeheap.Threading
@@ -52,10 +48,11 @@ namespace ch.froorider.codeheap.Threading
         /// Initializes a new instance of the <see cref="SignalSchedule"/> class.
         /// </summary>
         /// <remarks>
-        /// Per default this creates a trigger which is not enabled!
+        /// Per default this creates a trigger which is not enabled! That means the nextTimeDue is set
+        /// to DateTime.MaxValue.
         /// </remarks>
         /// <param name="triggerPeriod">The trigger period.</param>
-        /// <param name="creator">The creator or owner of this ISchedule</param>
+        /// <param name="creator">The creator or owner of this ISchedule.</param>
         internal SignalSchedule(TimeSpan triggerPeriod, IScheduler creator)
         {
             this.trigger = new AutoResetEvent(false);
@@ -107,9 +104,18 @@ namespace ch.froorider.codeheap.Threading
             {
                 return this.isEnabled;
             }
+
             set
             {
                 this.isEnabled = value;
+                if (this.isEnabled)
+                {
+                    this.nextTimeDue = DateTime.Now + this.period;
+                }
+                else
+                {
+                    this.nextTimeDue = DateTime.MaxValue;
+                }
             }
         }
 
@@ -128,14 +134,14 @@ namespace ch.froorider.codeheap.Threading
         #region IDisposable - implementation
 
         /// <summary>
-        /// Disposes the unmanaged ressources
+        /// Disposes the unmanaged ressources.
         /// </summary>
         /// <param name="disposing">Always true.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                throw new NotImplementedException();
+                this.trigger.Close();
             }
         }
 
@@ -146,7 +152,7 @@ namespace ch.froorider.codeheap.Threading
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 

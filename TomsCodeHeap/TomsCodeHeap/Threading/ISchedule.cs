@@ -1,24 +1,24 @@
-﻿//========================================================================
-//File:     ISchedule.cs
-//
-//Author:   $Author$
-//Date:     $LastChangedDate$
-//Revision: $Revision$
-//========================================================================
-//Copyright [2009] [$Author$]
-//
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
-//
-//http://www.apache.org/licenses/LICENSE-2.0
-//
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
-//========================================================================
+﻿// ========================================================================
+// File:     ISchedule.cs
+// 
+// Author:   $Author$
+// Date:     $LastChangedDate$
+// Revision: $Revision$
+// ========================================================================
+// Copyright [2009] [$Author$]
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ========================================================================
           
 using System;
 using System.Collections.Generic;
@@ -67,6 +67,10 @@ namespace ch.froorider.codeheap.Threading
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ISchedule"/> is currently active.
         /// </summary>
+        /// <remarks>
+        /// If you enable the Schedule, the NextDueTime is set to <see cref="DateTime.Now"/> + period.
+        /// If you disable the Schedule, the NextDueTime is set to <see cref="DateTime.MaxValue"/>.
+        /// </remarks>
         bool Enabled
         {
             get;
@@ -75,7 +79,7 @@ namespace ch.froorider.codeheap.Threading
         }
 
         /// <summary>
-        /// Gets the next time when <see cref="ScheduleSignal"/> will be <see cref="AutoResetEvent.Set"/>;
+        /// Gets the next time when <see cref="ScheduleSignal"/> will be <see cref="M:AutoResetEvent.Set"/>;
         /// or <see cref="DateTime.MaxValue"/> if <see cref="Enabled"/> is <see langword="false"/>.
         /// </summary>
         DateTime NextDueTime

@@ -1,31 +1,30 @@
-﻿//========================================================================
-//File:     Scheduler.cs
-//
-//Author:   $Author$
-//Date:     $LastChangedDate$
-//Revision: $Revision$
-//========================================================================
-//Copyright [2009] [$Author$]
-//
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
-//
-//http://www.apache.org/licenses/LICENSE-2.0
-//
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
-//========================================================================
-          
+﻿// ========================================================================
+// File:     Scheduler.cs
+// 
+// Author:   $Author$
+// Date:     $LastChangedDate$
+// Revision: $Revision$
+// ========================================================================
+// Copyright [2009] [$Author$]
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ========================================================================
+
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Collections;
 
 namespace ch.froorider.codeheap.Threading
 {
@@ -35,19 +34,32 @@ namespace ch.froorider.codeheap.Threading
     /// The class is a singleton, so only one instance is running. The scheduler itself is using his own thread
     /// and does not need a hosting thread.
     /// </summary>
+    /// <remarks>Multithreading: This class is thread-safe.</remarks>
+    [Serializable()]
     public class Scheduler : IScheduler, IDisposable
     {
         #region fields
 
         /// <summary>
+        /// Default timespan we wait for a lock until throwing an exception.
+        /// </summary>
+        private const int WAIT_ON_LOCK_IN_MILLISECONDS = 1000;
+
+        /// <summary>
+        /// The System.Timer.ElapsedEvent is too fast. So we have to add a jitter. 
+        /// </summary>
+        private const int JITTER_TIME_IN_MILLISECONDS = 12;
+
+        /// <summary>
         /// The reference on the one and only instance of this class.
         /// </summary>
+        [NonSerialized]
         private static volatile Scheduler instance;
 
         /// <summary>
         /// Used to synchronize the creation of the scheduler.
         /// </summary>
-        private static object instanceLocker = new object();
+        private static volatile object instanceLocker = new object();
 
         /// <summary>
         /// This is the internal bookkeeping of the triggers. Contains a reference on all registered triggers.
@@ -58,20 +70,39 @@ namespace ch.froorider.codeheap.Threading
         /// </remarks>
         private static volatile List<ISchedule> triggerList = new List<ISchedule>();
 
-        private static System.Timers.Timer timer;
+        /// <summary>
+        /// The global timer which is used to trigger all the registered events periodically.
+        /// </summary>
+        private static volatile System.Timers.Timer timer;
+
+        /// <summary>
+        /// Common object to synchronize the access on the trigger list over multiple threads.
+        /// </summary>
+        private static ReaderWriterLockSlim listLock = new ReaderWriterLockSlim();
+
+        /// <summary>
+        /// Common object to synchronize the access on the timer over multiple threads.
+        /// </summary>
+        private static ReaderWriterLockSlim timerLock = new ReaderWriterLockSlim();
+
+        /// <summary>
+        /// TimeSpan used for the un-enabled timer. Is one hour.
+        /// </summary>
+        private TimeSpan DISABLED_TIMER_TIME_SPAN = new TimeSpan(1, 0, 0);
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Scheduler"/> class. (Default constructor)
+        /// Prevents a default instance of the <see cref="Scheduler"/> class from being created.
+        /// Initializes a new instance of the <see cref="Scheduler"/> class.
         /// </summary>
         private Scheduler()
         {
             timer = new System.Timers.Timer();
             timer.AutoReset = true;
-            timer.Elapsed += this.timer_Elapsed;
+            timer.Elapsed += Timer_Elapsed;
         }
 
         #endregion
@@ -98,6 +129,7 @@ namespace ch.froorider.codeheap.Threading
                     }
                 }
             }
+
             return Scheduler.instance;
         }
 
@@ -110,9 +142,120 @@ namespace ch.froorider.codeheap.Threading
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.Timers.ElapsedEventArgs"/> instance containing the event data.</param>
-        private void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private static void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            throw new NotImplementedException();
+            DateTime timerElapsedTime = DateTime.Now.Add(new TimeSpan(0, 0, 0, 0, JITTER_TIME_IN_MILLISECONDS));
+            Console.WriteLine("Timer elapsed event raised at: " + timerElapsedTime.Ticks);
+            try
+            {
+                if (timerLock.TryEnterWriteLock(WAIT_ON_LOCK_IN_MILLISECONDS))
+                {
+                    if (listLock.TryEnterUpgradeableReadLock(WAIT_ON_LOCK_IN_MILLISECONDS))
+                    {
+                        foreach (ISchedule currentSchedule in triggerList)
+                        {
+                            if (currentSchedule.Enabled)
+                            {
+                                int comparison = currentSchedule.NextDueTime.CompareTo(timerElapsedTime);
+                                
+                                if (comparison <= 0)
+                                {
+                                    if (listLock.TryEnterWriteLock(WAIT_ON_LOCK_IN_MILLISECONDS))
+                                    {
+                                        Console.WriteLine("Signaling schedule with period: " + currentSchedule.Period);
+                                        currentSchedule.ScheduleSignal.Set();
+                                        currentSchedule.Enabled = true;
+                                        listLock.ExitWriteLock();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Couldn't lock the trigger list for reading. Trigger's were not signaled.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Couldn't lock the timer. Trigger's were not signaled.");
+                }
+            }
+            finally
+            {
+                timerLock.ExitWriteLock();
+                listLock.ExitUpgradeableReadLock();
+            }
+        }
+
+        /// <summary>
+        /// Sets the timer properties (period and enabled) manually.
+        /// </summary>
+        /// <remarks>
+        /// This method can be used either to start the timer, stop the timer or manually override the settings determined by
+        /// the recalculation method. It is useless to have a running timer, when e.g. the Remove() - method has deleted the last
+        /// remaining Schedule in the trigger list. 
+        /// It could also be that we want have another period than the calculation would determine. E.g. fix period over all Schedules.
+        /// So this can be used to adapt the behaviour of the timer for special cases.
+        /// </remarks>
+        /// <param name="period">The period the timer should wake-up.</param>
+        /// <param name="enableTimer">If <see langword="true"/> the timer is started. If set to <see langword="false"/> the timer is stopped.</param>
+        /// <returns>Is <see langword="true"/> if the timer properites could be modified. Is <see langword="false"/> if the timer was blocked.</returns>
+        private bool SetTimerProperties(TimeSpan period, bool enableTimer)
+        {
+            try
+            {
+                if (timerLock.TryEnterWriteLock(WAIT_ON_LOCK_IN_MILLISECONDS))
+                {
+                    timer.Interval = period.TotalMilliseconds;
+                    timer.Enabled = enableTimer;
+
+                    Console.WriteLine("Timer interval set to: " + timer.Interval + " ms.");
+                    Console.WriteLine("Timer enabled: " + timer.Enabled + ".");
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                timerLock.ExitWriteLock();
+            }
+        }
+
+        /// <summary>
+        /// Recalculates and set's the period when the timer has to wake up.
+        /// </summary>
+        /// <returns>
+        /// 	Is <see langword="true"/> if the recalculation could be done, Is <see langword="false"/> if not.
+        /// </returns>
+        /// <remarks>
+        /// After the recalculation of the timer period, the timer is always enabled!
+        /// </remarks>
+        private bool RecalculateTimerPeriod()
+        {
+            try
+            {
+                if (timerLock.TryEnterWriteLock(WAIT_ON_LOCK_IN_MILLISECONDS))
+                {
+                    IEnumerable<ISchedule> orderedList = triggerList.OrderBy<ISchedule, long>(p => p.Period.Ticks);
+                    timer.Interval = orderedList.FirstOrDefault().Period.TotalMilliseconds;
+                    timer.Enabled = true;
+
+                    Console.WriteLine("Timer interval set to: " + timer.Interval + " ms.");
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                timerLock.ExitWriteLock();
+            }
         }
 
         #endregion
@@ -127,22 +270,34 @@ namespace ch.froorider.codeheap.Threading
         /// <returns>
         /// Returns the new <see cref="ISchedule"/>.
         /// </returns>
+        /// <exception cref="ApplicationException">Is thrown when the new trigger couldn't be created.</exception>
         public ISchedule Add(TimeSpan period, bool enable)
         {
-            ISchedule trigger = new SignalSchedule(period,this);
+            ISchedule trigger = new SignalSchedule(period, this);
             trigger.Enabled = enable;
-            Scheduler.triggerList.Add(trigger);
-            
-            //Recalculation of the timer's period.
-            if (!timer.Enabled)
+
+            try
             {
-                timer.Interval = period.Ticks;
-                timer.Enabled = true;
+                if (listLock.TryEnterWriteLock(WAIT_ON_LOCK_IN_MILLISECONDS))
+                {
+                    Scheduler.triggerList.Add(trigger);
+                    if (Scheduler.triggerList.Count > 1)
+                    {
+                        this.RecalculateTimerPeriod();
+                    }
+                    else
+                    {
+                        this.SetTimerProperties(trigger.Period, true);
+                    }
+                }
+                else
+                {
+                    throw new ApplicationException("Couldn't add the new ISchedule. List is blocked.");
+                }
             }
-            else
+            finally
             {
-                IEnumerable<ISchedule> orderedList = triggerList.OrderByDescending<ISchedule,long>(p => p.Period.Ticks);
-                timer.Interval = SortedList  .Period.Ticks;
+                listLock.ExitWriteLock();
             }
 
             return trigger;
@@ -154,58 +309,38 @@ namespace ch.froorider.codeheap.Threading
         /// </summary>
         /// <param name="schedule">The <see cref="ISchedule"/> to remove from this <see cref="IScheduler"/>.</param>
         /// <returns>
-        /// 	<see langword="true"/> if <paramref name="schedule"/> was successfully removed from this <see cref="IScheduler"/>; otherwise, <see langword="false"/>.
+        /// 	Is <see langword="true"/> if <paramref name="schedule"/> was successfully removed from this <see cref="IScheduler"/>; otherwise, <see langword="false"/>.
         /// This method also returns false if <paramref name="schedule"/> is not found in this <see cref="IScheduler"/>.
         /// </returns>
         public bool Remove(ISchedule schedule)
         {
-            throw new NotImplementedException();
-        }
+            bool removeResult;
 
-        /// <summary>
-        /// Gets the number of <see cref="ISchedule"/>s owned by this <see cref="IScheduler"/>.
-        /// </summary>
-        /// <value></value>
-        /// <returns>
-        /// The number of <see cref="ISchedule"/>s owned by this <see cref="IScheduler"/>
-        /// </returns>
-        public int Count
-        {
-            get { return Scheduler.triggerList.Count; }
-        }
+            try
+            {
+                if (listLock.TryEnterWriteLock(Scheduler.WAIT_ON_LOCK_IN_MILLISECONDS))
+                {
+                    removeResult = Scheduler.triggerList.Remove(schedule);
+                    if (Scheduler.triggerList.Count > 0)
+                    {
+                        this.RecalculateTimerPeriod();
+                    }
+                    else
+                    {
+                        this.SetTimerProperties(this.DISABLED_TIMER_TIME_SPAN, false);
+                    }
+                }
+                else
+                {
+                    removeResult = false;
+                }
+            }
+            finally
+            {
+                listLock.ExitWriteLock();
+            }
 
-        /// <summary>
-        /// Gets the <see cref="ISchedule"/> at the specified index.
-        /// </summary>
-        /// <param name="index">The zero-based index of the element to get.</param>
-        /// <value>The <see cref="ISchedule"/> at the specified index.</value>
-        public ISchedule this[int index]
-        {
-            get { return Scheduler.triggerList[index]; }
-        }
-
-        /// <summary>
-        /// Determines whether this <see cref="IScheduler"/> contains a specific <see cref="ISchedule"/>.
-        /// </summary>
-        /// <param name="schedule">The <see cref="ISchedule"/> to locate in this <see cref="IScheduler"/>.</param>
-        /// <returns>
-        /// 	<see langword="true"/> if <paramref name="schedule"/> is found in this <see cref="IScheduler"/>; otherwise, <see langword="false"/>.
-        /// </returns>
-        public bool Contains(ISchedule schedule)
-        {
-            return Scheduler.triggerList.Exists(p => p.Equals(schedule));
-        }
-
-        /// <summary>
-        /// Determines the index of a specific <see cref="ISchedule"/> in this <see cref="IScheduler"/>.
-        /// </summary>
-        /// <param name="schedule">The <see cref="ISchedule"/> to locate in this <see cref="IScheduler"/>.</param>
-        /// <returns>
-        /// The index of <paramref name="schedule"/> if found in this <see cref="IScheduler"/>; otherwise, -1.
-        /// </returns>
-        public int IndexOf(ISchedule schedule)
-        {
-            return Scheduler.triggerList.FindIndex(p => p.Equals(schedule));
+            return removeResult;
         }
 
         /// <summary>
@@ -217,7 +352,133 @@ namespace ch.froorider.codeheap.Threading
         /// </exception>
         public void RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            if (index >= 0)
+            {
+                if (Scheduler.triggerList.Count >= index + 1)
+                {
+                    Scheduler.triggerList.Remove(this[index]);
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException("Index must be a positiv number.");
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of <see cref="ISchedule"/>s owned by this <see cref="IScheduler"/>.
+        /// </summary>
+        /// <value></value>
+        /// <returns>
+        /// The number of <see cref="ISchedule"/>s owned by this <see cref="IScheduler"/>
+        /// </returns>
+        /// <exception cref="ApplicationException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
+        public int Count
+        {
+            get
+            {
+                try
+                {
+                    if (Scheduler.listLock.TryEnterReadLock(Scheduler.WAIT_ON_LOCK_IN_MILLISECONDS))
+                    {
+                        return Scheduler.triggerList.Count;
+                    }
+                    else
+                    {
+                        throw new ApplicationException("Trigger list is blocked at the moment.");
+                    }
+                }
+                finally
+                {
+                    Scheduler.listLock.ExitReadLock();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="ISchedule"/> at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get.</param>
+        /// <value>The <see cref="ISchedule"/> at the specified index.</value>
+        /// <exception cref="ApplicationException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
+        public ISchedule this[int index]
+        {
+            get
+            {
+                try
+                {
+                    if (Scheduler.listLock.TryEnterReadLock(Scheduler.WAIT_ON_LOCK_IN_MILLISECONDS))
+                    {
+                        return Scheduler.triggerList[index];
+                    }
+                    else
+                    {
+                        throw new ApplicationException("Trigger list is blocked at the moment.");
+                    }
+                }
+                finally
+                {
+                    Scheduler.listLock.ExitReadLock();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Determines whether this <see cref="IScheduler"/> contains a specific <see cref="ISchedule"/>.
+        /// </summary>
+        /// <param name="schedule">The <see cref="ISchedule"/> to locate in this <see cref="IScheduler"/>.</param>
+        /// <returns>
+        /// 	Is <see langword="true"/> if <paramref name="schedule"/> is found in this <see cref="IScheduler"/>; otherwise, <see langword="false"/>.
+        /// </returns>
+        /// <exception cref="ApplicationException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
+        public bool Contains(ISchedule schedule)
+        {
+            try
+            {
+                if (Scheduler.listLock.TryEnterReadLock(Scheduler.WAIT_ON_LOCK_IN_MILLISECONDS))
+                {
+                    return Scheduler.triggerList.Exists(p => p.Equals(schedule));
+                }
+                else
+                {
+                    throw new ApplicationException("Trigger list is blocked at the moment.");
+                }
+            }
+            finally
+            {
+                Scheduler.listLock.ExitReadLock();
+            }
+        }
+
+        /// <summary>
+        /// Determines the index of a specific <see cref="ISchedule"/> in this <see cref="IScheduler"/>.
+        /// </summary>
+        /// <param name="schedule">The <see cref="ISchedule"/> to locate in this <see cref="IScheduler"/>.</param>
+        /// <returns>
+        /// The index of <paramref name="schedule"/> if found in this <see cref="IScheduler"/>; otherwise, -1.
+        /// </returns>
+        /// <exception cref="ApplicationException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
+        public int IndexOf(ISchedule schedule)
+        {
+            try
+            {
+                if (Scheduler.listLock.TryEnterReadLock(Scheduler.WAIT_ON_LOCK_IN_MILLISECONDS))
+                {
+                    return Scheduler.triggerList.FindIndex(p => p.Equals(schedule));
+                }
+                else
+                {
+                    throw new ApplicationException("Trigger list is blocked at the moment.");
+                }
+            }
+            finally
+            {
+                Scheduler.listLock.ExitReadLock();
+            }
         }
 
         #endregion
@@ -232,7 +493,7 @@ namespace ch.froorider.codeheap.Threading
         /// </returns>
         public IEnumerator<ISchedule> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return Scheduler.triggerList.GetEnumerator();
         }
 
         #endregion
@@ -247,7 +508,7 @@ namespace ch.froorider.codeheap.Threading
         /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         #endregion
@@ -255,14 +516,14 @@ namespace ch.froorider.codeheap.Threading
         #region IDisposable - implementation
 
         /// <summary>
-        /// Disposes the unmanaged ressources
+        /// Disposes the unmanaged ressources.
         /// </summary>
         /// <param name="disposing">Always true.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                throw new NotImplementedException();
+                timer.Dispose();
             }
         }
 
@@ -273,7 +534,7 @@ namespace ch.froorider.codeheap.Threading
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 

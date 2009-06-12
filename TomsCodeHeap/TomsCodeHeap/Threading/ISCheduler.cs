@@ -1,24 +1,24 @@
-﻿//========================================================================
-//File:     IScheduler.cs
-//
-//Author:   $Author: froorider@gmail.com $
-//Date:     $LastChangedDate$
-//Revision: $Revision: 13 $
-//========================================================================
-//Copyright [2009] [$Author: froorider@gmail.com $]
-//
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
-//
-//http://www.apache.org/licenses/LICENSE-2.0
-//
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
-//========================================================================
+﻿// ========================================================================
+// File:     IScheduler.cs
+// 
+// Author:   $Author: froorider@gmail.com $
+// Date:     $LastChangedDate$
+// Revision: $Revision: 13 $
+// ========================================================================
+// Copyright [2009] [$Author: froorider@gmail.com $]
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ========================================================================
 
 using System;
 using System.Collections.Generic;
@@ -33,6 +33,7 @@ namespace ch.froorider.codeheap.Threading
     /// The scheduler offers an enumerable interface. So you can loop with a foreach
     /// over all registered ISchedules.
     /// </summary>
+    /// <remarks>Multithreading: An IScheduler is thread-safe.</remarks>
     public interface IScheduler : IEnumerable<ISchedule>, IDisposable
     {
         #region Properties
@@ -78,7 +79,7 @@ namespace ch.froorider.codeheap.Threading
         /// </summary>
         /// <param name="schedule">The <see cref="ISchedule"/> to locate in this <see cref="IScheduler"/>.</param>
         /// <returns>
-        /// <see langword="true"/> if <paramref name="schedule"/> is found in this <see cref="IScheduler"/>; otherwise, <see langword="false"/>.
+        /// Returns <see langword="true"/> if <paramref name="schedule"/> is found in this <see cref="IScheduler"/>; otherwise, <see langword="false"/>.
         /// </returns>
         bool Contains(ISchedule schedule);
 
@@ -88,7 +89,7 @@ namespace ch.froorider.codeheap.Threading
         /// </summary>
         /// <param name="schedule">The <see cref="ISchedule"/> to remove from this <see cref="IScheduler"/>.</param>
         /// <returns>
-        /// <see langword="true"/> if <paramref name="schedule"/> was successfully removed from this <see cref="IScheduler"/>; otherwise, <see langword="false"/>. 
+        /// Returns <see langword="true"/> if <paramref name="schedule"/> was successfully removed from this <see cref="IScheduler"/>; otherwise, <see langword="false"/>. 
         /// This method also returns false if <paramref name="schedule"/> is not found in this <see cref="IScheduler"/>.
         /// </returns>
         bool Remove(ISchedule schedule);

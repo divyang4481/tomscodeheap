@@ -19,7 +19,7 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //========================================================================
-          
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +44,9 @@ namespace ch.froorider.codeheap.Domain
     {
         #region events/fields/properites
 
+        /// <summary>
+        /// Wrapper instance around the used library logger.
+        /// </summary>
         [NonSerialized]
         private ILog logger = LogManager.GetLogger(typeof(BusinessObject));
 
@@ -83,7 +86,7 @@ namespace ch.froorider.codeheap.Domain
         /// Returns a string represenation of this object. All values stored in the properties
         /// are listed in the string in the format 'Name:xxxxx Value:yyyyyy'.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The content of this object as a string.</returns>
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
@@ -157,6 +160,7 @@ namespace ch.froorider.codeheap.Domain
             }
             catch (FormatException fe)
             {
+                this.logger.Debug("Couldn't transform the hash string: " + hashString + " to an Integer. Cause: " + fe.Message);
                 return base.GetHashCode();
             }
         }
@@ -169,7 +173,7 @@ namespace ch.froorider.codeheap.Domain
         /// This method compares the parameter business object with this object for equality. 
         /// All properties are checked exept following cases:
         /// - Properites which are marked with the XmlIgnore - Attribute
-        /// 
+        /// <para></para>
         /// This properties have to be checked manually in the Equals - method
         /// </summary>
         /// <param name="toCompare">The business object which shall be compared with this one.</param>
@@ -234,7 +238,7 @@ namespace ch.froorider.codeheap.Domain
         /// <summary>
         /// Notify all observers that a property of this business object has changed.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="info">Additional information which is transported via the event.</param>
         protected void NotifyPropertyChanged(String info)
         {
             if (PropertyChanged != null)
