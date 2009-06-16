@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Comment CommentText="Client classes use the reference on the IScheduler (by calling Scheduler.Instance())&#xD;&#xA;&#xD;&#xA;By adding the IScheduler gives you the reference on the newly created ISchedule.&#xD;&#xA;&#xD;&#xA;ISchedule is not enabled by default. When Enabled is set to true, the client is informed.">
+    <Position X="8.385" Y="2.76" Height="1.479" Width="2.721" />
+  </Comment>
+  <Class Name="ch.froorider.codeheap.Threading.Scheduler">
+    <Position X="4.25" Y="3" Width="3" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AEYAAAAAACEAABAACCAABAQAMABAAAAGSABCgAARAAA=</HashCode>
+      <FileName>Threading\Scheduler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ch.froorider.codeheap.Threading.SignalSchedule">
+    <Position X="0.5" Y="2.5" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAECBAgQAAgAAAAIAAAAAAAAAQAQAgAgAAAAA=</HashCode>
+      <FileName>Threading\SignalSchedule.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="ch.froorider.codeheap.Threading.ISchedule">
+    <Position X="1" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAABAIAAAAAAAAAAAAAAAAAAAAAIAAAAAAI=</HashCode>
+      <FileName>Threading\ISchedule.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ch.froorider.codeheap.Threading.IScheduler">
+    <Position X="5.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEIAAAAAAAAAAAAACAAABAQAAAAAAAAACAAAAAAQAAA=</HashCode>
+      <FileName>Threading\IScheduler.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

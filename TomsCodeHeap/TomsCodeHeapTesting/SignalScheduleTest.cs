@@ -100,7 +100,6 @@ namespace TomsCodeHeapTesting
         ///Test's the mechanism when a signal schedule is enabled and disabled. Especially if the nextduetime is modified.
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("TomsCodeHeap.dll")]
         public void EnabledTest()
         {
             TimeSpan triggerPeriod = new TimeSpan(5, 0, 0);

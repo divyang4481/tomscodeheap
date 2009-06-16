@@ -127,4 +127,7 @@
   <ItemGroup>
     <Content Include="codeheap.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="CodeHeapClasses.cd" />
+  </ItemGroup>
 </Project>
