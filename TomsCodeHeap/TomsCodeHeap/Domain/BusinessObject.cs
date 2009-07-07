@@ -1,39 +1,40 @@
-﻿//========================================================================
-//File:     BusinessObject.cs
+﻿// ========================================================================
+// File:     BusinessObject.cs
 //
-//Author:   $Author$
-//Date:     
-//Revision: $Revision$
-//========================================================================
-//Copyright [2009] [$Author$]
+// Author:   $Author$
+// Date:     
+// Revision: $Revision$
+// ========================================================================
+// Copyright [2009] [$Author$]
 //
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
-//========================================================================
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ========================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
-using log4net;
 using System.Globalization;
 using System.Reflection;
-using ch.froorider.codeheap.Persistence;
+using System.Text;
 using System.Xml.Serialization;
+using Ch.Froorider.Codeheap.Persistence;
+using log4net;
 
-namespace ch.froorider.codeheap.Domain
+namespace Ch.Froorider.Codeheap.Domain
 {
-    /// <summary>The list containing all Observers, which want to be informed when the BO has changed.</summary>
+    /// <summary>
+    /// The list containing all Observers, which want to be informed when the BO has changed.
+    /// </summary>
+    /// <param name="changedBO">The <see cref="BusinessObject"/> which has changed.</param>
     public delegate void BusinessObjectChangedHandler(BusinessObject changedBO);
 
     /// <summary>
@@ -96,7 +97,7 @@ namespace ch.froorider.codeheap.Domain
 
             foreach (PropertyInfo currentProperty in properties)
             {
-                //Only use the property if it's not an set-only property
+                // Only use the property if it's not an set-only property
                 if (currentProperty.CanRead)
                 {
                     object propiValue = currentProperty.GetValue(this, null) ?? string.Empty;
@@ -104,26 +105,31 @@ namespace ch.froorider.codeheap.Domain
 
                     if (bo != null)
                     {
-                        //Recursive call on subclasses
-                        builder.AppendFormat(CultureInfo.InvariantCulture, "Name: '{0}' Value: '{1}'",
-                            currentProperty.Name, bo.ToString());
+                        // Recursive call on subclasses
+                        builder.AppendFormat(
+                            CultureInfo.InvariantCulture, 
+                            "Name: '{0}' Value: '{1}'",
+                            currentProperty.Name, 
+                            bo.ToString());
                     }
                     else
                     {
-                        builder.AppendFormat(CultureInfo.InvariantCulture, "Name: '{0}' Value: '{1}'",
-                            currentProperty.Name, currentProperty.GetValue(this, null));
+                        builder.AppendFormat(
+                            CultureInfo.InvariantCulture, 
+                            "Name: '{0}' Value: '{1}'",
+                            currentProperty.Name, 
+                            currentProperty.GetValue(this, null));
                     }
 
                     builder.Append("|");
                 }
             }
 
-            //Remove the final "|" from the end of the string
+            // Remove the final "|" from the end of the string
             if (builder.Length > 0)
             {
                 builder.Remove(builder.Length - 1, 1);
             }
-
 
             return builder.ToString();
         }
@@ -140,7 +146,11 @@ namespace ch.froorider.codeheap.Domain
         /// </exception>
         public override bool Equals(object obj)
         {
-            if (obj == null || !(obj is BusinessObject)) return false;
+            if (obj == null || !(obj is BusinessObject))
+            {
+                return false;
+            }
+
             BusinessObject toCompare = obj as BusinessObject;
             return this.ArePropertiesEqual(toCompare);
         }
@@ -188,7 +198,10 @@ namespace ch.froorider.codeheap.Domain
             {
                 // Do not compare the property if its marked as XmlIgnore 
                 object[] ignoreList = pi.GetCustomAttributes(typeof(XmlIgnoreAttribute), false);
-                if (ignoreList != null && ignoreList.Length == 1) { continue; };
+                if (ignoreList != null && ignoreList.Length == 1) 
+                { 
+                    continue; 
+                }
 
                 // Check aggregat objects
                 if (pi.PropertyType.IsSubclassOf(typeof(BusinessObject)))
@@ -219,7 +232,7 @@ namespace ch.froorider.codeheap.Domain
                 {
                     if (!originalPropertyValue.Equals(toComparePropertyValue))
                     {
-                        logger.Debug("Values of property: " + pi.Name + " are not equal. Value 1: " + originalPropertyValue + " Value 2: " + toComparePropertyValue);
+                        this.logger.Debug("Values of property: " + pi.Name + " are not equal. Value 1: " + originalPropertyValue + " Value 2: " + toComparePropertyValue);
                         return false;
                     }
                 }
@@ -228,6 +241,7 @@ namespace ch.froorider.codeheap.Domain
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -239,11 +253,11 @@ namespace ch.froorider.codeheap.Domain
         /// Notify all observers that a property of this business object has changed.
         /// </summary>
         /// <param name="info">Additional information which is transported via the event.</param>
-        protected void NotifyPropertyChanged(String info)
+        protected void NotifyPropertyChanged(string info)
         {
-            if (PropertyChanged != null)
+            if (this.PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
+                this.PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
         }
 

@@ -1,36 +1,34 @@
-﻿//========================================================================
-//File:     MD5HashGenerator.cs
+﻿// ========================================================================
+// File:     MD5HashGenerator.cs
 //
-//Author:   $Author$
-//Date:     $LastChangedDate$
-//Revision: $Revision$
-//========================================================================
-//Copyright [2009] [$Author$]
+// Author:   $Author$
+// Date:     $LastChangedDate$
+// Revision: $Revision$
+// ========================================================================
+// Copyright [2009] [$Author$]
 //
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
-//========================================================================
-          
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ========================================================================
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Security.Cryptography;
+using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Reflection;
-using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
-namespace ch.froorider.codeheap.Persistence
+namespace Ch.Froorider.Codeheap.Persistence
 {
     /// <summary>
     /// This class takes an object, and generates a key to it. There are several possibilities:
@@ -39,7 +37,10 @@ namespace ch.froorider.codeheap.Persistence
     /// </summary>
     public class MD5HashGenerator
     {
-        private static readonly Object locker = new Object();
+        /// <summary>
+        /// Lock to synchronize the access over multiple threads.
+        /// </summary>
+        private static readonly object locker = new object();
 
         /// <summary>
         /// Generates a hashed - key for an instance of a class.
@@ -54,21 +55,21 @@ namespace ch.froorider.codeheap.Persistence
         /// <param name="sourceObject">The object you'd like to have a key out of it.</param>
         /// <returns>An string representing a MD5 Hashkey corresponding to the object or null if the object couldn't be serialized.</returns>
         /// <exception cref="ApplicationException">Will be thrown if the key cannot be generated.</exception>
-        public static String GenerateKey(Object sourceObject)
+        public static string GenerateKey(object sourceObject)
         {
-            String hashString = "";
+            string hashString = string.Empty;
 
-            //Catch unuseful parameter values
+            // Catch unuseful parameter values
             if (sourceObject == null)
             {
                 throw new ArgumentNullException("Null as parameter is not allowed");
             }
             else
             {
-                //We determine if the passed object is really serializable.
+                // We determine if the passed object is really serializable.
                 try
                 {
-                    //Now we begin to do the real work.
+                    // Now we begin to do the real work.
                     hashString = ComputeHash(ObjectToByteArray(sourceObject));
                     return hashString;
                 }
@@ -85,18 +86,20 @@ namespace ch.froorider.codeheap.Persistence
         /// <param name="objectToSerialize">Just an object</param>
         /// <returns>A byte - array representation of the object.</returns>
         /// <exception cref="SerializationException">Is thrown if something went wrong during serialization.</exception>
-        private static byte[] ObjectToByteArray(Object objectToSerialize)
+        private static byte[] ObjectToByteArray(object objectToSerialize)
         {
             MemoryStream fs = new MemoryStream();
             BinaryFormatter formatter = new BinaryFormatter();
+            
             try
             {
-                //Here's the core functionality! One Line!
-                //To be thread-safe we lock the object
+                // Here's the core functionality! One Line!
+                // To be thread-safe we lock the object
                 lock (locker)
                 {
                     formatter.Serialize(fs, objectToSerialize);
                 }
+
                 return fs.ToArray();
             }
             catch (SerializationException se)
@@ -136,7 +139,7 @@ namespace ch.froorider.codeheap.Persistence
             }
             catch (ArgumentNullException ane)
             {
-                //If something occured during serialization, this method is called with an null argument. 
+                // If something occured during serialization, this method is called with an null argument. 
                 Console.WriteLine("Hash has not been generated. Cause: " + ane.Message);
                 return null;
             }

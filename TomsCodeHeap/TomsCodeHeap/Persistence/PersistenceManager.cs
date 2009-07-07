@@ -1,35 +1,31 @@
-﻿//========================================================================
-//File:     PersistenceManager.cs
+﻿// ========================================================================
+// File:     PersistenceManager.cs
 //
-//Author:   $Author$
-//Date:     $LastChangedDate$
-//Revision: $Revision$
-//========================================================================
-//Copyright [2009] [$Author$]
+// Author:   $Author$
+// Date:     $LastChangedDate$
+// Revision: $Revision$
+// ========================================================================
+// Copyright [2009] [$Author$]
 //
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
-//========================================================================
-          
-          
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
-using System.IO;
-using ch.froorider.codeheap.Domain;
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ========================================================================
 
-namespace ch.froorider.codeheap.Persistence
+using System;
+using System.IO;
+using System.Xml.Serialization;
+using Ch.Froorider.Codeheap.Domain;
+
+namespace Ch.Froorider.Codeheap.Persistence
 {
     /// <summary>
     /// The persistence manager class offers two generic methods to serialize and deserialize objects. The serialization method is
@@ -39,7 +35,14 @@ namespace ch.froorider.codeheap.Persistence
     {
         #region fields
 
+        /// <summary>
+        /// Used file extension.
+        /// </summary>
         private static readonly string fileNameExtension = ".GDC";
+        
+        /// <summary>
+        /// Path where to store the object (as files)
+        /// </summary>
         private static readonly string filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\NGoogleCalendar\\";
 
         #endregion
@@ -47,7 +50,7 @@ namespace ch.froorider.codeheap.Persistence
         #region constructors
 
         /// <summary>
-        /// Constructor. Inits some things like the directories etc.
+        /// Initializes static members of the <see cref="PersistenceManager"/> class.
         /// </summary>
         static PersistenceManager()
         {
@@ -82,6 +85,7 @@ namespace ch.froorider.codeheap.Persistence
                     serializer.Serialize(textWriter, objectToSerialize);
                     textWriter.Close();
                 }
+
                 objectToSerialize.ObjectIdentifier = filename;
                 return filename;
             }
@@ -111,6 +115,7 @@ namespace ch.froorider.codeheap.Persistence
                 deserializedObject = (T)serializer.Deserialize(textReader);
                 textReader.Close();
             }
+
             return deserializedObject;
         }
 
