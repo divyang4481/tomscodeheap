@@ -129,5 +129,155 @@ namespace DokuwikiClient.Communication
 		}
 
 		#endregion
-	}
+
+        #region IDokuWikiClient Member
+
+        /// <summary>
+        /// Gets a wikipage identified by it's name as raw wiki text.
+        /// </summary>
+        /// <param name="pageName">Name of the page.</param>
+        /// <returns>The raw Wiki text for a page.</returns>
+        /// <exception cref="ArgumentNullException">Is thrown when the passed argument is null.</exception>
+        public string GetPage(string pageName)
+        {
+            string wikiText = String.Empty;
+
+            if (String.IsNullOrEmpty(pageName))
+            {
+                throw new ArgumentNullException("pageName");
+            }
+
+            try
+            {
+                wikiText = this.clientProxy.GetPage(pageName);
+            }
+            catch (WebException we)
+            {
+                logger.Error("Underlying HTTP - Connection had errors. Cause: " + we.Message);
+            }
+            catch (XmlRpcException xrpce)
+            {
+                logger.Error("XmlRpc mechanism had errors. Cause: " + xrpce.Message);
+            }
+
+            return wikiText;
+        }
+
+        public string[] GetPageList(string nameSpace, string[] options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetDokuWikiVersion()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetTime()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetXmlRpcApiVersion()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Login(string user, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string[] SetLocks(string[] pagesToLockOrUnlock)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetRpcVersionSupported()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetPageVersion(string pageName, int timestamp)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] GetPageVersions(string pageName, int offset)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] GetPageInfo(string pageName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] GetPageInfoVersion(string pageName, int timestamp)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetPageHtml(string pageName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetPageHtmlVersion(string pageName, int timestamp)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool PutPage(string pageName, string rawWikiText, object putParameters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] ListLinks(string pageName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] GetAllPages()
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] GetBackLinks(string pageName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] GetRecentChanges(int timestamp)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] GetAttachments(string nameSpace, object[] attachmentOptions)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object GetAttachment(string mediaFileId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] GetAttachmentInfo(string mediaFileId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PutAttachment(string mediaFileId, object mediaFileData, object attachmentOptions)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteAttachment(string mediaFileId)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
 }

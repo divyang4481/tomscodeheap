@@ -17,6 +17,11 @@ namespace DokuwikiClient
 			{
 				Console.WriteLine("Method name: {0}", serverMethodName);
 			}
+
+            Console.Write("Enter the name of a wikipage you want to see:");
+            string pageName = Console.ReadLine();
+            Console.WriteLine("Getting wikipage.");
+            Console.WriteLine("Wikitext of page: "+client.GetPage(pageName));
 			Console.WriteLine();
 			Console.WriteLine("Press the any key to exit.");
 			Console.Read();
