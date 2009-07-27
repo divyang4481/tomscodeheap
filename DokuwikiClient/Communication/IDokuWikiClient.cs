@@ -57,6 +57,34 @@ namespace DokuwikiClient.Communication
 		[XmlRpcMethod("dokuwiki.getTime")]
 		int GetTime();
 
+		/// <summary>
+		/// Gets the XML RPC API version.
+		/// </summary>
+		/// <remarks>
+		/// Returns the XML RPC interface version of the remote Wiki. This is DokuWiki implementation specific and independent 
+		/// of the supported standard API version returned by wiki.getRPCVersionSupported().
+		/// </remarks>
+		/// <returns>An integer representing the version number.</returns>
+		[XmlRpcMethod("dokuwiki.getXMLRPCAPIVersion")]
+		int GetXmlRpcApiVersion();
+
+		/// <summary>
+		/// Logins the specified user.
+		/// </summary>
+		/// <param name="user">The username as a string.</param>
+		/// <param name="password">The password of the user as a string.</param>
+		/// <returns>An integer describing the status of the login - request.</returns>
+		[XmlRpcMethod("dokuwiki.login")]
+		int Login(string user, string password);
+
+		/// <summary>
+		/// Locks or unlocks a bunch of wiki pages.
+		/// </summary>
+		/// <param name="pagesToLockOrUnlock">A List of two lists of page ids.</param>
+		/// <returns>Array with 4 lists of pageids.</returns>
+		[XmlRpcMethod("dokuwiki.setLocks")]
+		string[] SetLocks(string[] pagesToLockOrUnlock);
+
 		#endregion
 
 		#region common remote methods
