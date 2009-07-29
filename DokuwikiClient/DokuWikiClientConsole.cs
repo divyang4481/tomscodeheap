@@ -5,6 +5,7 @@ using System.Text;
 using DokuwikiClient.Communication;
 using log4net;
 using DokuwikiClient.Communication.XmlRpcMessages;
+using log4net.Config;
 
 namespace DokuwikiClient
 {
@@ -16,6 +17,7 @@ namespace DokuwikiClient
 		static void Main(string[] args)
 		{
 			AppDomain.CurrentDomain.UnhandledException += DokuWikiClientConsole.OnUnhandledException;
+            XmlConfigurator.Configure();
 
 			Console.WriteLine("Connecting to wiki.");
 			XmlRpcClient client = new XmlRpcClient(new Uri("http://wiki.froorider.ch/lib/exe/xmlrpc.php"));
@@ -40,7 +42,7 @@ namespace DokuwikiClient
 
 			do
 			{
-				Console.Write(" 0 := Exit application\n 1 := Get Wikipage \n 2 := GetAllPages \n");
+				Console.Write(" 0 := Exit application\n 1 := Get Wikipage \n 2 := GetAllPages \n 3 := Get WikiPage as HTML \n");
 				string input = Console.ReadLine();
 				if (input.Equals("0"))
 				{
@@ -50,7 +52,7 @@ namespace DokuwikiClient
 				{
 					Console.WriteLine("Enter pagename of wikipage.");
 					string pageName = Console.ReadLine();
-					Console.WriteLine("Wikitext of page: " + client.GetPage(pageName));
+					Console.WriteLine("Wikitext of page: \n" + client.GetPage(pageName));
 				}
 				else if (input.Equals("2"))
 				{
@@ -65,11 +67,17 @@ namespace DokuwikiClient
 						Console.WriteLine();
 					}
 				}
-				else
-				{
-					Console.WriteLine("Unknown command.");
-					
-				}
+                else if (input.Equals("3"))
+                {
+                    Console.WriteLine("Enter pagename of wikipage.");
+                    string pageName = Console.ReadLine();
+                    Console.WriteLine("Page as HTML: \n" + client.GetPageHtml(pageName));
+                }
+                else
+                {
+                    Console.WriteLine("Unknown command.");
+
+                }
 				Console.WriteLine("----------------------------------------------------");
 			}
 			while (!exitLoop);
@@ -84,6 +92,8 @@ namespace DokuwikiClient
 		{
 			Exception exc = (Exception)args.ExceptionObject;
 			logger.Fatal("Unhandled exception caught.", exc);
+            Console.WriteLine("Press enter to exit.");
+            Console.ReadLine();
 			Environment.Exit(-1);
 		}
 	}

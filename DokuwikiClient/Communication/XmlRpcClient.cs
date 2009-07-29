@@ -242,6 +242,46 @@ namespace DokuwikiClient.Communication
 			}
 		}
 
+        /// <summary>
+        /// Gets the a wiki page pre-formatted in HTML.
+        /// </summary>
+        /// <param name="pageName">Name of the wikpage.</param>
+        /// <returns>XHTML represenation of the wiki page.</returns>
+        /// <exception cref="ArgumentNullException">Is thrown when the passed argument is null.</exception>
+        /// <exception cref="ArgumentException">Is thrown when the <paramref name="pageName"/> is unkown at remote host.</exception>
+        /// <exception cref="CommunicationException">Is thrown when the Xml-Rpc mechanism had errors.</exception>
+        /// <exception cref="WebException">Is thrown when the HTTP connection had errors.</exception>
+        public string GetPageHtml(string pageName)
+        {
+            string wikiTextAsHtml = String.Empty;
+
+            if (String.IsNullOrEmpty(pageName))
+            {
+                throw new ArgumentNullException("pageName");
+            }
+
+            try
+            {
+                wikiTextAsHtml = this.clientProxy.GetPageHtml(pageName);
+                return wikiTextAsHtml;
+            }
+            catch (WebException we)
+            {
+                logger.Warn(we);
+                throw;
+            }
+            catch (XmlRpcFaultException xrfe)
+            {
+                logger.Warn(xrfe);
+                throw new ArgumentException("Unknown wiki page.", "pageName");
+            }
+            catch (XmlRpcException xrpce)
+            {
+                logger.Warn(xrpce);
+                throw new CommunicationException(xrpce.Message);
+            }
+        }
+
         public string[] GetPageList(string nameSpace, string[] options)
         {
             throw new NotImplementedException();
@@ -293,11 +333,6 @@ namespace DokuwikiClient.Communication
         }
 
         public object[] GetPageInfoVersion(string pageName, int timestamp)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetPageHtml(string pageName)
         {
             throw new NotImplementedException();
         }
