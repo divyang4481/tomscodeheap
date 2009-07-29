@@ -25,6 +25,8 @@ using System.IO;
 using System.Net;
 using CookComputing.XmlRpc;
 using log4net;
+using DokuwikiClient.Communication.Messages;
+using DokuwikiClient.Communication.XmlRpcMessages;
 
 namespace DokuwikiClient.Communication
 {
@@ -85,6 +87,9 @@ namespace DokuwikiClient.Communication
 		/// Returns a list of methods implemented by the server.
 		/// </summary>
 		/// <returns>An array of strings listing all remote method names.</returns>
+		/// <exception cref="ArgumentException">Is thrown when the XmlRpc server is not enabled.</exception>
+		/// <exception cref="CommunicationException">Is thrown when the Xml-Rpc mechanism had errors.</exception>
+		/// <exception cref="WebException">Is thrown when the HTTP connection had errors.</exception>
 		public string[] ListServerMethods()
 		{
 			try
@@ -94,8 +99,16 @@ namespace DokuwikiClient.Communication
 			catch (WebException we)
 			{
 				logger.Warn(we);
-				string[] errorMessage = { "URL to remote server is not valid." };
-				return errorMessage;
+				throw;
+			}
+			catch (XmlRpcIllFormedXmlException)
+			{
+				throw new ArgumentException("XmlRpc server not enabled.");
+			}
+			catch (XmlRpcException xrpce)
+			{
+				logger.Warn(xrpce);
+				throw new CommunicationException(xrpce.Message);
 			}
 		}
 
@@ -104,17 +117,29 @@ namespace DokuwikiClient.Communication
 		/// </summary>
 		/// <param name="methodName">Name of the method.</param>
 		/// <returns>An array containing all method signatures this remote method call offers.</returns>
+		/// <exception cref="ArgumentException">Is thrown when the <paramref name="methodName"/> is unkown at remote host.</exception>
+		/// <exception cref="CommunicationException">Is thrown when the Xml-Rpc mechanism had errors.</exception>
+		/// <exception cref="WebException">Is thrown when the HTTP connection had errors.</exception>
 		public object[] GetMethodSignatures(string methodName)
 		{
 			try
 			{
 				return this.clientProxy.SystemMethodSignature(methodName);
 			}
+			catch (WebException we)
+			{
+				logger.Warn(we);
+				throw;
+			}
 			catch (XmlRpcFaultException xrfe)
 			{
 				logger.Warn(xrfe);
-				string[] errorMessage = { "Unknown method name" };
-				return errorMessage;
+				throw new ArgumentException("Unknown remote method.","methodName");
+			}
+			catch (XmlRpcException xrpce)
+			{
+				logger.Warn(xrpce);
+				throw new CommunicationException(xrpce.Message);
 			}
 		}
 
@@ -123,9 +148,30 @@ namespace DokuwikiClient.Communication
 		/// </summary>
 		/// <param name="methodName">Name of the method.</param>
 		/// <returns>A description for the usage of this remote method.</returns>
+		/// <exception cref="ArgumentException">Is thrown when the <paramref name="methodName"/> is unkown at remote host.</exception>
+		/// <exception cref="CommunicationException">Is thrown when the Xml-Rpc mechanism had errors.</exception>
+		/// <exception cref="WebException">Is thrown when the HTTP connection had errors.</exception>
 		public string GetMethodHelp(string methodName)
 		{
-			return this.clientProxy.SystemMethodHelp(methodName);
+			try
+			{
+				return this.clientProxy.SystemMethodHelp(methodName);
+			}
+			catch (WebException we)
+			{
+				logger.Warn(we);
+				throw;
+			}
+			catch (XmlRpcFaultException xrfe)
+			{
+				logger.Warn(xrfe);
+				throw new ArgumentException("Unknown remote method.", "methodName");
+			}
+			catch (XmlRpcException xrpce)
+			{
+				logger.Warn(xrpce);
+				throw new CommunicationException(xrpce.Message);
+			}
 		}
 
 		#endregion
@@ -138,6 +184,9 @@ namespace DokuwikiClient.Communication
         /// <param name="pageName">Name of the page.</param>
         /// <returns>The raw Wiki text for a page.</returns>
         /// <exception cref="ArgumentNullException">Is thrown when the passed argument is null.</exception>
+		/// <exception cref="ArgumentException">Is thrown when the <paramref name="pageName"/> is unkown at remote host.</exception>
+		/// <exception cref="CommunicationException">Is thrown when the Xml-Rpc mechanism had errors.</exception>
+		/// <exception cref="WebException">Is thrown when the HTTP connection had errors.</exception>
         public string GetPage(string pageName)
         {
             string wikiText = String.Empty;
@@ -150,18 +199,48 @@ namespace DokuwikiClient.Communication
             try
             {
                 wikiText = this.clientProxy.GetPage(pageName);
+				return wikiText;
             }
-            catch (WebException we)
-            {
-                logger.Error("Underlying HTTP - Connection had errors. Cause: " + we.Message);
-            }
-            catch (XmlRpcException xrpce)
-            {
-                logger.Error("XmlRpc mechanism had errors. Cause: " + xrpce.Message);
-            }
-
-            return wikiText;
+			catch (WebException we)
+			{
+				logger.Warn(we);
+				throw;
+			}
+			catch (XmlRpcFaultException xrfe)
+			{
+				logger.Warn(xrfe);
+				throw new ArgumentException("Unknown wiki page.", "pageName");
+			}
+			catch (XmlRpcException xrpce)
+			{
+				logger.Warn(xrpce);
+				throw new CommunicationException(xrpce.Message);
+			}
         }
+
+		/// <summary>
+		/// Gets all pages of the remote wiki.
+		/// </summary>
+		/// <returns>An array of <see cref="PageItem"/>s.</returns>
+		/// <exception cref="CommunicationException">Is thrown when the Xml-Rpc mechanism had errors.</exception>
+		/// <exception cref="WebException">Is thrown when the HTTP connection had errors.</exception>
+		public PageItem[] GetAllPages()
+		{
+			try
+			{
+				return this.clientProxy.GetAllPages();
+			}
+			catch (WebException we)
+			{
+				logger.Warn(we);
+				throw;
+			}
+			catch (XmlRpcException xrpce)
+			{
+				logger.Warn(xrpce);
+				throw new CommunicationException(xrpce.Message);
+			}
+		}
 
         public string[] GetPageList(string nameSpace, string[] options)
         {
@@ -234,11 +313,6 @@ namespace DokuwikiClient.Communication
         }
 
         public object[] ListLinks(string pageName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public object[] GetAllPages()
         {
             throw new NotImplementedException();
         }

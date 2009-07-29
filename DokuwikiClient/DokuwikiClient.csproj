@@ -54,7 +54,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Communication\IDokuWikiClient.cs" />
+    <Compile Include="Communication\Messages\CommunicationException.cs" />
     <Compile Include="Communication\XmlRpcClient.cs" />
+    <Compile Include="Communication\XmlRpcMessages\PageItem.cs" />
+    <Compile Include="Communication\XmlRpcMessages\XmlRpcMessage.cs" />
     <Compile Include="DokuWikiClientConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

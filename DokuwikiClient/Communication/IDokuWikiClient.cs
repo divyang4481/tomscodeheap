@@ -21,6 +21,7 @@
 // ========================================================================
 
 using CookComputing.XmlRpc;
+using DokuwikiClient.Communication.XmlRpcMessages;
 
 namespace DokuwikiClient.Communication
 {
@@ -156,7 +157,7 @@ namespace DokuwikiClient.Communication
         /// </summary>
         /// <param name="pageName">Name of the page.</param>
         /// <param name="timestamp">The timestamp of the revision.</param>
-        /// <returns>the rendered HTML of a specific version of a Wiki page.</returns>
+        /// <returns>The rendered HTML of a specific version of a Wiki page.</returns>
         [XmlRpcMethod("wiki.getPageHTMLVersion")]
         string GetPageHtmlVersion(string pageName, int timestamp);
 
@@ -181,9 +182,9 @@ namespace DokuwikiClient.Communication
         /// <summary>
         /// Gets all pages of the remote wiki in one big array.
         /// </summary>
-        /// <returns>A list of all Wiki pages in the remote Wiki.</returns>
+        /// <returns>A list of all Wiki pages in the remote Wiki as a <see cref="PageItem"/> array.</returns>
         [XmlRpcMethod("wiki.getAllPages")]
-        object[] GetAllPages();
+        PageItem[] GetAllPages();
 
         /// <summary>
         /// Gets all backlinks of a certain wikipage.
