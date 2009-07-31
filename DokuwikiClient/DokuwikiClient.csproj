@@ -55,8 +55,11 @@
   <ItemGroup>
     <Compile Include="Communication\IDokuWikiClient.cs" />
     <Compile Include="Communication\Messages\CommunicationException.cs" />
+    <Compile Include="Communication\Messages\XmlRpcFaultCodes.cs" />
     <Compile Include="Communication\XmlRpcClient.cs" />
+    <Compile Include="Communication\XmlRpcMessages\Capability.cs" />
     <Compile Include="Communication\XmlRpcMessages\PageItem.cs" />
+    <Compile Include="Communication\XmlRpcMessages\SpecificationInfo.cs" />
     <Compile Include="Communication\XmlRpcMessages\XmlRpcMessage.cs" />
     <Compile Include="DokuWikiClientConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

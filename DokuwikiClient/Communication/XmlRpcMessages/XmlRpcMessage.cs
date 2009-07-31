@@ -49,7 +49,7 @@ namespace DokuwikiClient.Communication.XmlRpcMessages
 		{
 			StringBuilder builder = new StringBuilder();
 			Type type = this.GetType();
-			builder.AppendFormat(CultureInfo.InvariantCulture, ">> Information of object: '{0}'|", type.Name);
+			builder.AppendFormat(CultureInfo.InvariantCulture, ">> Information of object: '{0}' \n", type.Name);
 			PropertyInfo[] properties = type.GetProperties();
 			foreach (PropertyInfo currentProperty in properties)
 			{
@@ -69,7 +69,7 @@ namespace DokuwikiClient.Communication.XmlRpcMessages
 						// Recursive call for object hierarchies
 						builder.AppendFormat(
 							CultureInfo.InvariantCulture, 
-							"Name: '{0}' Value: '{1}'",
+							"Name: '{0}' Value: '{1}' \n",
 							currentProperty.Name, 
 							xmlRpcMessage.Dump());
 					}
@@ -83,7 +83,7 @@ namespace DokuwikiClient.Communication.XmlRpcMessages
 							{
 								builder.AppendFormat(
 									CultureInfo.InvariantCulture, 
-									"Name: '{0}' Value: '{1}'",
+									"Name: '{0}' Value: '{1}' \n",
 									key.ToString(), 
 									dataProperty[key].ToString());
 							}
@@ -93,7 +93,7 @@ namespace DokuwikiClient.Communication.XmlRpcMessages
 							// Print common properites of base class
 							builder.AppendFormat(
 								CultureInfo.InvariantCulture, 
-								"Name: '{0}' Value: '{1}'",
+								"Name: '{0}' Value: '{1}' \n",
 								currentProperty.Name, 
 								currentProperty.GetValue(this, null));
 						}

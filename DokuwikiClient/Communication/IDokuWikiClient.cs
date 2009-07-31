@@ -30,6 +30,17 @@ namespace DokuwikiClient.Communication
 	/// </summary>
 	public interface IDokuWikiClient : IXmlRpcProxy
 	{
+		#region Introspection API
+
+		/// <summary>
+		/// Gets the capabilities the Xml Rpc server offers.
+		/// </summary>
+		/// <returns>An instance of <see cref="Capability"/> which tells you which Xml Rpc spcifications in which versions are implemented.</returns>
+		[XmlRpcMethod("system.getCapabilities")]
+		Capability GetCapabilities();
+
+		#endregion
+
 		#region DokuWiki specific remote methods
 
 		/// <summary>

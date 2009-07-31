@@ -84,6 +84,46 @@ namespace DokuwikiClient.Communication
 		#region Introspection API
 
 		/// <summary>
+		/// Gets the server capabilites.
+		/// </summary>
+		/// <returns>An instance of <see cref="Capability"/>.</returns>
+		/// <exception cref="ArgumentException">Is thrown when the XmlRpc server is not enabled.</exception>
+		/// <exception cref="CommunicationException">Is thrown when the Xml-Rpc mechanism had errors.</exception>
+		/// <exception cref="WebException">Is thrown when the HTTP connection had errors.</exception>
+		public Capability GetServerCapabilites()
+		{
+			try
+			{
+				return this.clientProxy.GetCapabilities();
+			}
+			catch (WebException we)
+			{
+				logger.Warn(we);
+				throw;
+			}
+			catch (XmlRpcIllFormedXmlException)
+			{
+				throw new ArgumentException("XmlRpc server not enabled.");
+			}
+			catch (XmlRpcFaultException xrpcfe)
+			{
+				if (xrpcfe.FaultCode == (int)XmlRpcFaultCodes.ServerErrorRequestedMethodNotFound)
+				{
+					throw new ArgumentException("Method not found.");
+				}
+				else
+				{
+					throw new ArgumentException(xrpcfe.Message);
+				}
+			}
+			catch (XmlRpcException xrpce)
+			{
+				logger.Warn(xrpce);
+				throw new CommunicationException(xrpce.Message);
+			}
+		}
+
+		/// <summary>
 		/// Returns a list of methods implemented by the server.
 		/// </summary>
 		/// <returns>An array of strings listing all remote method names.</returns>

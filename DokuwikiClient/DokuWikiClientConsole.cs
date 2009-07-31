@@ -18,16 +18,44 @@ namespace DokuwikiClient
 		{
 			AppDomain.CurrentDomain.UnhandledException += DokuWikiClientConsole.OnUnhandledException;
             XmlConfigurator.Configure();
+			XmlRpcClient client;
 
 			Console.WriteLine("Connecting to wiki.");
-			XmlRpcClient client = new XmlRpcClient(new Uri("http://wiki.froorider.ch/lib/exe/xmlrpc.php"));
+			if (args.Length != 0 && !String.IsNullOrEmpty(args[0]))
+			{
+				client = new XmlRpcClient(new Uri(args[0]));
+			}
+			else
+			{
+				client = new XmlRpcClient(new Uri("http://wiki.froorider.ch/lib/exe/xmlrpc.php"));
+			}
 			
-			Console.WriteLine("Listing server methods.");
 			try
 			{
+				Console.WriteLine("Listing server methods.");
 				foreach (String serverMethodName in client.ListServerMethods())
 				{
 					Console.WriteLine("Method name: {0}", serverMethodName);
+				}
+				Console.WriteLine("----------------------------------------------------");
+
+				Console.WriteLine("Listing server capabilites.");
+				Capability serverCapability = client.GetServerCapabilites();
+				if (serverCapability.XmlRpcSpecification != null)
+				{
+					Console.WriteLine("Xml-Rpc Version: {0}", serverCapability.XmlRpcSpecification.SpecificationVersion);
+				}
+				if (serverCapability.IntrospectionSpecification != null)
+				{
+					Console.WriteLine("Introspection Version: {0}", serverCapability.IntrospectionSpecification.SpecificationVersion);
+				}
+				if (serverCapability.MulticallSpecification != null)
+				{
+					Console.WriteLine("Multicall Version: {0}", serverCapability.MulticallSpecification.SpecificationVersion);
+				}
+				if (serverCapability.FaultCodesSpecification != null)
+				{
+					Console.WriteLine("Fault codes Version: {0}", serverCapability.FaultCodesSpecification.SpecificationVersion);
 				}
 			}
 			catch (ArgumentException ae)
