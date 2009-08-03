@@ -34,7 +34,7 @@ namespace DokuwikiClient.Communication
 	/// Proxy class for the communication between the program and the XmlRpcServer.
 	/// Wraps all the remote method calls in a common way.
 	/// </summary>
-	internal class XmlRpcClient
+	public class XmlRpcClient
 	{
 		#region fields
 
