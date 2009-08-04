@@ -5,11 +5,11 @@
 	<DockPanel Name="mainPanel">
 		<StatusBar Name="statusBar" DockPanel.Dock="Bottom" Width="Auto">
 			<Label Name="statusLabel" Width="Auto">Enter first the URL of your wiki an press the button "Connect to Wiki."</Label>
-			<ProgressBar Name="statusProgress" Visibility="Hidden" Width="150" Height="15" IsIndeterminate="True"></ProgressBar>
+			<ProgressBar Name="statusProgress" Width="150" Height="15" IsIndeterminate="True"></ProgressBar>
 		</StatusBar>
 		<StackPanel Height="Auto" Name="menuPanel" Width="320" HorizontalAlignment="Left" DockPanel.Dock="Left">
 			<Button Height="23" Name="connectToWikiButton" Width="Auto" Click="connectToWikiButton_Click">Connect to wiki</Button>
-			<TextBox Height="23" Name="connectoToWikiText" Width="Auto" BorderThickness="1" Text="http://www.mywiki.org/lib/exe/xmlrpc.php"/>
+			<TextBox Height="23" Name="connectoToWikiText" Width="Auto" BorderThickness="1" Text="http://wiki.froorider.ch/lib/exe/xmlrpc.php"/>
 			<Button Height="23" Name="getWikipageButton" Width="Auto" Click="getWikipageButton_Click">Get Wiki Page</Button>
 			<TextBox BorderThickness="1" Height="23" Name="getWikipageText" Width="Auto">wikipage name</TextBox>
 		</StackPanel>
