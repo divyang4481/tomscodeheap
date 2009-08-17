@@ -2,7 +2,7 @@
 // File:     XmlRpcClient.cs
 //
 // Author:   $Author$
-// Date:     $LastChangeDate$
+// Date:     $LastChangedDate$
 // Revision: $Revision$
 // ========================================================================
 // Copyright [2009] [$Author$]
@@ -21,12 +21,14 @@
 // ========================================================================
 
 using System;
+using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using CookComputing.XmlRpc;
-using log4net;
 using DokuwikiClient.Communication.Messages;
 using DokuwikiClient.Communication.XmlRpcMessages;
+using log4net;
 
 namespace DokuwikiClient.Communication
 {
@@ -58,19 +60,10 @@ namespace DokuwikiClient.Communication
 				this.clientProxy = XmlRpcProxyGen.Create<IDokuWikiClient>();
 				this.clientProxy.NonStandard = XmlRpcNonStandard.AllowNonStandardDateTime;
 				this.clientProxy.Url = serverUrl.AbsoluteUri;
-
-#if(TRACE)
-				RequestResponseLogger dumper = new RequestResponseLogger();
-				dumper.Directory = @"C:\logs\xmlrpctests";
-				if (!Directory.Exists(dumper.Directory))
-				{
-					Directory.CreateDirectory(dumper.Directory);
-				}
-
-				dumper.Attach(this.clientProxy);
-#endif
-
 				Console.WriteLine("XmlRpc proxy to URL: " + serverUrl.AbsoluteUri + " generated.");
+
+				// Network logging; Only used by developers in debug configuration when "LOG_NETWORK_TRAFFIC" is set.
+				this.LogXmlTraffic();
 			}
 			catch (UriFormatException ufe)
 			{
@@ -174,7 +167,7 @@ namespace DokuwikiClient.Communication
 			catch (XmlRpcFaultException xrfe)
 			{
 				logger.Warn(xrfe);
-				throw new ArgumentException("Unknown remote method.","methodName");
+				throw new ArgumentException("Unknown remote method.", "methodName");
 			}
 			catch (XmlRpcException xrpce)
 			{
@@ -216,31 +209,31 @@ namespace DokuwikiClient.Communication
 
 		#endregion
 
-        #region IDokuWikiClient Member
+		#region IDokuWikiClient Member
 
-        /// <summary>
-        /// Gets a wikipage identified by it's name as raw wiki text.
-        /// </summary>
-        /// <param name="pageName">Name of the page.</param>
-        /// <returns>The raw Wiki text for a page.</returns>
-        /// <exception cref="ArgumentNullException">Is thrown when the passed argument is null.</exception>
+		/// <summary>
+		/// Gets a wikipage identified by it's name as raw wiki text.
+		/// </summary>
+		/// <param name="pageName">Name of the page.</param>
+		/// <returns>The raw Wiki text for a page.</returns>
+		/// <exception cref="ArgumentNullException">Is thrown when the passed argument is null.</exception>
 		/// <exception cref="ArgumentException">Is thrown when the <paramref name="pageName"/> is unkown at remote host.</exception>
 		/// <exception cref="CommunicationException">Is thrown when the Xml-Rpc mechanism had errors.</exception>
 		/// <exception cref="WebException">Is thrown when the HTTP connection had errors.</exception>
-        public string GetPage(string pageName)
-        {
-            string wikiText = String.Empty;
+		public string GetPage(string pageName)
+		{
+			string wikiText = String.Empty;
 
-            if (String.IsNullOrEmpty(pageName))
-            {
-                throw new ArgumentNullException("pageName");
-            }
+			if (String.IsNullOrEmpty(pageName))
+			{
+				throw new ArgumentNullException("pageName");
+			}
 
-            try
-            {
-                wikiText = this.clientProxy.GetPage(pageName);
+			try
+			{
+				wikiText = this.clientProxy.GetPage(pageName);
 				return wikiText;
-            }
+			}
 			catch (WebException we)
 			{
 				logger.Warn(we);
@@ -256,7 +249,7 @@ namespace DokuwikiClient.Communication
 				logger.Warn(xrpce);
 				throw new CommunicationException(xrpce.Message);
 			}
-        }
+		}
 
 		/// <summary>
 		/// Gets all pages of the remote wiki.
@@ -282,151 +275,175 @@ namespace DokuwikiClient.Communication
 			}
 		}
 
-        /// <summary>
-        /// Gets the a wiki page pre-formatted in HTML.
-        /// </summary>
-        /// <param name="pageName">Name of the wikpage.</param>
-        /// <returns>XHTML represenation of the wiki page.</returns>
-        /// <exception cref="ArgumentNullException">Is thrown when the passed argument is null.</exception>
-        /// <exception cref="ArgumentException">Is thrown when the <paramref name="pageName"/> is unkown at remote host.</exception>
-        /// <exception cref="CommunicationException">Is thrown when the Xml-Rpc mechanism had errors.</exception>
-        /// <exception cref="WebException">Is thrown when the HTTP connection had errors.</exception>
-        public string GetPageHtml(string pageName)
-        {
-            string wikiTextAsHtml = String.Empty;
+		/// <summary>
+		/// Gets the a wiki page pre-formatted in HTML.
+		/// </summary>
+		/// <param name="pageName">Name of the wikpage.</param>
+		/// <returns>XHTML represenation of the wiki page.</returns>
+		/// <exception cref="ArgumentNullException">Is thrown when the passed argument is null.</exception>
+		/// <exception cref="ArgumentException">Is thrown when the <paramref name="pageName"/> is unkown at remote host.</exception>
+		/// <exception cref="CommunicationException">Is thrown when the Xml-Rpc mechanism had errors.</exception>
+		/// <exception cref="WebException">Is thrown when the HTTP connection had errors.</exception>
+		public string GetPageHtml(string pageName)
+		{
+			string wikiTextAsHtml = String.Empty;
 
-            if (String.IsNullOrEmpty(pageName))
-            {
-                throw new ArgumentNullException("pageName");
-            }
+			if (String.IsNullOrEmpty(pageName))
+			{
+				throw new ArgumentNullException("pageName");
+			}
 
-            try
-            {
-                wikiTextAsHtml = this.clientProxy.GetPageHtml(pageName);
-                return wikiTextAsHtml;
-            }
-            catch (WebException we)
-            {
-                logger.Warn(we);
-                throw;
-            }
-            catch (XmlRpcFaultException xrfe)
-            {
-                logger.Warn(xrfe);
-                throw new ArgumentException("Unknown wiki page.", "pageName");
-            }
-            catch (XmlRpcException xrpce)
-            {
-                logger.Warn(xrpce);
-                throw new CommunicationException(xrpce.Message);
-            }
-        }
+			try
+			{
+				wikiTextAsHtml = this.clientProxy.GetPageHtml(pageName);
+				return wikiTextAsHtml;
+			}
+			catch (WebException we)
+			{
+				logger.Warn(we);
+				throw;
+			}
+			catch (XmlRpcFaultException xrfe)
+			{
+				logger.Warn(xrfe);
+				throw new ArgumentException("Unknown wiki page.", "pageName");
+			}
+			catch (XmlRpcException xrpce)
+			{
+				logger.Warn(xrpce);
+				throw new CommunicationException(xrpce.Message);
+			}
+		}
 
-        public string[] GetPageList(string nameSpace, string[] options)
-        {
-            throw new NotImplementedException();
-        }
+		public string[] GetPageList(string nameSpace, string[] options)
+		{
+			throw new NotImplementedException();
+		}
 
-        public string GetDokuWikiVersion()
-        {
-            throw new NotImplementedException();
-        }
+		public string GetDokuWikiVersion()
+		{
+			throw new NotImplementedException();
+		}
 
-        public int GetTime()
-        {
-            throw new NotImplementedException();
-        }
+		public int GetTime()
+		{
+			throw new NotImplementedException();
+		}
 
-        public int GetXmlRpcApiVersion()
-        {
-            throw new NotImplementedException();
-        }
+		public int GetXmlRpcApiVersion()
+		{
+			throw new NotImplementedException();
+		}
 
-        public int Login(string user, string password)
-        {
-            throw new NotImplementedException();
-        }
+		public int Login(string user, string password)
+		{
+			throw new NotImplementedException();
+		}
 
-        public string[] SetLocks(string[] pagesToLockOrUnlock)
-        {
-            throw new NotImplementedException();
-        }
+		public string[] SetLocks(string[] pagesToLockOrUnlock)
+		{
+			throw new NotImplementedException();
+		}
 
-        public string GetRpcVersionSupported()
-        {
-            throw new NotImplementedException();
-        }
+		public string GetRpcVersionSupported()
+		{
+			throw new NotImplementedException();
+		}
 
-        public string GetPageVersion(string pageName, int timestamp)
-        {
-            throw new NotImplementedException();
-        }
+		public string GetPageVersion(string pageName, int timestamp)
+		{
+			throw new NotImplementedException();
+		}
 
-        public object[] GetPageVersions(string pageName, int offset)
-        {
-            throw new NotImplementedException();
-        }
+		public object[] GetPageVersions(string pageName, int offset)
+		{
+			throw new NotImplementedException();
+		}
 
-        public object[] GetPageInfo(string pageName)
-        {
-            throw new NotImplementedException();
-        }
+		public object[] GetPageInfo(string pageName)
+		{
+			throw new NotImplementedException();
+		}
 
-        public object[] GetPageInfoVersion(string pageName, int timestamp)
-        {
-            throw new NotImplementedException();
-        }
+		public object[] GetPageInfoVersion(string pageName, int timestamp)
+		{
+			throw new NotImplementedException();
+		}
 
-        public string GetPageHtmlVersion(string pageName, int timestamp)
-        {
-            throw new NotImplementedException();
-        }
+		public string GetPageHtmlVersion(string pageName, int timestamp)
+		{
+			throw new NotImplementedException();
+		}
 
-        public bool PutPage(string pageName, string rawWikiText, object putParameters)
-        {
-            throw new NotImplementedException();
-        }
+		public bool PutPage(string pageName, string rawWikiText, object putParameters)
+		{
+			throw new NotImplementedException();
+		}
 
-        public object[] ListLinks(string pageName)
-        {
-            throw new NotImplementedException();
-        }
+		public object[] ListLinks(string pageName)
+		{
+			throw new NotImplementedException();
+		}
 
-        public object[] GetBackLinks(string pageName)
-        {
-            throw new NotImplementedException();
-        }
+		public object[] GetBackLinks(string pageName)
+		{
+			throw new NotImplementedException();
+		}
 
-        public object[] GetRecentChanges(int timestamp)
-        {
-            throw new NotImplementedException();
-        }
+		public object[] GetRecentChanges(int timestamp)
+		{
+			throw new NotImplementedException();
+		}
 
-        public object[] GetAttachments(string nameSpace, object[] attachmentOptions)
-        {
-            throw new NotImplementedException();
-        }
+		public object[] GetAttachments(string nameSpace, object[] attachmentOptions)
+		{
+			throw new NotImplementedException();
+		}
 
-        public object GetAttachment(string mediaFileId)
-        {
-            throw new NotImplementedException();
-        }
+		public object GetAttachment(string mediaFileId)
+		{
+			throw new NotImplementedException();
+		}
 
-        public object[] GetAttachmentInfo(string mediaFileId)
-        {
-            throw new NotImplementedException();
-        }
+		public object[] GetAttachmentInfo(string mediaFileId)
+		{
+			throw new NotImplementedException();
+		}
 
-        public void PutAttachment(string mediaFileId, object mediaFileData, object attachmentOptions)
-        {
-            throw new NotImplementedException();
-        }
+		public void PutAttachment(string mediaFileId, object mediaFileData, object attachmentOptions)
+		{
+			throw new NotImplementedException();
+		}
 
-        public void DeleteAttachment(string mediaFileId)
-        {
-            throw new NotImplementedException();
-        }
+		public void DeleteAttachment(string mediaFileId)
+		{
+			throw new NotImplementedException();
+		}
 
-        #endregion
-    }
+		#endregion
+
+		#region private methods
+
+		/// <summary>
+		/// Logs the XML traffic (The XML files raw as sent by the device) into a special folder.
+		/// </summary>
+		/// <remarks>Activate the "LOG_NETWORK_TRAFFIC" variable to enable this.</remarks>
+		[Conditional("LOG_NETWORK_TRAFFIC")]
+		private void LogXmlTraffic()
+		{
+			RequestResponseLogger dumper = new RequestResponseLogger
+			{
+				Directory = ConfigurationManager.AppSettings.Get("NETWORK_LOGGING_PATH")
+			};
+
+			if (!Directory.Exists(dumper.Directory))
+			{
+				Directory.CreateDirectory(dumper.Directory);
+			}
+
+			dumper.Attach(this.clientProxy);
+		}
+
+		#endregion
+	}
 }

@@ -62,7 +62,14 @@ namespace DokuWikiEditor
 		{
 			this.statusLabel.Content = "Connecting to wiki!";
 			this.statusProgress.Visibility = Visibility.Visible;
-            this.worker.RunWorkerAsync(this.connectoToWikiText.Text);
+			if (!this.worker.IsBusy)
+			{
+				this.worker.RunWorkerAsync(this.connectoToWikiText.Text);
+			}
+			else
+			{
+				this.statusLabel.Content = "Dokuwiki client is already working.";
+			}
 		}
 
 		private void getWikipageButton_Click(object sender, RoutedEventArgs e)
@@ -95,6 +102,7 @@ namespace DokuWikiEditor
 		{
             string urlOfWiki = e.Argument as string;
 			this.client = new XmlRpcClient(new Uri(urlOfWiki));
+			client.ListServerMethods();
         }
 
         /// <summary>
