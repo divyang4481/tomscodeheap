@@ -25,15 +25,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ch.froorider.codeheap.Threading
+namespace CH.Froorider.Codeheap.Threading
 {
     /// <summary>
-    /// An Scheduler holds and maintains a list of Schedules. Client's registrating or
-    /// adding schedules are signaled, whenever the trigger fires.
+	/// A scheduler holds and maintains a list of <see cref="ISchedule"/>s. Client's registrating or
+	/// adding <see cref="ISchedule"/>s are signaled, whenever the trigger fires.
     /// The scheduler offers an enumerable interface. So you can loop with a foreach
-    /// over all registered ISchedules.
+	/// over all registered <see cref="ISchedule"/>s.
     /// </summary>
-    /// <remarks>Multithreading: An IScheduler is thread-safe.</remarks>
+    /// <remarks>Multithreading: An implementation of this interface must be thread-safe.</remarks>
     public interface IScheduler : IEnumerable<ISchedule>, IDisposable
     {
         #region Properties

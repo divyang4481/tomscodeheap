@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Xml.Serialization;
 using Ch.Froorider.Codeheap.Domain;
+using Ch.Froorider.Codeheap.Configuration;
 
 namespace Ch.Froorider.Codeheap.Persistence
 {
@@ -43,7 +44,7 @@ namespace Ch.Froorider.Codeheap.Persistence
         /// <summary>
         /// Path where to store the object (as files)
         /// </summary>
-        private static readonly string filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\NGoogleCalendar\\";
+        private static readonly string filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
         #endregion
 
@@ -56,6 +57,7 @@ namespace Ch.Froorider.Codeheap.Persistence
         {
             lock (filePath)
             {
+				filePath += "//" + AppDomain.CurrentDomain.FriendlyName;
                 if (!Directory.Exists(filePath))
                 {
                     Directory.CreateDirectory(filePath);
@@ -69,10 +71,10 @@ namespace Ch.Froorider.Codeheap.Persistence
 
         /// <summary>
         /// Serializes the specified object to an XML - File.
-        /// The mthod returns as result the filename (without extension) where the contents of the object has been saved.
+        /// The method returns as result the filename (without extension) where the contents of the object has been saved.
         /// </summary>
-        /// <param name="objectToSerialize">The object to serialize. Must implement Serializable.</param>
-        /// <returns>The content of the object as an MD5 Hash string.</returns>
+        /// <param name="objectToSerialize">The object to serialize. Must implement <see cref="Serializable"/>.</param>
+        /// <returns>The filename of the object as an MD5 Hash string.</returns>
         /// <exception cref="System.InvalidOperationException">Is thrown when the object is not suited for serialization.</exception>
         public static string Serialize(this BusinessObject objectToSerialize)
         {

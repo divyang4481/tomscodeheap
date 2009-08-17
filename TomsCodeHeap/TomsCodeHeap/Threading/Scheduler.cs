@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace ch.froorider.codeheap.Threading
+namespace CH.Froorider.Codeheap.Threading
 {
     /// <summary>
     /// This class represents a scheduler. Cleints can register triggers at the scheduler which signals them

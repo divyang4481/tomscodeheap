@@ -20,14 +20,12 @@
 //limitations under the License.
 //========================================================================
 
-using ch.froorider.codeheap.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using System;
-using System.Timers;
-using ch.froorider.codeheap.Persistence;
-using System.Threading;
+using System.Collections.Generic;
 using ch.froorider.codeheap.Testing;
+using Ch.Froorider.Codeheap.Persistence;
+using CH.Froorider.Codeheap.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TomsCodeHeapTesting
 {

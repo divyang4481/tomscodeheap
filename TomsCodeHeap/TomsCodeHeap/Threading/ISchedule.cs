@@ -26,13 +26,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace ch.froorider.codeheap.Threading
+namespace CH.Froorider.Codeheap.Threading
 {
     /// <summary>
     /// This interface declares the offered functionality by a sheduled object.
     /// A scheduled object can be managed by a Scheduler. The client using this
     /// schedule defines when to be triggered.
-    /// As trigger acts an AutoResetEvent. This signal can be used by the client to
+	/// An <see cref="AutoResetEvent"/> acts as a trigger. This signal can be used by the client to
     /// wake up.
     /// </summary>
     public interface ISchedule : IDisposable
@@ -68,7 +68,7 @@ namespace ch.froorider.codeheap.Threading
         /// Gets or sets a value indicating whether this <see cref="ISchedule"/> is currently active.
         /// </summary>
         /// <remarks>
-        /// If you enable the Schedule, the NextDueTime is set to <see cref="DateTime.Now"/> + period.
+		/// If you enable the Schedule, the NextDueTime is set to <see cref="DateTime.Now"/> + <see cref="Period"/>.
         /// If you disable the Schedule, the NextDueTime is set to <see cref="DateTime.MaxValue"/>.
         /// </remarks>
         bool Enabled

@@ -2,7 +2,7 @@
 // File:     SignalSchedule.cs
 // 
 // Author:   $Author$
-// Date:     
+// Date:     $LastChangedDate$
 // Revision: $Revision$
 // ========================================================================
 // Copyright [2009] [$Author$]
@@ -23,7 +23,7 @@
 using System;
 using System.Threading;
 
-namespace ch.froorider.codeheap.Threading
+namespace CH.Froorider.Codeheap.Threading
 {
     /// <summary>
     /// This is a trigger using an <see cref="AutoResetEvent"/> as base.
@@ -34,12 +34,17 @@ namespace ch.froorider.codeheap.Threading
     {
         #region fields
 
+		/// <summary>
+		/// This synchronize the modifications on the <see cref="M:SignalSchedule.Enabled"/> property.
+		/// </summary>
+		private static volatile ReaderWriterLockSlim enabledLock = new ReaderWriterLockSlim(); 
+
         private AutoResetEvent trigger;
         private IScheduler owner;
         private TimeSpan period;
         private bool isEnabled;
-        private DateTime nextTimeDue;
-
+        private DateTime nextDueTime;
+		
         #endregion
 
         #region Constructors
@@ -53,13 +58,19 @@ namespace ch.froorider.codeheap.Threading
         /// </remarks>
         /// <param name="triggerPeriod">The trigger period.</param>
         /// <param name="creator">The creator or owner of this ISchedule.</param>
+		/// <exception cref="ArgumentNullException">Is thrown when the <paramref name="creator"/> is null.</exception>
         internal SignalSchedule(TimeSpan triggerPeriod, IScheduler creator)
         {
+			if (creator == null)
+			{
+				throw new ArgumentNullException("creator", "Cannot contain a null value.");
+			}
+
             this.trigger = new AutoResetEvent(false);
             this.period = triggerPeriod;
             this.owner = creator;
             this.isEnabled = false;
-            this.nextTimeDue = DateTime.MaxValue;
+            this.nextDueTime = DateTime.MaxValue;
         }
 
         #endregion
@@ -69,8 +80,7 @@ namespace ch.froorider.codeheap.Threading
         /// <summary>
         /// Gets the <see cref="IScheduler"/> that this <see cref="ISchedule"/> belongs to.
         /// </summary>
-        /// <value></value>
-        IScheduler ISchedule.Owner
+        public IScheduler Owner
         {
             get { return this.owner; }
         }
@@ -78,8 +88,7 @@ namespace ch.froorider.codeheap.Threading
         /// <summary>
         /// Gets the period of this <see cref="ISchedule"/>.
         /// </summary>
-        /// <value></value>
-        TimeSpan ISchedule.Period
+        public TimeSpan Period
         {
             get { return this.period; }
         }
@@ -88,8 +97,7 @@ namespace ch.froorider.codeheap.Threading
         /// Gets the signal that a client of this <see cref="ISchedule"/>
         /// waits for to be signaled periodically.
         /// </summary>
-        /// <value></value>
-        AutoResetEvent ISchedule.ScheduleSignal
+        public AutoResetEvent ScheduleSignal
         {
             get { return this.trigger; }
         }
@@ -97,64 +105,104 @@ namespace ch.froorider.codeheap.Threading
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ISchedule"/> is currently active.
         /// </summary>
-        /// <value></value>
-        bool ISchedule.Enabled
+		/// <remarks>
+		/// <para>
+		/// Setting Enabled to <see langword="true"/> will set the <see cref="M:SignalSchedule.NextDueTime"/> to <see cref="M:DateTime.Now"/>
+		/// plus the period.
+		/// Setting Enabled to <see langword="false"/> will set the <see cref="M:SignalSchedule.NextDueTime"/> to <see cref="M:DateTime.MaxValue"/>.
+		/// </para>
+		/// </remarks>
+        public bool Enabled
         {
             get
             {
-                return this.isEnabled;
+				SignalSchedule.enabledLock.EnterReadLock();
+				try
+				{
+					return this.isEnabled;
+				}
+				finally
+				{
+					SignalSchedule.enabledLock.ExitReadLock();
+				}
             }
 
             set
             {
-                this.isEnabled = value;
-                if (this.isEnabled)
-                {
-                    this.nextTimeDue = DateTime.Now + this.period;
-                }
-                else
-                {
-                    this.nextTimeDue = DateTime.MaxValue;
-                }
+				SignalSchedule.enabledLock.EnterWriteLock();
+				try
+				{
+					if (this.isEnabled != value)
+					{
+						if (value)
+						{
+							this.nextDueTime = DateTime.Now + this.period;
+						}
+						else
+						{
+							this.nextDueTime = DateTime.MaxValue;
+						}
+
+						this.isEnabled = value;
+					}
+				}
+				finally
+				{
+					SignalSchedule.enabledLock.ExitWriteLock();
+				}
             }
         }
 
         /// <summary>
-        /// Gets the next time when <see cref="ISchedule.ScheduleSignal"/> will be <see cref="M:AutoResetEvent.Set"/>;
-        /// or <see cref="DateTime.MaxValue"/> if <see cref="ISchedule.Enabled"/> is <see langword="false"/>.
+        /// Gets the next time when <see cref="ISchedule.ScheduleSignal"/> will be <see cref="M:AutoResetEvent.Set"/>.
         /// </summary>
         /// <value>A <see cref="DateTime"/> value.</value>
-        DateTime ISchedule.NextDueTime
+        public DateTime NextDueTime
         {
-            get { return this.nextTimeDue; }
+            get { return this.nextDueTime; }
         }
 
         #endregion
 
         #region IDisposable - implementation
 
-        /// <summary>
-        /// Disposes the unmanaged ressources.
-        /// </summary>
-        /// <param name="disposing">Always true.</param>
+		private bool disposed;
+
+		/// <summary>
+		/// Releases unmanaged and - optionally - managed resources.
+		/// </summary>
+		/// <param name="disposing"><c>True</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                this.trigger.Close();
-            }
+			if (!this.disposed)
+			{
+				if (disposing)
+				{
+					this.trigger.Close();
+				}
+			}
+
+			this.disposed = true;
         }
 
-        /// <summary>
-        /// Dispose - pattern.
-        /// Call base.Dispose() first if possible, then the Dispose of the class and finally
-        /// Supress the GC-Finalizer.
-        /// </summary>
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
         public void Dispose()
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+		/// <summary>
+		/// Finalizes an instance of the <see cref="SignalSchedule"/> class.
+		/// Releases unmanaged resources and performs other cleanup operations before the
+		/// <see cref="SignalSchedule"/> is reclaimed by garbage collection.
+		/// </summary>
+		~SignalSchedule()
+		{
+			this.Dispose(false);
+		}
 
         #endregion
     }
