@@ -1,33 +1,29 @@
-﻿//========================================================================
-//File:     AssertException.cs
+﻿// ========================================================================
+// File:     AssertException.cs
 //
-//Author:   $Author$
-//Date:     $LastChangedDate$
-//Revision: $Revision$
-//========================================================================
-//Copyright [2009] [$Author$]
+// Author:   $Author$
+// Date:     $LastChangedDate$
+// Revision: $Revision$
+// ========================================================================
+// Copyright [2009] [$Author$]
 //
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
-//========================================================================
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ========================================================================
           
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ch.froorider.codeheap.Testing
+namespace CH.Froorider.Codeheap.Testing
 {
     /// <summary>
     /// Contains assertion types for exceptions that are not provided with the standard MSTest assertions.
@@ -50,7 +46,7 @@ namespace ch.froorider.codeheap.Testing
         /// <summary>
         /// Checks to make sure that the input delegate throws a exception of type TException.
         /// <para>
-        /// The input delegate must be a method with no parameters and return type void!
+        /// The input delegate must be a method with no parameters and return type void.
         /// </para>
         /// </summary>
         /// <typeparam name="TException">The type of exception expected.</typeparam>
@@ -66,13 +62,14 @@ namespace ch.froorider.codeheap.Testing
                 Assert.IsTrue(e.GetType() == typeof(TException), "Expected exception of type " + typeof(TException) + " but type of " + e.GetType() + " was thrown instead.");
                 return;
             }
+
             Assert.Fail("Expected exception of type " + typeof(TException) + " but no exception was thrown.");
         }
 
         /// <summary>
         /// Checks to make sure that the input delegate throws a exception of type TException with a specific exception message.
         /// <para>
-        /// The input delegate must be a method with no parameters and return type void!
+        /// The input delegate must be a method with no parameters and return type void.
         /// </para>
         /// </summary>
         /// <typeparam name="TException">The type of exception expected.</typeparam>
@@ -93,13 +90,14 @@ namespace ch.froorider.codeheap.Testing
                 Assert.AreEqual(expectedMessage, e.Message, "Expected exception with a message of '" + expectedMessage + "' but exception with message of '" + e.Message + "' was thrown instead.");
                 return;
             }
+
             Assert.Fail("Expected exception of type " + typeof(TException) + " but no exception was thrown.");
         }
 
         /// <summary>
         /// Checks to make sure that the input delegate throws a exception of type TException with a specific exception message.
         /// <para>
-        /// The input delegate must be a method with no parameters and return type void!
+        /// The input delegate must be a method with no parameters and return type void.
         /// </para>
         /// </summary>
         /// <typeparam name="TException">The type of exception expected.</typeparam>
@@ -120,9 +118,9 @@ namespace ch.froorider.codeheap.Testing
                 Assert.IsTrue(e.GetType() == typeof(TException), "Expected exception of type " + typeof(TException) + " but type of " + e.GetType() + " was thrown instead.");
                 return;
             }
+
             Assert.Fail("Expected exception of type " + typeof(TException) + " but no exception was thrown.");
         }
-
 
         #endregion
 
@@ -131,11 +129,11 @@ namespace ch.froorider.codeheap.Testing
         /// <summary>
         /// Checks to make sure that the input delegate throws a exception of type TException with a specific exception message.
         /// <para>
-        /// The input delegate must be a method with ONE parameter and return type!
+        /// The input delegate must be a method with ONE parameter and return type.
         /// </para>
         /// </summary>
         /// <typeparam name="TException">The type of the exception.</typeparam>
-        /// <typeparam name="T">The type of the input argument</typeparam>
+        /// <typeparam name="T">The type of the input argument.</typeparam>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="methodToExecute">The method to execute.</param>
         /// <param name="argument">The argument to input.</param>
@@ -151,6 +149,7 @@ namespace ch.froorider.codeheap.Testing
                 Assert.IsTrue(e.GetType() == typeof(TException), "Expected exception of type " + typeof(TException) + " but type of " + e.GetType() + " was thrown instead.");
                 return;
             }
+
             Assert.Fail("Expected exception of type " + typeof(TException) + " but no exception was thrown.");
         }
 
@@ -175,13 +174,14 @@ namespace ch.froorider.codeheap.Testing
                 Assert.IsTrue(e.InnerException.GetType() == typeof(TException), "Expected exception of type " + typeof(TException) + " but type of " + e.InnerException.GetType() + " was thrown instead.");
                 return;
             }
+
             Assert.Fail("Expected exception of type " + typeof(TException) + " but no exception was thrown.");
         }
 
         /// <summary>
         /// Checks the constructor which takes one argument.
         /// </summary>
-        /// <typeparam name="TException">The type of the exception to check</typeparam>
+        /// <typeparam name="TException">The type of the exception to check.</typeparam>
         /// <typeparam name="T">The type of the argument.</typeparam>
         /// <param name="typeToCreate">The type to create.</param>
         /// <param name="argument">The argument itself.</param>
@@ -199,6 +199,7 @@ namespace ch.froorider.codeheap.Testing
                 Assert.IsTrue(e.InnerException.GetType() == typeof(TException), "Expected exception of type " + typeof(TException) + " but type of " + e.InnerException.GetType() + " was thrown instead.");
                 return;
             }
+
             Assert.Fail("Expected exception of type " + typeof(TException) + " but no exception was thrown.");
         }
 

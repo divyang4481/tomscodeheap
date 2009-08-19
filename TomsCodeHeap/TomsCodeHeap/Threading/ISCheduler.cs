@@ -22,96 +22,95 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CH.Froorider.Codeheap.Threading
 {
-    /// <summary>
+	/// <summary>
 	/// A scheduler holds and maintains a list of <see cref="ISchedule"/>s. Client's registrating or
 	/// adding <see cref="ISchedule"/>s are signaled, whenever the trigger fires.
-    /// The scheduler offers an enumerable interface. So you can loop with a foreach
+	/// The scheduler offers an enumerable interface. So you can loop with a foreach
 	/// over all registered <see cref="ISchedule"/>s.
-    /// </summary>
-    /// <remarks>Multithreading: An implementation of this interface must be thread-safe.</remarks>
-    public interface IScheduler : IEnumerable<ISchedule>, IDisposable
-    {
-        #region Properties
+	/// </summary>
+	/// <remarks>Multithreading: An implementation of this interface must be thread-safe.</remarks>
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "This is not a collection but a wrapper around a collection")]
+	public interface IScheduler : IEnumerable<ISchedule>, IDisposable
+	{
+		#region Properties
 
-        /// <summary>
-        /// Gets the number of <see cref="ISchedule"/>s owned by this <see cref="IScheduler"/>.
-        /// </summary>
-        /// <returns>
-        /// The number of <see cref="ISchedule"/>s owned by this <see cref="IScheduler"/>
-        /// </returns>
-        int Count
-        {
-            get;
-        }
+		/// <summary>
+		/// Gets the number of <see cref="ISchedule"/>s owned by this <see cref="IScheduler"/>.
+		/// </summary>
+		/// <returns>
+		/// The number of <see cref="ISchedule"/>s owned by this <see cref="IScheduler"/>
+		/// </returns>
+		int Count
+		{
+			get;
+		}
 
-        #endregion Properties
+		#endregion Properties
 
-        #region Indexer
+		#region Indexer
 
-        /// <summary>
-        /// Gets the <see cref="ISchedule"/> at the specified index.
-        /// </summary>
-        /// <param name="index">The zero-based index of the element to get.</param>
-        ISchedule this[int index]
-        {
-            get;
-        }
+		/// <summary>
+		/// Gets the <see cref="ISchedule"/> at the specified index.
+		/// </summary>
+		/// <param name="index">The zero-based index of the element to get.</param>
+		ISchedule this[int index]
+		{
+			get;
+		}
 
-        #endregion Indexer
+		#endregion Indexer
 
-        #region Methods
+		#region Methods
 
-        /// <summary>
-        /// Adds a new <see cref="IScheduler"/> with a specified period.
-        /// </summary>
-        /// <param name="period">The period of the new <see cref="ISchedule"/>.</param>
-        /// <param name="enable">If set to <see langword="true"/>, enables the new <see cref="ISchedule"/> immediately.</param>
-        /// <returns>Returns the new <see cref="ISchedule"/>.</returns>
-        ISchedule Add(TimeSpan period, bool enable);
+		/// <summary>
+		/// Adds a new <see cref="IScheduler"/> with a specified period.
+		/// </summary>
+		/// <param name="period">The period of the new <see cref="ISchedule"/>.</param>
+		/// <param name="enable">If set to <see langword="true"/>, enables the new <see cref="ISchedule"/> immediately.</param>
+		/// <returns>Returns the new <see cref="ISchedule"/>.</returns>
+		ISchedule Add(TimeSpan period, bool enable);
 
-        /// <summary>
-        /// Determines whether this <see cref="IScheduler"/> contains a specific <see cref="ISchedule"/>.
-        /// </summary>
-        /// <param name="schedule">The <see cref="ISchedule"/> to locate in this <see cref="IScheduler"/>.</param>
-        /// <returns>
-        /// Returns <see langword="true"/> if <paramref name="schedule"/> is found in this <see cref="IScheduler"/>; otherwise, <see langword="false"/>.
-        /// </returns>
-        bool Contains(ISchedule schedule);
+		/// <summary>
+		/// Determines whether this <see cref="IScheduler"/> contains a specific <see cref="ISchedule"/>.
+		/// </summary>
+		/// <param name="schedule">The <see cref="ISchedule"/> to locate in this <see cref="IScheduler"/>.</param>
+		/// <returns>
+		/// Returns <see langword="true"/> if <paramref name="schedule"/> is found in this <see cref="IScheduler"/>; otherwise, <see langword="false"/>.
+		/// </returns>
+		bool Contains(ISchedule schedule);
 
-        /// <summary>
-        /// Removes and <see cref="IDisposable.Dispose"/>s the first occurrence of a specific <see cref="ISchedule"/> 
-        /// from this <see cref="IScheduler"/>.
-        /// </summary>
-        /// <param name="schedule">The <see cref="ISchedule"/> to remove from this <see cref="IScheduler"/>.</param>
-        /// <returns>
-        /// Returns <see langword="true"/> if <paramref name="schedule"/> was successfully removed from this <see cref="IScheduler"/>; otherwise, <see langword="false"/>. 
-        /// This method also returns false if <paramref name="schedule"/> is not found in this <see cref="IScheduler"/>.
-        /// </returns>
-        bool Remove(ISchedule schedule);
+		/// <summary>
+		/// Removes and <see cref="IDisposable.Dispose"/>s the first occurrence of a specific <see cref="ISchedule"/> 
+		/// from this <see cref="IScheduler"/>.
+		/// </summary>
+		/// <param name="schedule">The <see cref="ISchedule"/> to remove from this <see cref="IScheduler"/>.</param>
+		/// <returns>
+		/// Returns <see langword="true"/> if <paramref name="schedule"/> was successfully removed from this <see cref="IScheduler"/>; otherwise, <see langword="false"/>. 
+		/// This method also returns false if <paramref name="schedule"/> is not found in this <see cref="IScheduler"/>.
+		/// </returns>
+		bool Remove(ISchedule schedule);
 
-        /// <summary>
-        /// Determines the index of a specific <see cref="ISchedule"/> in this <see cref="IScheduler"/>.
-        /// </summary>
-        /// <param name="schedule">The <see cref="ISchedule"/> to locate in this <see cref="IScheduler"/>.</param>
-        /// <returns>
-        /// The index of <paramref name="schedule"/> if found in this <see cref="IScheduler"/>; otherwise, -1.
-        /// </returns>
-        int IndexOf(ISchedule schedule);
+		/// <summary>
+		/// Determines the index of a specific <see cref="ISchedule"/> in this <see cref="IScheduler"/>.
+		/// </summary>
+		/// <param name="schedule">The <see cref="ISchedule"/> to locate in this <see cref="IScheduler"/>.</param>
+		/// <returns>
+		/// The index of <paramref name="schedule"/> if found in this <see cref="IScheduler"/>; otherwise, -1.
+		/// </returns>
+		int IndexOf(ISchedule schedule);
 
-        /// <summary>
-        /// Removes the <see cref="ISchedule"/> at the specified index.
-        /// </summary>
-        /// <param name="index">The zero-based index of the <see cref="ISchedule"/> to remove.</param>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
-        /// 	<paramref name="index"/> is not a valid index in the <see cref="T:System.Collections.Generic.IList`1"/>.
-        /// </exception>
-        void RemoveAt(int index);
+		/// <summary>
+		/// Removes the <see cref="ISchedule"/> at the specified index.
+		/// </summary>
+		/// <param name="index">The zero-based index of the <see cref="ISchedule"/> to remove.</param>
+		/// <exception cref="T:System.ArgumentOutOfRangeException">
+		/// 	<paramref name="index"/> is not a valid index in the <see cref="T:System.Collections.Generic.IList`1"/>.
+		/// </exception>
+		void RemoveAt(int index);
 
-        #endregion Methods
-    }
+		#endregion Methods
+	}
 }

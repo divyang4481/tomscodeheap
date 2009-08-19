@@ -23,104 +23,103 @@
 using System;
 using System.IO;
 using System.Xml.Serialization;
-using Ch.Froorider.Codeheap.Domain;
-using Ch.Froorider.Codeheap.Configuration;
+using CH.Froorider.Codeheap.Domain;
 
-namespace Ch.Froorider.Codeheap.Persistence
+namespace CH.Froorider.Codeheap.Persistence
 {
-    /// <summary>
-    /// The persistence manager class offers two generic methods to serialize and deserialize objects. The serialization method is
-    /// implemented as an extension method. So it can be used / called directly on any object.
-    /// </summary>
-    public static class PersistenceManager
-    {
-        #region fields
+	/// <summary>
+	/// The persistence manager class offers two generic methods to serialize and deserialize objects. The serialization method is
+	/// implemented as an extension method. So it can be used / called directly on any object.
+	/// </summary>
+	public static class PersistenceManager
+	{
+		#region fields
 
-        /// <summary>
-        /// Used file extension.
-        /// </summary>
-        private static readonly string fileNameExtension = ".GDC";
-        
-        /// <summary>
-        /// Path where to store the object (as files)
-        /// </summary>
-        private static readonly string filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+		/// <summary>
+		/// Used file extension.
+		/// </summary>
+		private static readonly string fileNameExtension = ".GDC";
 
-        #endregion
+		/// <summary>
+		/// Path where to store the object (as files).
+		/// </summary>
+		private static readonly string filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-        #region constructors
+		#endregion
 
-        /// <summary>
-        /// Initializes static members of the <see cref="PersistenceManager"/> class.
-        /// </summary>
-        static PersistenceManager()
-        {
-            lock (filePath)
-            {
-				filePath += "//" + AppDomain.CurrentDomain.FriendlyName;
-                if (!Directory.Exists(filePath))
-                {
-                    Directory.CreateDirectory(filePath);
-                }
-            }
-        }
+		#region constructors
 
-        #endregion
+		/// <summary>
+		/// Initializes static members of the <see cref="PersistenceManager"/> class.
+		/// </summary>
+		static PersistenceManager()
+		{
+			lock (filePath)
+			{
+				filePath += "//" + AppDomain.CurrentDomain.FriendlyName + "//";
+				if (!Directory.Exists(filePath))
+				{
+					Directory.CreateDirectory(filePath);
+				}
+			}
+		}
 
-        #region public methods (functionality)
+		#endregion
 
-        /// <summary>
-        /// Serializes the specified object to an XML - File.
-        /// The method returns as result the filename (without extension) where the contents of the object has been saved.
-        /// </summary>
-        /// <param name="objectToSerialize">The object to serialize. Must implement <see cref="Serializable"/>.</param>
-        /// <returns>The filename of the object as an MD5 Hash string.</returns>
-        /// <exception cref="System.InvalidOperationException">Is thrown when the object is not suited for serialization.</exception>
-        public static string Serialize(this BusinessObject objectToSerialize)
-        {
-            if (objectToSerialize.GetType().IsSerializable)
-            {
-                string filename = MD5HashGenerator.GenerateKey(objectToSerialize);
-                XmlSerializer serializer = new XmlSerializer(objectToSerialize.GetType());
-                using (TextWriter textWriter = new StreamWriter(filePath + filename + fileNameExtension))
-                {
-                    serializer.Serialize(textWriter, objectToSerialize);
-                    textWriter.Close();
-                }
+		#region public methods (functionality)
 
-                objectToSerialize.ObjectIdentifier = filename;
-                return filename;
-            }
-            else
-            {
-                throw new InvalidOperationException("Only types which are marked as Serializable are supported.");
-            }
-        }
+		/// <summary>
+		/// Serializes the specified object to an XML - File.
+		/// The method returns as result the filename (without extension) where the contents of the object has been saved.
+		/// </summary>
+		/// <param name="objectToSerialize">The object to serialize. Must implement serializable.</param>
+		/// <returns>The filename of the object as an MD5 Hash string.</returns>
+		/// <exception cref="System.InvalidOperationException">Is thrown when the object is not suited for serialization.</exception>
+		public static string Serialize(this BusinessObject objectToSerialize)
+		{
+			if (objectToSerialize.GetType().IsSerializable)
+			{
+				string filename = MD5HashGenerator.GenerateKey(objectToSerialize);
+				XmlSerializer serializer = new XmlSerializer(objectToSerialize.GetType());
+				using (TextWriter textWriter = new StreamWriter(filePath + filename + fileNameExtension))
+				{
+					serializer.Serialize(textWriter, objectToSerialize);
+					textWriter.Close();
+				}
 
-        /// <summary>
-        /// Deserializes an object.
-        /// </summary>
-        /// <typeparam name="T">Type of the object which you expect.</typeparam>
-        /// <param name="filename">The filename (without extension) of the file which contains the persistent data.</param>
-        /// <returns>An object of desired type when the file could be deserialized.</returns>
-        public static T DeserializeObject<T>(string filename)
-        {
-            if (String.IsNullOrEmpty(filename))
-            {
-                throw new ArgumentException("Filename cannot be null or empty");
-            }
+				objectToSerialize.ObjectIdentifier = filename;
+				return filename;
+			}
+			else
+			{
+				throw new InvalidOperationException("Only types which are marked as Serializable are supported.");
+			}
+		}
 
-            T deserializedObject;
-            XmlSerializer serializer = new XmlSerializer(typeof(T));
-            using (TextReader textReader = new StreamReader(filePath + filename + fileNameExtension))
-            {
-                deserializedObject = (T)serializer.Deserialize(textReader);
-                textReader.Close();
-            }
+		/// <summary>
+		/// Deserializes an object.
+		/// </summary>
+		/// <typeparam name="T">Type of the object which you expect.</typeparam>
+		/// <param name="filename">The filename (without extension) of the file which contains the persistent data.</param>
+		/// <returns>An object of desired type when the file could be deserialized.</returns>
+		public static T DeserializeObject<T>(string filename)
+		{
+			if (String.IsNullOrEmpty(filename))
+			{
+				throw new ArgumentException("Filename cannot be null or empty");
+			}
 
-            return deserializedObject;
-        }
+			T deserializedObject;
+			XmlSerializer serializer = new XmlSerializer(typeof(T));
+			using (TextReader textReader = new StreamReader(filePath + filename + fileNameExtension))
+			{
+				deserializedObject = (T)serializer.Deserialize(textReader);
+				textReader.Close();
+			}
 
-        #endregion
-    }
+			return deserializedObject;
+		}
+
+		#endregion
+	}
 }

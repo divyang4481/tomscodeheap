@@ -30,7 +30,7 @@ using System.Xml;
 using System.Xml.Linq;
 using log4net;
 
-namespace Ch.Froorider.Codeheap.Configuration
+namespace CH.Froorider.Codeheap.Configuration
 {
     /// <summary>
     /// Class loads the configuration for a library out of an XML Document.
@@ -43,7 +43,7 @@ namespace Ch.Froorider.Codeheap.Configuration
     public static class LibraryConfigurationManager
     {
         /// <summary>
-        /// Local used logger
+        /// Local used logger instance.
         /// </summary>
         private static ILog logger = LogManager.GetLogger(typeof(LibraryConfigurationManager));
 
@@ -63,9 +63,9 @@ namespace Ch.Froorider.Codeheap.Configuration
         /// <summary>
         /// Loads the configuration out of the specified filename.
         /// </summary>
-        /// <param name="filename">The filename.</param>
+        /// <param name="fileName">The filename.</param>
         /// <exception cref="ArgumentNullException">Is thrown when the file not exists or is not valid.</exception>
-        public static void Load(string filename)
+        public static void Load(string fileName)
         {
             // An already loaded configuration is not overwritten
             if (loadedKeys.HasKeys())
@@ -73,9 +73,9 @@ namespace Ch.Froorider.Codeheap.Configuration
                 return;
             }
 
-            if (String.IsNullOrEmpty(filename))
+            if (String.IsNullOrEmpty(fileName))
             {
-                throw new ArgumentNullException("Filename is null or empty.");
+                throw new ArgumentNullException("fileName","Filename is null or empty.");
             }
 
             // Get the application folder.
@@ -84,7 +84,7 @@ namespace Ch.Froorider.Codeheap.Configuration
             string applicationFolder = Path.GetDirectoryName(codebase);
 
             // Get the complete path to the config file. 
-            string configFile = Path.Combine(applicationFolder, filename);
+            string configFile = Path.Combine(applicationFolder, fileName);
             if (!File.Exists(@configFile))
             {
                 logger.Error("Path to config file is not valid: " + configFile);

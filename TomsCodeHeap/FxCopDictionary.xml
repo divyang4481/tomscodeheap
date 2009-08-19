@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Dictionary>
+	<Words>
+		<Unrecognized>
+			<!--Abbreviation for Switzerland used in namesapces etc.-->
+			<Word>ch</Word>
+		</Unrecognized>
+		<Recognized>
+			<Word>Code</Word>
+			<!--Term not supported from currently used E-dictionnary.-->
+			<Word>Copyably</Word>
+			<!--Term not supported from currently used E-dictionnary.-->
+			<Word>Deletable</Word>
+			<!--Abbreviation used from PI division for specific type of sequence: FEFO sequence.-->
+			<Word>Fefo</Word>
+			<!--Nickname-->
+			<Word>Froorider</Word>
+			<Word>Heap</Word>
+		</Recognized>
+		<Deprecated>
+			<!--<Term PreferredAlternate="EnterpriseServices">ComPlus</Term>-->
+		</Deprecated>
+		<Compound>
+			<!-- 
+        This is a list of discrete terms with their compound alternates and is used by 
+        CompoundWordsShouldBeCasedCorrectly. These are words that exist in the 
+        dictionary as discrete terms, however, should actually be cased as compound words. 
+        For example, 'Filename' exists in the dictionary and hence the spelling rules will 
+        not see it as unrecognized but its actual preferred usage is 'FileName'; adding it
+        below causes CompoundWordsShouldBeCasedCorrectly to fire. The discrete terms are 
+        case-insensitive, however, be sure to pascal-case the compound alternates.
+        Any discrete terms added below automatically get added to the list of discrete
+        exceptions to prevent CompoundWordsShouldBeCasedCorrectly from firing both on the
+        compound word (for example 'WhiteSpace') and its discrete alternate (for example 
+        'Whitespace').
+      -->
+			<Term CompoundAlternate="Codeheap">codeheap</Term>
+		</Compound>
+		<DiscreteExceptions>
+			<!--
+        This is a list of case-insensitive exceptions to the CompoundWordsShouldBeCasedCorrectly 
+        discrete term check. As this check works solely on the basis of whether two consecutive
+        tokens exists in the dictionary, it can have a high false positive rate. For example, 
+        'onset' exists in the dictionary but the user probably intended it to be 'OnSet'. 
+        Adding this word below prevents this rule from firing telling the user to change 'OnSet' 
+        to 'Onset'.
+      -->
+			<Term>codeheap</Term>
+		</DiscreteExceptions>
+	</Words>
+	<Acronyms>
+		<CasingExceptions>
+			<!--Metal detector model ASN35-->
+			<Acronym>ASN</Acronym>
+			<!--Fluid ounce (US)-->
+			<Acronym>FLOZ</Acronym>
+			<!--Metal detector-->
+			<Acronym>Md</Acronym>
+			<!--Abbreviation for Switzerland-->
+			<Acronym>ch</Acronym>
+		</CasingExceptions>
+	</Acronyms>
+</Dictionary>

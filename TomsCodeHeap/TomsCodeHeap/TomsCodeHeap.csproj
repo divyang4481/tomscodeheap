@@ -8,7 +8,7 @@
     <ProjectGuid>{109A8D24-D00F-4D41-B668-F6222CF56D50}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ch.froorider.codeheap</RootNamespace>
+    <RootNamespace>CH.Froorider.Codeheap</RootNamespace>
     <AssemblyName>TomsCodeHeap</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -44,6 +44,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\TomsCodeHeap.XML</DocumentationFile>
+    <CodeAnalysisRules>-Microsoft.Design#CA1012;-Microsoft.Design#CA1020;-Microsoft.Design#CA1004;-Microsoft.Design#CA1014;-Microsoft.Naming#CA1709</CodeAnalysisRules>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -54,6 +55,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
     </DocumentationFile>
+    <CodeAnalysisRules>-Microsoft.Design#CA1012;-Microsoft.Design#CA1020;-Microsoft.Design#CA1004;-Microsoft.Design#CA1014;-Microsoft.Naming#CA1709</CodeAnalysisRules>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -66,6 +68,9 @@
   <ItemGroup>
     <Compile Include="Configuration\LibraryConfigurationManager.cs" />
     <Compile Include="Domain\BusinessObject.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Http\BaseHttpServiceEndpoint.cs" />
+    <Compile Include="Http\SimpleHttpServer.cs" />
     <Compile Include="NotNull.cs" />
     <Compile Include="Persistence\MD5HashGenerator.cs" />
     <Compile Include="Persistence\PersistenceManager.cs" />
@@ -125,6 +130,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <CodeAnalysisDictionary Include="..\FxCopDictionary.xml">
+      <Link>FxCopDictionary.xml</Link>
+    </CodeAnalysisDictionary>
     <Content Include="codeheap.ico" />
   </ItemGroup>
   <ItemGroup>

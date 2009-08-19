@@ -11,6 +11,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{97F60831-6E03-4DB1-8135-4F8DF7679645}"
 	ProjectSection(SolutionItems) = preProject
 		FileHeader.snippet = FileHeader.snippet
+		FxCopDictionary.xml = FxCopDictionary.xml
 		3th Party Libs\LICENSE-2.0.txt = 3th Party Libs\LICENSE-2.0.txt
 		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
 		Tom's Code Heap.shfbproj = Tom's Code Heap.shfbproj

@@ -22,8 +22,8 @@
 
 using System;
 using System.Collections.Generic;
-using ch.froorider.codeheap.Testing;
-using Ch.Froorider.Codeheap.Persistence;
+using CH.Froorider.Codeheap.Testing;
+using CH.Froorider.Codeheap.Persistence;
 using CH.Froorider.Codeheap.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
