@@ -22,6 +22,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using System.Xml.Serialization;
 using CH.Froorider.Codeheap.Domain;
 
@@ -38,31 +39,17 @@ namespace CH.Froorider.Codeheap.Persistence
 		/// <summary>
 		/// Used file extension.
 		/// </summary>
-		private static readonly string fileNameExtension = ".GDC";
+		private const string FileNameExtension = ".GDC";
 
 		/// <summary>
 		/// Path where to store the object (as files).
 		/// </summary>
-		private static readonly string filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
-		#endregion
-
-		#region constructors
+		private static readonly string filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "//" + Assembly.GetExecutingAssembly().GetName() + "//";
 
 		/// <summary>
-		/// Initializes static members of the <see cref="PersistenceManager"/> class.
+		/// Locks the multithreaded access on the directory creation.
 		/// </summary>
-		static PersistenceManager()
-		{
-			lock (filePath)
-			{
-				filePath += "//" + AppDomain.CurrentDomain.FriendlyName + "//";
-				if (!Directory.Exists(filePath))
-				{
-					Directory.CreateDirectory(filePath);
-				}
-			}
-		}
+		private static volatile object filePathLock = new object();
 
 		#endregion
 
@@ -77,11 +64,13 @@ namespace CH.Froorider.Codeheap.Persistence
 		/// <exception cref="System.InvalidOperationException">Is thrown when the object is not suited for serialization.</exception>
 		public static string Serialize(this BusinessObject objectToSerialize)
 		{
+			CreateDirectoryIfNotExisting();
+
 			if (objectToSerialize.GetType().IsSerializable)
 			{
 				string filename = MD5HashGenerator.GenerateKey(objectToSerialize);
 				XmlSerializer serializer = new XmlSerializer(objectToSerialize.GetType());
-				using (TextWriter textWriter = new StreamWriter(filePath + filename + fileNameExtension))
+				using (TextWriter textWriter = new StreamWriter(filePath + filename + FileNameExtension))
 				{
 					serializer.Serialize(textWriter, objectToSerialize);
 					textWriter.Close();
@@ -100,24 +89,39 @@ namespace CH.Froorider.Codeheap.Persistence
 		/// Deserializes an object.
 		/// </summary>
 		/// <typeparam name="T">Type of the object which you expect.</typeparam>
-		/// <param name="filename">The filename (without extension) of the file which contains the persistent data.</param>
+		/// <param name="fileName">The filename (without extension) of the file which contains the persistent data.</param>
 		/// <returns>An object of desired type when the file could be deserialized.</returns>
-		public static T DeserializeObject<T>(string filename)
+		public static T DeserializeObject<T>(string fileName)
 		{
-			if (String.IsNullOrEmpty(filename))
+			if (String.IsNullOrEmpty(fileName))
 			{
 				throw new ArgumentException("Filename cannot be null or empty");
 			}
 
 			T deserializedObject;
 			XmlSerializer serializer = new XmlSerializer(typeof(T));
-			using (TextReader textReader = new StreamReader(filePath + filename + fileNameExtension))
+			using (TextReader textReader = new StreamReader(filePath + fileName + FileNameExtension))
 			{
 				deserializedObject = (T)serializer.Deserialize(textReader);
 				textReader.Close();
 			}
 
 			return deserializedObject;
+		}
+
+		#endregion
+
+		#region private methods
+
+		private static void CreateDirectoryIfNotExisting()
+		{
+			lock (filePathLock)
+			{
+				if (!Directory.Exists(filePath))
+				{
+					Directory.CreateDirectory(filePath);
+				}
+			}
 		}
 
 		#endregion

@@ -49,7 +49,7 @@ namespace CH.Froorider.Codeheap.Persistence
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MD5HashGenerator"/> class.
+		/// Prevents a default instance of the <see cref="MD5HashGenerator"/> class from being created.
 		/// </summary>
 		private MD5HashGenerator()
 		{

@@ -106,7 +106,7 @@ namespace CH.Froorider.Codeheap.Http
 
 			this.httpListener = new HttpListener();
 			this.httpListener.Prefixes.Add(String.Concat("http://+:", portNumber, "/"));
-			logger.DebugFormat("HTTP Listener created on port: " + portNumber);
+			logger.DebugFormat(CultureInfo.CurrentCulture,"HTTP Listener created on port: " + portNumber);
 			this.serviceEndpoint = service;
 
 			this.signals[ExitThread] = this.stopThreadEvent;
@@ -125,22 +125,22 @@ namespace CH.Froorider.Codeheap.Http
 		{
 			try
 			{
-				logger.InfoFormat("Starting HTTP server.");
+				logger.Info("Starting HTTP server.");
 				this.httpListener.Start();
 				this.listeningForConnectionLoop = new Thread(this.Execute);
 				this.listeningForConnectionLoop.Name = "HTTP Server";
 				this.listeningForConnectionLoop.Start();
-				logger.InfoFormat("HTTP server started.");
+				logger.Info("HTTP server started.");
 			}
 			catch (HttpListenerException hle)
 			{
 				logger.Error(hle);
-				throw hle;
+				throw;
 			}
 			catch (ObjectDisposedException ode)
 			{
 				logger.Error(ode);
-				throw ode;
+				throw;
 			}
 		}
 
@@ -159,11 +159,11 @@ namespace CH.Froorider.Codeheap.Http
 				}
 				catch (ObjectDisposedException ode)
 				{
-					logger.DebugFormat("Http Listener was already disposed. {0}", ode.Message);
+					logger.DebugFormat(CultureInfo.CurrentCulture, "Http Listener was already disposed. {0}", ode.Message);
 				}
 
 				this.listeningForConnectionLoop.Join();
-				logger.InfoFormat("HTTP server stopped");
+				logger.Info("HTTP server stopped");
 			}
 		}
 
@@ -178,7 +178,7 @@ namespace CH.Froorider.Codeheap.Http
 
 			do
 			{
-				logger.DebugFormat("Waiting for incoming connections.");
+				logger.Debug("Waiting for incoming connections.");
 				try
 				{
 					HttpListenerContext context = this.httpListener.GetContext();
@@ -186,11 +186,11 @@ namespace CH.Froorider.Codeheap.Http
 				}
 				catch (HttpListenerException hle)
 				{
-					logger.WarnFormat("HttpListenerException caught with Error code: {0} and message: {1}", hle.ErrorCode, hle.Message);
+					logger.WarnFormat(CultureInfo.CurrentCulture, "HttpListenerException caught with Error code: {0} and message: {1}", hle.ErrorCode, hle.Message);
 				}
 				catch (InvalidOperationException ioe)
 				{
-					logger.WarnFormat("Invalid operation caught on HTTP - Listener. Shutting down. Cause: {0}", ioe.Message);
+					logger.WarnFormat(CultureInfo.CurrentCulture, "Invalid operation caught on HTTP - Listener. Shutting down. Cause: {0}", ioe.Message);
 					this.stopThreadEvent.Set();
 				}
 
@@ -212,11 +212,11 @@ namespace CH.Froorider.Codeheap.Http
 		{
 			try
 			{
-				logger.DebugFormat("Incoming connection accepted.");
-				logger.DebugFormat("Accepted request method: {0}", connection.Request.HttpMethod);
-				logger.DebugFormat("Client IP and Port: {0}", connection.Request.UserHostAddress);
-				logger.DebugFormat("Client name: {0}", connection.Request.UserHostName);
-				logger.DebugFormat("Processing input.");
+				logger.Debug("Incoming connection accepted.");
+				logger.DebugFormat(CultureInfo.CurrentCulture, "Accepted request method: {0}", connection.Request.HttpMethod);
+				logger.DebugFormat(CultureInfo.CurrentCulture, "Client IP and Port: {0}", connection.Request.UserHostAddress);
+				logger.DebugFormat(CultureInfo.CurrentCulture, "Client name: {0}", connection.Request.UserHostName);
+				logger.Debug("Processing input.");
 
 				// It is possible that this server host another service than an Pac Service
 				// so we filter this out here.
@@ -240,7 +240,7 @@ namespace CH.Froorider.Codeheap.Http
 			}
 			catch (HttpListenerException hle)
 			{
-				logger.ErrorFormat("HttpListenerException caught with Error code: " + hle.ErrorCode + " and message: " + hle.Message);
+				logger.ErrorFormat(CultureInfo.CurrentCulture, "HttpListenerException caught with Error code: " + hle.ErrorCode + " and message: " + hle.Message);
 			}
 		}
 
@@ -262,9 +262,7 @@ namespace CH.Froorider.Codeheap.Http
 				{
 					// For AutoResetEvent it is not necessary to implement the Dispose-Pattern. 
 					// See MSDN -> WaitHandle class; But we do it here to satisfy CA1063
-					this.stopThreadEvent.SafeWaitHandle.Dispose();
 					this.stopThreadEvent.Close();
-					this.listenForConnection.SafeWaitHandle.Dispose();
 					this.listenForConnection.Close();
 					this.httpListener.Close();
 				}
