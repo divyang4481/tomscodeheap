@@ -1,6 +1,7 @@
 ﻿using CH.Froorider.Codeheap.Persistence;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CH.Froorider.Codeheap.Domain;
+using System;
 
 namespace TomsCodeHeapTesting
 {
@@ -11,9 +12,12 @@ namespace TomsCodeHeapTesting
 	[TestClass()]
 	public class PersistenceManagerTest
 	{
-		#region properties
+		#region fields / properties
 
+		private static volatile object testSynchronizer = new object();
+ 
 		private static TestBusinessObject testBusinessObject = new TestBusinessObject() { SimpleProperty = "Some test data" };
+		private static TestBusinessObject testBusinessObject2 = new TestBusinessObject() { SimpleProperty = "Some other test data." };
 
 		#endregion
 
@@ -23,29 +27,33 @@ namespace TomsCodeHeapTesting
 		[TestMethod()]
 		public void SerializeTest()
 		{
-			string expected = testBusinessObject.Serialize();
-			string actual;
-			actual = PersistenceManager.Serialize(testBusinessObject);
-			Assert.AreEqual(expected, actual);
+			lock (testSynchronizer)
+			{
+				string expected = testBusinessObject.Serialize();
+				string actual = testBusinessObject.ObjectIdentifier;
+				Assert.AreEqual(expected, actual);
+				actual = testBusinessObject2.Serialize();
+				Assert.AreNotEqual(expected, actual);
+			}
 		}
 
 		/// <summary>
-		///A test for DeserializeObject
+		/// Tests that a serialized business object can be deserialzed again.
 		///</summary>
-		public void DeserializeObjectTestHelper<T>()
+		[TestMethod()]
+		public void DeserializeTest()
 		{
-			string filename = string.Empty; // TODO: Initialize to an appropriate value
-			T expected = default(T); // TODO: Initialize to an appropriate value
-			T actual;
-			actual = PersistenceManager.DeserializeObject<T>(filename);
-			Assert.AreEqual(expected, actual);
-			Assert.Inconclusive("Verify the correctness of this test method.");
+			lock (testSynchronizer)
+			{
+				string fileName = testBusinessObject.Serialize();
+				string fileName2 = testBusinessObject2.Serialize();
+				TestBusinessObject deserializedBusinessObject = PersistenceManager.DeserializeObject<TestBusinessObject>(fileName);
+				TestBusinessObject deserializedBusinessObject2 = PersistenceManager.DeserializeObject<TestBusinessObject>(fileName2);
+				Assert.AreEqual(deserializedBusinessObject, testBusinessObject);
+				Assert.AreEqual(deserializedBusinessObject2, testBusinessObject2);
+				Assert.IsFalse(deserializedBusinessObject.Equals(deserializedBusinessObject2));
+			}
 		}
 
-		[TestMethod()]
-		public void DeserializeObjectTest()
-		{
-			DeserializeObjectTestHelper<GenericParameterHelper>();
-		}
 	}
 }

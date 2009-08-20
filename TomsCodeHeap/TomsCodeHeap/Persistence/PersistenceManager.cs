@@ -44,7 +44,7 @@ namespace CH.Froorider.Codeheap.Persistence
 		/// <summary>
 		/// Path where to store the object (as files).
 		/// </summary>
-		private static readonly string filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "//" + Assembly.GetExecutingAssembly().GetName() + "//";
+		private static readonly string filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "//" + Assembly.GetExecutingAssembly().GetName().Name + "//";
 
 		/// <summary>
 		/// Locks the multithreaded access on the directory creation.
