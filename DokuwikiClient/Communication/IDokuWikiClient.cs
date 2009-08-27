@@ -180,7 +180,7 @@ namespace DokuwikiClient.Communication
         /// <param name="putParameters">The put parameters.</param>
         /// <returns>True if the page could be saved. False otherwise.</returns>
         [XmlRpcMethod("wiki.putPage")]
-        bool PutPage(string pageName, string rawWikiText, object putParameters);
+        bool PutPage(string pageName, string rawWikiText, PutParameters[] putParameters);
 
         /// <summary>
         /// Lists all the links contained in a wikipage.

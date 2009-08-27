@@ -315,6 +315,33 @@ namespace DokuwikiClient.Communication
 			}
 		}
 
+		/// <summary>
+		/// Puts / saves the modified wiki page at the remote wiki server.
+		/// </summary>
+		/// <param name="pageName">Name of the page.</param>
+		/// <param name="rawWikiText">The raw wiki text.</param>
+		/// <param name="putParameters">The put parameters.</param>
+		/// <returns>True if all went good. False otherwise.</returns>
+		/// <exception cref="CommunicationException">Is thrown when the Xml-Rpc mechanism had errors.</exception>
+		/// <exception cref="WebException">Is thrown when the HTTP connection had errors.</exception>
+		public bool PutPage(string pageName, string rawWikiText, PutParameters[] putParameters)
+		{
+			try
+			{
+				return this.clientProxy.PutPage(pageName,rawWikiText,putParameters);
+			}
+			catch (WebException we)
+			{
+				logger.Warn(we);
+				throw;
+			}
+			catch (XmlRpcException xrpce)
+			{
+				logger.Warn(xrpce);
+				throw new CommunicationException(xrpce.Message);
+			}
+		}
+
 		public string[] GetPageList(string nameSpace, string[] options)
 		{
 			throw new NotImplementedException();
@@ -371,11 +398,6 @@ namespace DokuwikiClient.Communication
 		}
 
 		public string GetPageHtmlVersion(string pageName, int timestamp)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool PutPage(string pageName, string rawWikiText, object putParameters)
 		{
 			throw new NotImplementedException();
 		}
