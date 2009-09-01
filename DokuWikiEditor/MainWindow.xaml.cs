@@ -19,6 +19,7 @@ using System.ComponentModel;
 using DokuwikiClient.Communication.Messages;
 using DokuwikiClient.Communication.XmlRpcMessages;
 using WikiPlex;
+using DokuwikiClient.Parsing;
 
 namespace DokuWikiEditor
 {
@@ -126,18 +127,20 @@ namespace DokuWikiEditor
 
 		private void previewButton_Click(object sender, RoutedEventArgs e)
 		{
-			var engine = new WikiEngine();
+			Macros.Register<DokuWikiHeadingsMacro>();
+			IWikiEngine engine = new WikiEngine();
 			string rawWikipage = String.Empty;
 			string htmlWikipage = String.Empty;
 
 			FlowDocument document = this.outputBox.Document;
 			TextRange wholeDocument = new TextRange(document.ContentStart, document.ContentEnd);
 			rawWikipage = wholeDocument.Text;
-			htmlWikipage = engine.Render(rawWikipage);
+			htmlWikipage = engine.Render(rawWikipage,DokuwikiClient.Parsing.DokuWikiFormatters.GetDokuWikiFormatters());
 
 			Window browserWindow = new Window();
 			StackPanel panel = new StackPanel();
 			WebBrowser browser = new WebBrowser();
+			browser.Height = 800;
 			browser.NavigateToString(htmlWikipage);
 			panel.Children.Add(browser);
 			browserWindow.Content = panel;
