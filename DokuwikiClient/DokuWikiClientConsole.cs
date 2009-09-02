@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DokuwikiClient.Communication;
-using log4net;
 using DokuwikiClient.Communication.XmlRpcMessages;
+using log4net;
 using log4net.Config;
 
 namespace DokuwikiClient

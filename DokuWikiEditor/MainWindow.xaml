@@ -1,7 +1,7 @@
 ﻿<Window x:Class="DokuWikiEditor.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="DokuWikiEditor" Height="500" Width="800">
+    Title="DokuWikiEditor" Height="500" Width="800" Icon="Notes.ico">
 	<DockPanel Name="mainPanel">
 		<StatusBar Name="statusBar" DockPanel.Dock="Bottom" Width="Auto">
 			<Label Name="statusLabel" Width="Auto">Enter first the URL of your wiki an press the button "Connect to Wiki."</Label>

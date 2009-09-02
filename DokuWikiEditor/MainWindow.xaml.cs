@@ -1,25 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using DokuwikiClient;
 using DokuwikiClient.Communication;
-using System.Windows.Threading;
-using System.Threading;
-using System.ComponentModel;
 using DokuwikiClient.Communication.Messages;
 using DokuwikiClient.Communication.XmlRpcMessages;
-using WikiPlex;
-using DokuwikiClient.Parsing;
+using System.Windows.Media.Imaging;
 
 namespace DokuWikiEditor
 {
@@ -32,6 +21,7 @@ namespace DokuWikiEditor
 
 		private XmlRpcClient client;
 		private BackgroundWorker worker;
+		private DokuWikiEngine engine = new DokuWikiEngine();
 
 		#endregion
 
@@ -127,17 +117,17 @@ namespace DokuWikiEditor
 
 		private void previewButton_Click(object sender, RoutedEventArgs e)
 		{
-			Macros.Register<DokuWikiHeadingsMacro>();
-			IWikiEngine engine = new WikiEngine();
 			string rawWikipage = String.Empty;
 			string htmlWikipage = String.Empty;
 
 			FlowDocument document = this.outputBox.Document;
 			TextRange wholeDocument = new TextRange(document.ContentStart, document.ContentEnd);
 			rawWikipage = wholeDocument.Text;
-			htmlWikipage = engine.Render(rawWikipage,DokuwikiClient.Parsing.DokuWikiFormatters.GetDokuWikiFormatters());
+			htmlWikipage = engine.Render(rawWikipage);
 
 			Window browserWindow = new Window();
+			Uri iconUri = new Uri("pack://application:,,,/Document Blank.ico", UriKind.RelativeOrAbsolute);
+			browserWindow.Icon = BitmapFrame.Create(iconUri);
 			StackPanel panel = new StackPanel();
 			WebBrowser browser = new WebBrowser();
 			browser.Height = 800;

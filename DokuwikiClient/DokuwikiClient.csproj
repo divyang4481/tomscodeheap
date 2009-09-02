@@ -88,16 +88,22 @@
     <Compile Include="Communication\XmlRpcMessages\SpecificationInfo.cs" />
     <Compile Include="Communication\XmlRpcMessages\XmlRpcMessage.cs" />
     <Compile Include="DokuWikiClientConsole.cs" />
-    <Compile Include="Parsing\DokuWikiFormatters.cs" />
-    <Compile Include="Parsing\DokuWikiHeadingsMacro.cs" />
-    <Compile Include="Parsing\DokuWikiHeadingsRenderer.cs" />
-    <Compile Include="Parsing\DokuWikiScope.cs" />
+    <Compile Include="DokuWikiEngine.cs" />
+    <Compile Include="Formatting\DokuWikiFormatters.cs" />
+    <Compile Include="Formatting\Macros\DokuWikiCodeMacro.cs" />
+    <Compile Include="Formatting\Macros\DokuWikiHeadingsMacro.cs" />
+    <Compile Include="Formatting\Renderers\DokuWikiCodeRenderer.cs" />
+    <Compile Include="Formatting\Renderers\DokuWikiHeadingsRenderer.cs" />
+    <Compile Include="Formatting\DokuWikiScope.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Ressources\design.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="XAML_file.ico" />
   </ItemGroup>
   <ItemGroup>

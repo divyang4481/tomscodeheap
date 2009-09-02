@@ -1,5 +1,6 @@
-﻿// ========================================================================
-// File:     PutParameters.cs
+﻿using System.Collections.Generic;
+// ========================================================================
+// File:     DokuWikiFormatters.cs
 // 
 // Author:   $Author$
 // Date:     $LastChangedDate$
@@ -20,31 +21,26 @@
 // limitations under the License.
 // ========================================================================
 
-using CookComputing.XmlRpc;
+using System.Linq;
+using DokuwikiClient.Formatting.Renderers;
+using WikiPlex.Formatting;
 
-namespace DokuwikiClient.Communication.XmlRpcMessages
+namespace DokuwikiClient.Formatting
 {
 	/// <summary>
-	/// Contains versioning information about a wikipage. 
+	/// Class which contains or links all formatters needed to render DokuWiki files correctly to HTML.
 	/// </summary>
-	public class PutParameters : XmlRpcMessage
+	internal static class DokuWikiFormatters
 	{
-		#region Properites
-
 		/// <summary>
-		/// Gets or sets the change summary for the page.
+		/// Gets the doku wiki formatters.
 		/// </summary>
-		/// <value>An string describing the changes made to the wikipage.</value>
-		[XmlRpcMember("sum")]
-		public string ChangeSummary { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether the wikipage changes are minor changes or not.
-		/// </summary>
-		/// <value><c>true</c> if the changes are minor; otherwise, <c>false</c>.</value>
-		[XmlRpcMember("minor")]
-		public bool IsMinor { get; set; }
-
-		#endregion
+		/// <returns>A MacroFormatter containing all specific DokuWiki renderers.</returns>
+		public static MacroFormatter GetDokuWikiFormatters()
+		{
+			var siteRenderers = new IRenderer[] { new DokuWikiHeadingsRenderer(), new DokuWikiCodeRenderer() };
+			IEnumerable<IRenderer> allRenderers = WikiPlex.Renderers.All.Union(siteRenderers);
+			return new MacroFormatter(allRenderers);
+		}
 	}
 }
