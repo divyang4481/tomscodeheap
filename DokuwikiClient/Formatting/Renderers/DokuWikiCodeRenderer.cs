@@ -37,6 +37,8 @@ namespace DokuwikiClient.Formatting.Renderers
 
 		private readonly string rendererName = typeof(DokuWikiCodeRenderer).ToString();
 
+        private readonly string headingOneFormat = "<div style='outline:4px solid invert; background-color:yellow; padding:4px; margin:0px;'>{0}</div>";
+
 		#endregion
 
 		#region Properties
@@ -85,19 +87,7 @@ namespace DokuwikiClient.Formatting.Renderers
 		{
 			if (scopeName == DokuWikiScope.CodeBlock)
 			{
-				int lastIndex1 = 0;
-				int lastIndex2 = 0;
-
-				while (input.Contains("<Code"))
-				{
-					lastIndex1 = input.IndexOf("<code csharp>",lastIndex1);
-					lastIndex2 = input.IndexOf("</code>",lastIndex2);
-					string temp1 = input.Substring(0,lastIndex1);
-					string temp2 = input.Substring(lastIndex1, lastIndex2);
-					string temp3 = input.Substring(lastIndex2);
-					input = temp1 + "<pre class='csharp code csharp'>" + temp2 + "</pre>" + temp3;
-				}
-				return input;
+                return String.Format(this.headingOneFormat, htmlEncode(input));
 			}
 			else
 			{

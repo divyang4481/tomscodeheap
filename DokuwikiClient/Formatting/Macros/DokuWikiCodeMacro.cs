@@ -67,10 +67,14 @@ namespace DokuwikiClient.Formatting.Macros
 				return new List<MacroRule>
                            {
                                new MacroRule(EscapeRegexPatterns.CurlyBraceEscape),
-                               new MacroRule(@"(<Code csharp>)",
+                               new MacroRule(@"(?si)(\<code(.*?)\>)(.*?)(\<\/code(.*?)\>)",
                                              new Dictionary<int, string>
                                                  {
-                                                     {1, DokuWikiScope.CodeBlock},
+                                                     {1, ScopeName.Remove},
+                                                     {2,ScopeName.Remove},
+                                                     {3, DokuWikiScope.CodeBlock},
+                                                     {4,ScopeName.Remove},
+                                                     {5,ScopeName.Remove}
                                                  }
                                    )
                            };
