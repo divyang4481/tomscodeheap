@@ -19,6 +19,8 @@
     <ManifestKeyFile>DokuWikiEditor_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
+    <ApplicationIcon>Notes.ico</ApplicationIcon>
+    <NoWin32Manifest>true</NoWin32Manifest>
     <PublishUrl>ftp://ftp.froorider.ch/html/dokuWikiClient/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -33,13 +35,12 @@
     <TargetCulture>en</TargetCulture>
     <PublisherName>Thomas Hasler</PublisherName>
     <SuiteName>DokuWiki Editor</SuiteName>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>4</ApplicationRevision>
     <ApplicationVersion>0.0.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <ApplicationIcon>Notes.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
