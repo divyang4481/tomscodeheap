@@ -33,7 +33,7 @@ namespace CH.Froorider.Codeheap.Threading
 	/// </summary>
 	/// <remarks>Multithreading: An implementation of this interface must be thread-safe.</remarks>
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "This is not a collection but a wrapper around a collection")]
-	public interface IScheduler : IEnumerable<ISchedule>, IDisposable
+	public interface IScheduler : IEnumerable<ISchedule>
 	{
 		#region Properties
 

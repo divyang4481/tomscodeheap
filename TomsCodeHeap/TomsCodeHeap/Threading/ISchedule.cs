@@ -32,7 +32,7 @@ namespace CH.Froorider.Codeheap.Threading
 	/// An <see cref="AutoResetEvent"/> acts as a trigger. This signal can be used by the client to
     /// wake up.
     /// </summary>
-    public interface ISchedule : IDisposable
+    public interface ISchedule
     {
         #region Properties
 

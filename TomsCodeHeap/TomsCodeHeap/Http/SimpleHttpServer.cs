@@ -29,48 +29,48 @@ using log4net;
 namespace CH.Froorider.Codeheap.Http
 {
 	/// <summary>
-    /// Defines all states this HTTP Server can have. Is internal because only the PAC itself
-    /// must have knowledge about the state etc. of this server. The outside world has no interest on it.
-    /// </summary>
-    internal enum HTTPServerState
-    {
-        /// <summary>
-        /// Server state is not set. Default value. Also nessecary to fulfill code rule CA1008.
-        /// </summary>
-        Undefined = 0,
+	/// Defines all states this HTTP Server can have. Is internal because only the PAC itself
+	/// must have knowledge about the state etc. of this server. The outside world has no interest on it.
+	/// </summary>
+	internal enum HTTPServerState
+	{
+		/// <summary>
+		/// Server state is not set. Default value. Also nessecary to fulfill code rule CA1008.
+		/// </summary>
+		Undefined = 0,
 
-        /// <summary>
-        /// Server is initialized, ready for work but the mian loop is not yet started.
-        /// </summary>
-        Created = 1,
+		/// <summary>
+		/// Server is initialized, ready for work but the mian loop is not yet started.
+		/// </summary>
+		Created = 1,
 
-        /// <summary>
-        /// Main loop is running, but does no work and waits for input.
-        /// </summary>
-        Idle = 2,
+		/// <summary>
+		/// Main loop is running, but does no work and waits for input.
+		/// </summary>
+		Idle = 2,
 
-        /// <summary>
-        /// Main loop is running and waiting for incoming connections.
-        /// </summary>
-        Listening = 3,
+		/// <summary>
+		/// Main loop is running and waiting for incoming connections.
+		/// </summary>
+		Listening = 3,
 
-        /// <summary>
-        /// The main loop is doing his primary work. Don't interrupt him until he has finished it's work. 
-        /// </summary>
-        Working = 4,
+		/// <summary>
+		/// The main loop is doing his primary work. Don't interrupt him until he has finished it's work. 
+		/// </summary>
+		Working = 4,
 
-        /// <summary>
-        /// Main loop has ended. Server can be shutdown.
-        /// </summary>
-        Stopped = 5
-    }
+		/// <summary>
+		/// Main loop has ended. Server can be shutdown.
+		/// </summary>
+		Stopped = 5
+	}
 
-    /// <summary>
-    /// Basic implementation of an HTTP - Server. Can be used to avoid the use of .NET Remoting or
-    /// IIS.
-    /// The server can be started and stopped using the similar named methods. It is a non-blocking
-    /// Server. Started in it's own thread it does not block the other threads while listening on a port.
-    /// </summary>
+	/// <summary>
+	/// Basic implementation of an HTTP - Server. Can be used to avoid the use of .NET Remoting or
+	/// IIS.
+	/// The server can be started and stopped using the similar named methods. It is a non-blocking
+	/// Server. Started in it's own thread it does not block the other threads while listening on a port.
+	/// </summary>
 	public class SimpleHttpServer : IDisposable
 	{
 		private const int ExitThread = 0;
@@ -106,7 +106,7 @@ namespace CH.Froorider.Codeheap.Http
 
 			this.httpListener = new HttpListener();
 			this.httpListener.Prefixes.Add(String.Concat("http://+:", portNumber, "/"));
-			logger.DebugFormat(CultureInfo.CurrentCulture,"HTTP Listener created on port: " + portNumber);
+			logger.DebugFormat(CultureInfo.CurrentCulture, "HTTP Listener created on port: " + portNumber);
 			this.serviceEndpoint = service;
 
 			this.signals[ExitThread] = this.stopThreadEvent;

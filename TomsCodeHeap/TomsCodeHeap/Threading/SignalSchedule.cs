@@ -30,7 +30,7 @@ namespace CH.Froorider.Codeheap.Threading
     /// A client gets the reference on the <see cref="ISchedule"/> and can wait
     /// until the AutoResetEvent has been set.
     /// </summary>
-    internal class SignalSchedule : ISchedule
+    internal class SignalSchedule : ISchedule, IDisposable
     {
         #region fields
 
@@ -69,7 +69,6 @@ namespace CH.Froorider.Codeheap.Threading
             this.trigger = new AutoResetEvent(false);
             this.period = triggerPeriod;
             this.owner = creator;
-            this.isEnabled = false;
             this.nextDueTime = DateTime.MaxValue;
         }
 

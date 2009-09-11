@@ -37,14 +37,14 @@ namespace CH.Froorider.Codeheap.Persistence
 		#region fields
 
 		/// <summary>
-		/// Used file extension.
+		/// Common used file extension.
 		/// </summary>
-		private const string FileNameExtension = ".GDC";
+		private const string CommonFileNameExtension = ".dat";
 
 		/// <summary>
 		/// Path where to store the object (as files).
 		/// </summary>
-		private static readonly string filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "//" + Assembly.GetExecutingAssembly().GetName().Name + "//";
+		private static readonly string CommonFilePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "//" + Assembly.GetExecutingAssembly().GetName().Name + "//";
 
 		/// <summary>
 		/// Locks the multithreaded access on the directory creation.
@@ -57,11 +57,13 @@ namespace CH.Froorider.Codeheap.Persistence
 
 		/// <summary>
 		/// Serializes the specified object to an XML - File.
-		/// The method returns as result the filename (without extension) where the contents of the object has been saved.
 		/// </summary>
 		/// <param name="objectToSerialize">The object to serialize. Must implement serializable.</param>
-		/// <returns>The filename of the object as an MD5 Hash string.</returns>
+		/// <returns>The filename of the object (without filename extension) as an MD5 Hash string.</returns>
 		/// <exception cref="System.InvalidOperationException">Is thrown when the object is not suited for serialization.</exception>
+		/// <remarks>The serialized object is stored in the folder: 
+		/// './DocumentsAndSettings/{UserName}/LocalSettings/ApplicationData/{ExecutingAssemblyName}/.
+		/// The filename extension is '.dat'.</remarks>
 		public static string Serialize(this BusinessObject objectToSerialize)
 		{
 			CreateDirectoryIfNotExisting();
@@ -70,7 +72,7 @@ namespace CH.Froorider.Codeheap.Persistence
 			{
 				string filename = MD5HashGenerator.GenerateKey(objectToSerialize);
 				XmlSerializer serializer = new XmlSerializer(objectToSerialize.GetType());
-				using (TextWriter textWriter = new StreamWriter(filePath + filename + FileNameExtension))
+				using (TextWriter textWriter = new StreamWriter(CommonFilePath + filename + CommonFileNameExtension))
 				{
 					serializer.Serialize(textWriter, objectToSerialize);
 					textWriter.Close();
@@ -100,7 +102,7 @@ namespace CH.Froorider.Codeheap.Persistence
 
 			T deserializedObject;
 			XmlSerializer serializer = new XmlSerializer(typeof(T));
-			using (TextReader textReader = new StreamReader(filePath + fileName + FileNameExtension))
+			using (TextReader textReader = new StreamReader(CommonFilePath + fileName + CommonFileNameExtension))
 			{
 				deserializedObject = (T)serializer.Deserialize(textReader);
 				textReader.Close();
@@ -117,9 +119,9 @@ namespace CH.Froorider.Codeheap.Persistence
 		{
 			lock (filePathLock)
 			{
-				if (!Directory.Exists(filePath))
+				if (!Directory.Exists(CommonFilePath))
 				{
-					Directory.CreateDirectory(filePath);
+					Directory.CreateDirectory(CommonFilePath);
 				}
 			}
 		}

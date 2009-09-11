@@ -67,15 +67,6 @@ namespace TomsCodeHeapTesting
             }
         }
 
-        /// <summary>
-        /// Cleanup's the test infrastructure.
-        /// </summary>
-        [ClassCleanup()]
-        public static void MyTestCleanup()
-        {
-            theScheduler.Dispose();
-        }
-
         #region Additional test attributes
         // 
         //You can use the following additional attributes as you write your tests:

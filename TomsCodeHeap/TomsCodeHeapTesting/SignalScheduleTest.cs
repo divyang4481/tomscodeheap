@@ -48,13 +48,6 @@ namespace TomsCodeHeapTesting
         {
             theScheduler = Scheduler.Instance();
         }
-
-        //Use ClassCleanup to run code after all tests in a class have run
-        [ClassCleanup()]
-        public static void MyClassCleanup()
-        {
-            theScheduler.Dispose();
-        }
         
         #region Additional test attributes
         
