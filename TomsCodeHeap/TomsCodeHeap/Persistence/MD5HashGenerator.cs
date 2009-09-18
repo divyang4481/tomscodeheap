@@ -35,7 +35,7 @@ namespace CH.Froorider.Codeheap.Persistence
     /// This generator can generate keys of type integer,float,double. The generated key is not necessarly
     /// unique.
     /// </summary>
-    public class MD5HashGenerator
+    public sealed class MD5HashGenerator
 	{
 		#region fields
 

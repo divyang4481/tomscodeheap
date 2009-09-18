@@ -360,7 +360,6 @@ namespace CH.Froorider.Codeheap.Threading
 			if (Scheduler.triggerList.Count < index + 1)
 			{
 				throw new ArgumentOutOfRangeException("index", "Index is too big.");
-
 			}
 
 			Scheduler.triggerList.Remove(this[index]);
