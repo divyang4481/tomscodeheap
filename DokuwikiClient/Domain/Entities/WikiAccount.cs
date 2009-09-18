@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CH.Froorider.Codeheap.Domain;
+using System.Xml.Serialization;
 
 namespace DokuwikiClient.Domain.Entities
 {
@@ -32,8 +33,16 @@ namespace DokuwikiClient.Domain.Entities
 	/// A wiki acccount contains information about the remote wiki, like Accountname, Uri, login etc.
 	/// </summary>
 	[Serializable]
+	[XmlRoot(ElementName="WikiAccount",Namespace="www.froorider.ch")]
 	public class WikiAccount : BusinessObject
 	{
+		#region fields
+
+		private Uri wikiUri;
+		private string wikiUrlRaw;
+
+		#endregion
+
 		#region Properites
 
 		/// <summary>
@@ -53,12 +62,48 @@ namespace DokuwikiClient.Domain.Entities
 		/// </summary>
 		/// <value>The password.</value>
 		public string Password { get; set; }
-		
+
+		/// <summary>
+		/// Gets the wiki URL as a string.
+		/// </summary>
+		/// <value>The wiki URL as a string.</value>
+		public string WikiUrlRaw
+		{
+			get
+			{
+				return this.wikiUrlRaw;
+			}
+
+			set
+			{
+				this.wikiUrlRaw = value;
+			}
+		}
+
 		/// <summary>
 		/// Gets or sets the wiki URL.
 		/// </summary>
 		/// <value>The wiki URL.</value>
-		public Uri WikiUrl { get; set; }
+		[XmlIgnore]
+		public Uri WikiUrl
+		{
+			get
+			{
+				return this.wikiUri;
+			}
+
+			set
+			{
+				this.wikiUri = value;
+				this.WikiUrlRaw = this.wikiUri.ToString();
+			}
+		}
+		
+		#endregion
+
+		#region public methods
+
+
 
 		#endregion
 	}

@@ -19,7 +19,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ========================================================================
-          
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +28,9 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using CH.Froorider.Codeheap.Domain;
+using CH.Froorider.Codeheap.Persistence;
+using log4net;
+using DokuwikiClient.Communication.Messages;
 
 namespace DokuwikiClient.Persistence
 {
@@ -38,12 +41,14 @@ namespace DokuwikiClient.Persistence
 	{
 		#region fields
 
-		private static readonly string registryPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "//codeheap//";
-		
+		private static readonly string registryPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "//DokuWikiEditor//";
+
 		private static readonly string registryFile = "Registry.dat";
-		
+
+		private static ILog logger = LogManager.GetLogger(typeof(FileManager));
+
 		private Registry registry;
-		
+
 		#endregion
 
 		#region properties
@@ -55,58 +60,120 @@ namespace DokuwikiClient.Persistence
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FileManager"/> class.
 		/// </summary>
+		/// <exception cref="DokuWikiClientException">Is thrown when the access on the file system did not worked.</exception>
 		public FileManager()
 		{
-			this.CreateDirectoryIfNotExisting();
-			this.LoadRegistry();
+			if (!this.CreateDirectoryIfNotExisting())
+			{
+				throw new DokuWikiClientException("Could not create base directory. See log-files for details.");
+			}
+
+			if (!this.LoadRegistry())
+			{
+				throw new DokuWikiClientException("Could not load files and registry. See log-files for details.");
+			}
 		}
 
 		#endregion
 
-		#region methods
+		#region public methods
 
 		/// <summary>
-		/// Registers the specified object to register.
+		/// Saves the given business object permamently on the disk.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="objectToRegister">The object to register.</param>
-		public void Register<T>(T objectToRegister) where T : BusinessObject
+		/// <typeparam name="T">The concrete Type of the BusinessObject.</typeparam>
+		/// <param name="objectToRegister">The object itself to save.</param>
+		public void Save<T>(T objectToSave) where T : BusinessObject
 		{
-			this.registry.AddWikiObject(objectToRegister);
+			List<string> identifiers = this.registry.GetIdentifiers(objectToSave.GetType().Name);
+			objectToSave.Serialize(registryPath + "//WikiObjects//", ".dat");
+			if (identifiers.Count == 0 || !identifiers.Contains(objectToSave.ObjectIdentifier))
+			{
+				this.registry.AddWikiObject(objectToSave);
+			}
+
 			this.SaveRegistry();
 		}
 
 		/// <summary>
-		/// Creates the directory if not existing.
+		/// Loads all wiki objects of a certain type.
 		/// </summary>
-		private void CreateDirectoryIfNotExisting()
+		/// <typeparam name="T">The type of BO's to load.</typeparam>
+		/// <param name="typeToLoad">The type to load.</param>
+		/// <returns>A list containing all BO's of this type, which could be loaded.</returns>
+		public List<T> LoadObjects<T>(string typeToLoadName) where T : BusinessObject
 		{
-			if (!Directory.Exists(registryPath))
+			List<string> identifiers = this.registry.GetIdentifiers(typeToLoadName);
+			List<T> loadedObjects = new List<T>();
+
+			foreach (string identifier in identifiers)
 			{
-				Directory.CreateDirectory(registryPath);
+				loadedObjects.Add(PersistenceManager.DeserializeObject<T>(identifier, registryPath + "//WikiObjects//", ".dat"));
 			}
 
-			if (!File.Exists(FileManager.registryPath + FileManager.registryFile))
+			return loadedObjects;
+		}
+
+		#endregion
+
+		#region private methods
+
+		/// <summary>
+		/// Creates the directory if not existing.
+		/// </summary>
+		/// <returns>True if the creation was successful. False if not.</returns>
+		private bool CreateDirectoryIfNotExisting()
+		{
+			try
 			{
-				FileStream stream = File.Create(FileManager.registryPath + FileManager.registryFile);
-				StreamWriter writer = new StreamWriter(stream);
-				writer.WriteLine("<?xml version='1.0' encoding = 'utf-8' ?>");
-				writer.WriteLine("<Registry>");
-				writer.WriteLine("</Registry>");
-				writer.Close();
-				stream.Close();
+				if (!Directory.Exists(registryPath))
+				{
+					Directory.CreateDirectory(registryPath);
+				}
+
+				if (!File.Exists(FileManager.registryPath + FileManager.registryFile))
+				{
+					using (FileStream stream = File.Create(FileManager.registryPath + FileManager.registryFile))
+					{
+						StreamWriter writer = new StreamWriter(stream);
+						writer.WriteLine("<?xml version='1.0' encoding = 'utf-8' ?>");
+						writer.WriteLine("<Registry xmlns='www.froorider.ch'>");
+						writer.WriteLine("</Registry>");
+						writer.Close();
+						stream.Close();
+					}
+				}
+
+				return true;
+			}
+			catch (Exception e)
+			{
+				logger.Error(e.Message);
+				return false;
 			}
 		}
 
 		/// <summary>
 		/// Loads the registry.
 		/// </summary>
-		private void LoadRegistry()
+		/// <returns>True if the loading was sucessful. False if not.</returns>
+		private bool LoadRegistry()
 		{
-			XmlTextReader reader = new XmlTextReader(FileManager.registryPath + FileManager.registryFile);
-			XmlSerializer serializer = new XmlSerializer(typeof(Registry));
-			registry = serializer.Deserialize(reader) as Registry;
-			reader.Close();
+			try
+			{
+				using (XmlTextReader reader = new XmlTextReader(FileManager.registryPath + FileManager.registryFile))
+				{
+					XmlSerializer serializer = new XmlSerializer(typeof(Registry));
+					registry = serializer.Deserialize(reader) as Registry;
+					reader.Close();
+				}
+				return true;
+			}
+			catch (InvalidOperationException ioe)
+			{
+				logger.Error(ioe.Message);
+				return false;
+			}
 		}
 
 		/// <summary>
@@ -114,12 +181,26 @@ namespace DokuwikiClient.Persistence
 		/// </summary>
 		private void SaveRegistry()
 		{
-			XmlTextWriter writer = new XmlTextWriter(FileManager.registryPath + FileManager.registryFile,Encoding.UTF8);
+			XmlTextWriter writer = new XmlTextWriter(FileManager.registryPath + FileManager.registryFile, Encoding.UTF8);
 			XmlSerializer serializer = new XmlSerializer(typeof(Registry));
-			serializer.Serialize(writer,registry);
+			serializer.Serialize(writer, registry);
 			writer.Close();
 		}
 
+		/// <summary>
+		/// Saves the business object.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="objectToSave">The object to save.</param>
+		private void SaveBusinessObject<T>(T objectToSave) where T : BusinessObject
+		{
+			using (XmlTextWriter writer = new XmlTextWriter(FileManager.registryPath + objectToSave.ObjectIdentifier + ".dat", Encoding.UTF8))
+			{
+				XmlSerializer serializer = new XmlSerializer(typeof(T));
+				serializer.Serialize(writer, objectToSave);
+				writer.Close();
+			}
+		}
 		#endregion
 	}
 }

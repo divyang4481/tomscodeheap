@@ -34,11 +34,25 @@ namespace DokuwikiClient.Persistence
 	/// </summary>
 	[Serializable]
 	[XmlInclude(typeof(BusinessObject))]
+	[XmlRoot(ElementName="Registry",Namespace="www.froorider.ch")]
 	public class Registry
 	{
 		#region Properties
 
-		List<string> wikiObjects { get; set; } 
+		[XmlArray(ElementName="WikiObjects")]
+		public List<string> wikiObjects { get; set; } 
+
+		#endregion
+
+		#region Constructors
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Registry"/> class.
+		/// </summary>
+		public Registry()
+		{
+			wikiObjects = new List<string>();
+		}
 
 		#endregion
 
