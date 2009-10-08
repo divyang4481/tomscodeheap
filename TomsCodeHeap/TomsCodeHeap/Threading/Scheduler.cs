@@ -29,13 +29,14 @@ using System.Threading;
 namespace CH.Froorider.Codeheap.Threading
 {
 	/// <summary>
-	/// This class represents a scheduler. Cleints can register triggers at the scheduler which signals them
+	/// This class represents a scheduler. Clients can register triggers at the scheduler which signals them
 	/// in a defined time interval to wake up.
 	/// The class is a singleton, so only one instance is running. The scheduler itself is using his own thread
 	/// and does not need a hosting thread.
 	/// </summary>
 	/// <remarks>Multithreading: This class is thread-safe.</remarks>
-	[Serializable()]
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix",
+		Justification = "A Scheduler is not a collection but a wrapper around a collection")]
 	public class Scheduler : IScheduler, IDisposable
 	{
 		#region fields
@@ -51,12 +52,6 @@ namespace CH.Froorider.Codeheap.Threading
 		private const int JitterTimeInMilliseconds = 12;
 
 		/// <summary>
-		/// The reference on the one and only instance of this class.
-		/// </summary>
-		[NonSerialized]
-		private static volatile Scheduler instance;
-
-		/// <summary>
 		/// Used to synchronize the creation of the scheduler.
 		/// </summary>
 		private static volatile object instanceLocker = new object();
@@ -68,22 +63,22 @@ namespace CH.Froorider.Codeheap.Threading
 		/// The list contains a reference on all created schedules and is periodically scanned to
 		/// look if a signal has to be set.
 		/// </remarks>
-		private static volatile List<ISchedule> triggerList = new List<ISchedule>();
+		private List<ISchedule> triggerList = new List<ISchedule>();
 
 		/// <summary>
 		/// The global timer which is used to trigger all the registered events periodically.
 		/// </summary>
-		private static volatile System.Timers.Timer timer;
+		private System.Timers.Timer timer;
 
 		/// <summary>
 		/// Common object to synchronize the access on the trigger list over multiple threads.
 		/// </summary>
-		private static ReaderWriterLockSlim listLock = new ReaderWriterLockSlim();
+		private ReaderWriterLockSlim listLock = new ReaderWriterLockSlim();
 
 		/// <summary>
 		/// Common object to synchronize the access on the timer over multiple threads.
 		/// </summary>
-		private static ReaderWriterLockSlim timerLock = new ReaderWriterLockSlim();
+		private ReaderWriterLockSlim timerLock = new ReaderWriterLockSlim();
 
 		/// <summary>
 		/// TimeSpan used for the un-enabled timer. Is one hour.
@@ -100,9 +95,9 @@ namespace CH.Froorider.Codeheap.Threading
 		/// </summary>
 		private Scheduler()
 		{
-			timer = new System.Timers.Timer();
-			timer.AutoReset = true;
-			timer.Elapsed += Timer_Elapsed;
+			this.timer = new System.Timers.Timer();
+			this.timer.AutoReset = true;
+			this.timer.Elapsed += this.Timer_Elapsed;
 		}
 
 		#endregion
@@ -110,27 +105,18 @@ namespace CH.Froorider.Codeheap.Threading
 		#region public methods
 
 		/// <summary>
-		/// Gives you access on the <see cref="IScheduler"/> representation of the Scheduler.
+		/// Factory method which creates an <see cref="IScheduler"/> representation of the Scheduler.
 		/// </summary>
 		/// <remarks>
-		/// This singleton creator uses double-locking with explicit memory barries to ensure that
-		/// this is thread-safe in a multi-threaded and multi-core environment. 
+		/// This is thread - safe.
 		/// </remarks>
 		/// <returns>An <see cref="IScheduler"/>. </returns>
-		public static IScheduler Instance()
+		public static IScheduler CreateInstance()
 		{
-			if (Scheduler.instance == null)
+			lock (instanceLocker)
 			{
-				lock (instanceLocker)
-				{
-					if (Scheduler.instance == null)
-					{
-						Scheduler.instance = new Scheduler();
-					}
-				}
+				return new Scheduler();
 			}
-
-			return Scheduler.instance;
 		}
 
 		#endregion
@@ -142,17 +128,17 @@ namespace CH.Froorider.Codeheap.Threading
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="System.Timers.ElapsedEventArgs"/> instance containing the event data.</param>
-		private static void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			DateTime timerElapsedTime = DateTime.Now.Add(new TimeSpan(0, 0, 0, 0, JitterTimeInMilliseconds));
 			Console.WriteLine("Timer elapsed event raised at: " + timerElapsedTime.Ticks);
 			try
 			{
-				if (timerLock.TryEnterWriteLock(WaitOnLockInMilliseconds))
+				if (this.timerLock.TryEnterWriteLock(WaitOnLockInMilliseconds))
 				{
-					if (listLock.TryEnterUpgradeableReadLock(WaitOnLockInMilliseconds))
+					if (this.listLock.TryEnterUpgradeableReadLock(WaitOnLockInMilliseconds))
 					{
-						foreach (ISchedule currentSchedule in triggerList)
+						foreach (ISchedule currentSchedule in this.triggerList)
 						{
 							if (currentSchedule.Enabled)
 							{
@@ -160,12 +146,12 @@ namespace CH.Froorider.Codeheap.Threading
 
 								if (comparison <= 0)
 								{
-									if (listLock.TryEnterWriteLock(WaitOnLockInMilliseconds))
+									if (this.listLock.TryEnterWriteLock(WaitOnLockInMilliseconds))
 									{
 										Console.WriteLine("Signaling schedule with period: " + currentSchedule.Period);
 										currentSchedule.ScheduleSignal.Set();
 										currentSchedule.Enabled = true;
-										listLock.ExitWriteLock();
+										this.listLock.ExitWriteLock();
 									}
 								}
 							}
@@ -183,8 +169,8 @@ namespace CH.Froorider.Codeheap.Threading
 			}
 			finally
 			{
-				timerLock.ExitWriteLock();
-				listLock.ExitUpgradeableReadLock();
+				this.timerLock.ExitWriteLock();
+				this.listLock.ExitUpgradeableReadLock();
 			}
 		}
 
@@ -205,13 +191,13 @@ namespace CH.Froorider.Codeheap.Threading
 		{
 			try
 			{
-				if (timerLock.TryEnterWriteLock(WaitOnLockInMilliseconds))
+				if (this.timerLock.TryEnterWriteLock(WaitOnLockInMilliseconds))
 				{
-					timer.Interval = period.TotalMilliseconds;
-					timer.Enabled = enableTimer;
+					this.timer.Interval = period.TotalMilliseconds;
+					this.timer.Enabled = enableTimer;
 
-					Console.WriteLine("Timer interval set to: " + timer.Interval + " ms.");
-					Console.WriteLine("Timer enabled: " + timer.Enabled + ".");
+					Console.WriteLine("Timer interval set to: " + this.timer.Interval + " ms.");
+					Console.WriteLine("Timer enabled: " + this.timer.Enabled + ".");
 					return true;
 				}
 				else
@@ -221,7 +207,7 @@ namespace CH.Froorider.Codeheap.Threading
 			}
 			finally
 			{
-				timerLock.ExitWriteLock();
+				this.timerLock.ExitWriteLock();
 			}
 		}
 
@@ -238,13 +224,13 @@ namespace CH.Froorider.Codeheap.Threading
 		{
 			try
 			{
-				if (timerLock.TryEnterWriteLock(WaitOnLockInMilliseconds))
+				if (this.timerLock.TryEnterWriteLock(WaitOnLockInMilliseconds))
 				{
-					IEnumerable<ISchedule> orderedList = triggerList.OrderBy<ISchedule, long>(p => p.Period.Ticks);
-					timer.Interval = orderedList.FirstOrDefault().Period.TotalMilliseconds;
-					timer.Enabled = true;
+					IEnumerable<ISchedule> orderedList = this.triggerList.OrderBy<ISchedule, long>(p => p.Period.Ticks);
+					this.timer.Interval = orderedList.FirstOrDefault().Period.TotalMilliseconds;
+					this.timer.Enabled = true;
 
-					Console.WriteLine("Timer interval set to: " + timer.Interval + " ms.");
+					Console.WriteLine("Timer interval set to: " + this.timer.Interval + " ms.");
 					return true;
 				}
 				else
@@ -254,7 +240,7 @@ namespace CH.Froorider.Codeheap.Threading
 			}
 			finally
 			{
-				timerLock.ExitWriteLock();
+				this.timerLock.ExitWriteLock();
 			}
 		}
 
@@ -270,7 +256,7 @@ namespace CH.Froorider.Codeheap.Threading
 		/// <returns>
 		/// Returns the new <see cref="ISchedule"/>.
 		/// </returns>
-		/// <exception cref="ApplicationException">Is thrown when the new trigger couldn't be created.</exception>
+		/// <exception cref="ArgumentException">Is thrown when the new trigger couldn't be created.</exception>
 		public ISchedule Add(TimeSpan period, bool enable)
 		{
 			ISchedule trigger = new SignalSchedule(period, this);
@@ -278,10 +264,10 @@ namespace CH.Froorider.Codeheap.Threading
 
 			try
 			{
-				if (listLock.TryEnterWriteLock(WaitOnLockInMilliseconds))
+				if (this.listLock.TryEnterWriteLock(WaitOnLockInMilliseconds))
 				{
-					Scheduler.triggerList.Add(trigger);
-					if (Scheduler.triggerList.Count > 1)
+					this.triggerList.Add(trigger);
+					if (this.triggerList.Count > 1)
 					{
 						this.RecalculateTimerPeriod();
 					}
@@ -292,12 +278,12 @@ namespace CH.Froorider.Codeheap.Threading
 				}
 				else
 				{
-					throw new ApplicationException("Couldn't add the new ISchedule. List is blocked.");
+					throw new ArgumentException("Couldn't add the new ISchedule. List is blocked.");
 				}
 			}
 			finally
 			{
-				listLock.ExitWriteLock();
+				this.listLock.ExitWriteLock();
 			}
 
 			return trigger;
@@ -318,10 +304,10 @@ namespace CH.Froorider.Codeheap.Threading
 
 			try
 			{
-				if (listLock.TryEnterWriteLock(Scheduler.WaitOnLockInMilliseconds))
+				if (this.listLock.TryEnterWriteLock(Scheduler.WaitOnLockInMilliseconds))
 				{
-					removeResult = Scheduler.triggerList.Remove(schedule);
-					if (Scheduler.triggerList.Count > 0)
+					removeResult = this.triggerList.Remove(schedule);
+					if (this.triggerList.Count > 0)
 					{
 						this.RecalculateTimerPeriod();
 					}
@@ -337,7 +323,7 @@ namespace CH.Froorider.Codeheap.Threading
 			}
 			finally
 			{
-				listLock.ExitWriteLock();
+				this.listLock.ExitWriteLock();
 			}
 
 			return removeResult;
@@ -357,12 +343,12 @@ namespace CH.Froorider.Codeheap.Threading
 				throw new ArgumentOutOfRangeException("index", "Index must be a positiv number.");
 			}
 
-			if (Scheduler.triggerList.Count < index + 1)
+			if (this.triggerList.Count < index + 1)
 			{
 				throw new ArgumentOutOfRangeException("index", "Index is too big.");
 			}
 
-			Scheduler.triggerList.Remove(this[index]);
+			this.triggerList.Remove(this[index]);
 		}
 
 		/// <summary>
@@ -372,25 +358,27 @@ namespace CH.Froorider.Codeheap.Threading
 		/// <returns>
 		/// The number of <see cref="ISchedule"/>s owned by this <see cref="IScheduler"/>
 		/// </returns>
-		/// <exception cref="ApplicationException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
+		/// <exception cref="ArgumentException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations",
+			Justification = "Don't know an alternative at the moment.")]
 		public int Count
 		{
 			get
 			{
 				try
 				{
-					if (Scheduler.listLock.TryEnterReadLock(Scheduler.WaitOnLockInMilliseconds))
+					if (this.listLock.TryEnterReadLock(Scheduler.WaitOnLockInMilliseconds))
 					{
-						return Scheduler.triggerList.Count;
+						return this.triggerList.Count;
 					}
 					else
 					{
-						throw new ApplicationException("Trigger list is blocked at the moment.");
+						throw new ArgumentException("Trigger list is blocked at the moment.");
 					}
 				}
 				finally
 				{
-					Scheduler.listLock.ExitReadLock();
+					this.listLock.ExitReadLock();
 				}
 			}
 		}
@@ -400,25 +388,25 @@ namespace CH.Froorider.Codeheap.Threading
 		/// </summary>
 		/// <param name="index">The zero-based index of the element to get.</param>
 		/// <value>The <see cref="ISchedule"/> at the specified index.</value>
-		/// <exception cref="ApplicationException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
+		/// <exception cref="ArgumentException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
 		public ISchedule this[int index]
 		{
 			get
 			{
 				try
 				{
-					if (Scheduler.listLock.TryEnterReadLock(Scheduler.WaitOnLockInMilliseconds))
+					if (this.listLock.TryEnterReadLock(Scheduler.WaitOnLockInMilliseconds))
 					{
-						return Scheduler.triggerList[index];
+						return this.triggerList[index];
 					}
 					else
 					{
-						throw new ApplicationException("Trigger list is blocked at the moment.");
+						throw new ArgumentException("Trigger list is blocked at the moment.");
 					}
 				}
 				finally
 				{
-					Scheduler.listLock.ExitReadLock();
+					this.listLock.ExitReadLock();
 				}
 			}
 		}
@@ -430,23 +418,23 @@ namespace CH.Froorider.Codeheap.Threading
 		/// <returns>
 		/// 	Is <see langword="true"/> if <paramref name="schedule"/> is found in this <see cref="IScheduler"/>; otherwise, <see langword="false"/>.
 		/// </returns>
-		/// <exception cref="ApplicationException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
+		/// <exception cref="ArgumentException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
 		public bool Contains(ISchedule schedule)
 		{
 			try
 			{
-				if (Scheduler.listLock.TryEnterReadLock(Scheduler.WaitOnLockInMilliseconds))
+				if (this.listLock.TryEnterReadLock(Scheduler.WaitOnLockInMilliseconds))
 				{
-					return Scheduler.triggerList.Exists(p => p.Equals(schedule));
+					return this.triggerList.Exists(p => p.Equals(schedule));
 				}
 				else
 				{
-					throw new ApplicationException("Trigger list is blocked at the moment.");
+					throw new ArgumentException("Trigger list is blocked at the moment.");
 				}
 			}
 			finally
 			{
-				Scheduler.listLock.ExitReadLock();
+				this.listLock.ExitReadLock();
 			}
 		}
 
@@ -457,23 +445,23 @@ namespace CH.Froorider.Codeheap.Threading
 		/// <returns>
 		/// The index of <paramref name="schedule"/> if found in this <see cref="IScheduler"/>; otherwise, -1.
 		/// </returns>
-		/// <exception cref="ApplicationException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
+		/// <exception cref="ArgumentException">Is thrown when the trigger list cannot be read because it is modified at the moment.</exception>
 		public int IndexOf(ISchedule schedule)
 		{
 			try
 			{
-				if (Scheduler.listLock.TryEnterReadLock(Scheduler.WaitOnLockInMilliseconds))
+				if (this.listLock.TryEnterReadLock(Scheduler.WaitOnLockInMilliseconds))
 				{
-					return Scheduler.triggerList.FindIndex(p => p.Equals(schedule));
+					return this.triggerList.FindIndex(p => p.Equals(schedule));
 				}
 				else
 				{
-					throw new ApplicationException("Trigger list is blocked at the moment.");
+					throw new ArgumentException("Trigger list is blocked at the moment.");
 				}
 			}
 			finally
 			{
-				Scheduler.listLock.ExitReadLock();
+				this.listLock.ExitReadLock();
 			}
 		}
 
@@ -482,14 +470,36 @@ namespace CH.Froorider.Codeheap.Threading
 		#region IEnumerable<ISchedule> Members
 
 		/// <summary>
-		/// Gibt einen Enumerator zurück, der die Auflistung durchläuft.
+		/// Returns an enumerator that iterates through the collection.
 		/// </summary>
 		/// <returns>
-		/// Ein <see cref="T:System.Collections.Generic.IEnumerator`1"/>, der zum Durchlaufen der Auflistung verwendet werden kann.
+		/// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
 		/// </returns>
 		public IEnumerator<ISchedule> GetEnumerator()
 		{
-			return Scheduler.triggerList.GetEnumerator();
+			// Use a local copy of the data to be thread-safe.
+			ISchedule[] scheduleArray;
+			try
+			{
+				if (this.listLock.TryEnterReadLock(Scheduler.WaitOnLockInMilliseconds))
+				{
+					scheduleArray = new ISchedule[this.triggerList.Count];
+					scheduleArray = this.triggerList.ToArray();
+				}
+				else
+				{
+					throw new ApplicationException("Trigger list is blocked at the moment.");
+				}
+			}
+			finally
+			{
+				this.listLock.ExitReadLock();
+			}
+
+			for (int i = 0; i < scheduleArray.Length; i++)
+			{
+				yield return scheduleArray[i];
+			}
 		}
 
 		#endregion
@@ -497,10 +507,10 @@ namespace CH.Froorider.Codeheap.Threading
 		#region IEnumerable Members
 
 		/// <summary>
-		/// Gibt einen Enumerator zurück, der eine Auflistung durchläuft.
+		/// Returns an enumerator that iterates through a collection.
 		/// </summary>
 		/// <returns>
-		/// Ein <see cref="T:System.Collections.IEnumerator"/>-Objekt, das zum Durchlaufen der Auflistung verwendet werden kann.
+		/// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
 		/// </returns>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
@@ -511,27 +521,45 @@ namespace CH.Froorider.Codeheap.Threading
 
 		#region IDisposable - implementation
 
+		private bool disposed;
+
 		/// <summary>
-		/// Disposes the unmanaged ressources.
+		/// Releases unmanaged and - optionally - managed resources.
 		/// </summary>
-		/// <param name="disposing">Always true.</param>
+		/// <param name="disposing"><c>True</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (disposing)
+			if (!this.disposed)
 			{
-				timer.Dispose();
+				if (disposing && this.timer != null)
+				{
+					this.timer.Enabled = false;
+					this.timer.Dispose();
+					this.listLock.Dispose();
+					this.timerLock.Dispose();
+				}
 			}
+
+			this.disposed = true;
 		}
 
 		/// <summary>
-		/// Dispose - pattern.
-		/// Call base.Dispose() first if possible, then the Dispose of the class and finally
-		/// Supress the GC-Finalizer.
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
 		public void Dispose()
 		{
 			this.Dispose(true);
 			GC.SuppressFinalize(this);
+		}
+
+		/// <summary>
+		/// Finalizes an instance of the <see cref="Scheduler"/> class.
+		/// Releases unmanaged resources and performs other cleanup operations before the
+		/// <see cref="Scheduler"/> is reclaimed by garbage collection.
+		/// </summary>
+		~Scheduler()
+		{
+			this.Dispose(false);
 		}
 
 		#endregion

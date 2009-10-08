@@ -30,9 +30,8 @@
     <StartupObject>
     </StartupObject>
     <ApplicationIcon>codeheap.ico</ApplicationIcon>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>TomsCodeHeapKeyFile.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -79,6 +78,7 @@
     <Compile Include="Testing\AsserException.cs" />
     <Compile Include="Threading\ISchedule.cs" />
     <Compile Include="Threading\IScheduler.cs" />
+    <Compile Include="Threading\ISchedulerProvider.cs" />
     <Compile Include="Threading\Scheduler.cs" />
     <Compile Include="Threading\SignalSchedule.cs" />
   </ItemGroup>
@@ -138,5 +138,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CodeHeapClasses.cd" />
+    <None Include="TomsCodeHeapKeyFile.pfx" />
   </ItemGroup>
 </Project>

@@ -46,7 +46,7 @@ namespace TomsCodeHeapTesting
         [ClassInitialize()]
         public static void MyClassInitialize(TestContext testContext)
         {
-            theScheduler = Scheduler.Instance();
+            theScheduler = Scheduler.CreateInstance();
         }
         
         #region Additional test attributes

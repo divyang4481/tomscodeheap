@@ -55,7 +55,7 @@ namespace CH.Froorider.Codeheap
 		{
 			if (objectToWrap == null)
 			{
-				throw new ArgumentNullException("maybeNull");
+				throw new ArgumentNullException("objectToWrap", "maybeNull");
 			}
 
 			this.wrappedObject = objectToWrap;
@@ -90,6 +90,8 @@ namespace CH.Froorider.Codeheap
 		/// </summary>  
 		/// <param name="wrappedObject">The wrapper.</param>  
 		/// <returns>The raw object being wrapped.</returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
+			Justification = "No justification yet.")]
 		public static implicit operator T(NotNull<T> wrappedObject)
 		{
 			return wrappedObject.WrappedObject;
@@ -104,6 +106,8 @@ namespace CH.Froorider.Codeheap
 		/// <returns>A new NotNull{T} that wraps the value, provided the  
 		/// value is not <c>null</c>.</returns>  
 		/// <exception cref="ArgumentNullException">If <c>maybeNull</c> is <c>null</c>.</exception>  
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates",
+			Justification = "No justification yet.")]
 		public static implicit operator NotNull<T>(T objectToWrap)
 		{
 			return new NotNull<T>(objectToWrap);

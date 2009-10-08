@@ -29,95 +29,23 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TomsCodeHeapTesting
 {
-    /// <summary>
-    ///This is a test class for SchedulerTest and is intended
-    ///to contain all SchedulerTest Unit Tests
-    ///</summary>
     [TestClass()]
     public class SchedulerTest
     {
         #region fields
-
-        private TestContext testContextInstance;
         
         /// <summary>
         /// Instance that is used by all test's in paralell. Because on multicore machines
         /// multiple test's are running in paralell, we lock it sometimes, when we need
         /// distinct results.
         /// </summary>
-        private static IScheduler theScheduler = Scheduler.Instance();
+        private static IScheduler theScheduler = Scheduler.CreateInstance();
 
-        #endregion
+		#endregion
 
-        #region Test attributes etc.
+		#region IScheduler - Test's
 
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
-        #region Additional test attributes
-        // 
-        //You can use the following additional attributes as you write your tests:
-        //
-        //Use ClassInitialize to run code before running the first test in the class
-        //[ClassInitialize()]
-        //public static void MyClassInitialize(TestContext testContext)
-        //{
-        //}
-        //
-        //Use ClassCleanup to run code after all tests in a class have run
-        //[ClassCleanup()]
-        //public static void MyClassCleanup()
-        //{
-        //}
-        //
-        /// <summary>
-        /// Initialize the test infrastructure.
-        /// </summary>
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
-        #endregion
-
-        #endregion
-
-        #region Constructor / Singleton - Test's
-
-        /// <summary>
-        ///A test for the Instance - method. Tet's the singelton pattern.
-        ///</summary>
-        [TestMethod()]
-        public void InstanceTest()
-        {
-            IScheduler firstInstance = Scheduler.Instance();
-            IScheduler secondInstance = Scheduler.Instance();
-
-            string expected = MD5HashGenerator.GenerateKey(firstInstance);
-            string actual = MD5HashGenerator.GenerateKey(secondInstance);
-
-            Assert.IsFalse(String.IsNullOrEmpty(expected), "First instance has no key.");
-            Assert.IsFalse(String.IsNullOrEmpty(actual), "Second instance has no key.");
-            Assert.AreEqual(expected, actual, "Singleton instances are not the same.");
-        }
-
-        #endregion
-
-        #region IScheduler - Test's
-
-        /// <summary>
+		/// <summary>
         ///Tet's the add - method and that the timer interval is recalculated.
         ///</summary>
         [TestMethod()]

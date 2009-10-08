@@ -88,7 +88,7 @@ namespace CH.Froorider.Codeheap.Configuration
 			if (!File.Exists(@configFile))
 			{
 				logger.Error("Path to config file is not valid: " + configFile);
-				throw new ArgumentException("fileName", "Specified config file does not exist.");
+				throw new ArgumentException("Specified config file does not exist.", "fileName");
 			}
 
 			// Now we are ready to do the main work

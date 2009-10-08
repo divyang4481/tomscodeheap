@@ -143,7 +143,7 @@ namespace CH.Froorider.Codeheap.Domain
 		/// <exception cref="T:System.NullReferenceException">
 		/// The <paramref name="obj"/> parameter is null.
 		/// </exception>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification="Readability is more important here.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "Readability is more important here.")]
 		public override bool Equals(object obj)
 		{
 			if (obj == null || !(obj is BusinessObject))

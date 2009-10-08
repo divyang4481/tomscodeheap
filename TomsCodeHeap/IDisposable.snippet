@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Standard implementation of the IDisposable Interface.</Title>
+      <Shortcut>disp</Shortcut>
+      <Description>
+        Adds a region IDisposable implemenation which contains the destructor and overrides
+        all the methods needed to implement Idisposable. The method docu is Fx- and StyleCop
+        proved.
+      </Description>
+      <Author>Thomas Hasler</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>classname</ID>
+          <ToolTip>Class name</ToolTip>
+          <Function>ClassName()</Function>
+          <Default>ClassNamePlaceholder</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp" Kind="method decl">
+        <![CDATA[
+				#region IDisposable - implementation
+
+		private bool disposed;
+
+		/// <summary>
+		/// Releases unmanaged and - optionally - managed resources.
+		/// </summary>
+		/// <param name="disposing"><c>True</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!this.disposed)
+			{
+				if (disposing)
+				{
+					// TODO: Release managed resources here
+				}
+			}
+			
+			// TODO: Release unmanaged resources here
+			
+			this.disposed = true;
+		}
+
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
+		public void Dispose()
+		{
+			this.Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary>
+		/// Finalizes an instance of the <see cref="$classname$"/> class.
+		/// Releases unmanaged resources and performs other cleanup operations before the
+		/// <see cref="$classname$"/> is reclaimed by garbage collection.
+		/// </summary>
+		~$classname$()
+		{
+			this.Dispose(false);
+		}
+
+		#endregion
+          ]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
