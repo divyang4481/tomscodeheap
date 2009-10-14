@@ -1,24 +1,24 @@
-﻿//========================================================================
-//File:     Capability.cs
+﻿// ========================================================================
+// File:     Capability.cs
 //
-//Author:   $Author$
-//Date:     $LastChangedDate$
-//Revision: $Revision$
-//========================================================================
-//Copyright [2009] [$Author$]
+// Author:   $Author$
+// Date:     $LastChangedDate$
+// Revision: $Revision$
+// ========================================================================
+// Copyright [2009] [$Author$]
 //
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
-//========================================================================
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ========================================================================
 
 using CookComputing.XmlRpc;
 
@@ -54,7 +54,7 @@ namespace DokuwikiClient.Communication.XmlRpcMessages
 		/// <value>A <see cref="SpecificationInfo"/> class containing the infos about the implemented version of the specification.</value>
 		[XmlRpcMember("system.multicall")]
 		[XmlRpcMissingMapping(MappingAction.Ignore)]
-		public SpecificationInfo MulticallSpecification { get; set; }
+		public SpecificationInfo MultiCallSpecification { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the implemented Introspection API specification.

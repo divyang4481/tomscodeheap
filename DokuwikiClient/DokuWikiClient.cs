@@ -29,6 +29,7 @@ using System.Net;
 using DokuwikiClient.Communication.Messages;
 using DokuwikiClient.Domain.Entities;
 using log4net;
+using DokuwikiClient.Persistence;
 
 namespace DokuwikiClient
 {
@@ -42,21 +43,19 @@ namespace DokuwikiClient
 		private static ILog logger = LogManager.GetLogger(typeof(DokuWikiClient).Name);
 
 		private XmlRpcClient client;
-		
+		private FileManager fileManager = new FileManager();
+
 		#endregion
 
-		#region Properties
-		#endregion
-
-		#region Constructors
+		#region Constructor / Init
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DokuWikiClient"/> class.
 		/// </summary>
 		/// <param name="account">The account to use for the communication etc.</param>
-		public DokuWikiClient(WikiAccount account)
+		public void InitializeDokuWikiClient(WikiAccount account)
 		{
-			if (account == null || account.WikiUrl == null)
+			if (account == null || account.WikiUrlRaw == null)
 			{
 				throw new ArgumentNullException("account", "The account object or the WikiUrl is null!");
 			}
@@ -69,8 +68,21 @@ namespace DokuwikiClient
 
 		#region public methods
 
+		/// <summary>
+		/// Loads the wiki accounts.
+		/// </summary>
+		/// <returns></returns>
+		public List<WikiAccount> LoadWikiAccounts()
+		{
+			return this.fileManager.LoadObjects<WikiAccount>(typeof(WikiAccount).Name);
+		}
 
 		#endregion
+
+		public void SaveWikiAccount(WikiAccount accountToSave)
+		{
+			this.fileManager.Save<WikiAccount>(accountToSave);
+		}
 
 		#region private methods
 

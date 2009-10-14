@@ -46,9 +46,9 @@ namespace DokuwikiClient
 				{
 					Console.WriteLine("Introspection Version: {0}", serverCapability.IntrospectionSpecification.SpecificationVersion);
 				}
-				if (serverCapability.MulticallSpecification != null)
+				if (serverCapability.MultiCallSpecification != null)
 				{
-					Console.WriteLine("Multicall Version: {0}", serverCapability.MulticallSpecification.SpecificationVersion);
+					Console.WriteLine("Multicall Version: {0}", serverCapability.MultiCallSpecification.SpecificationVersion);
 				}
 				if (serverCapability.FaultCodesSpecification != null)
 				{

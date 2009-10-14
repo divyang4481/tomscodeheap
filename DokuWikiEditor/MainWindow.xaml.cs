@@ -8,7 +8,10 @@ using DokuwikiClient;
 using DokuwikiClient.Communication;
 using DokuwikiClient.Communication.Messages;
 using DokuwikiClient.Communication.XmlRpcMessages;
+using DokuwikiClient.Persistence;
 using System.Windows.Media.Imaging;
+using System.Windows.Input;
+using DokuwikiClient.Domain.Entities;
 
 namespace DokuWikiEditor
 {
@@ -22,6 +25,10 @@ namespace DokuWikiEditor
 		private XmlRpcClient client;
 		private BackgroundWorker worker;
 		private DokuWikiEngine engine = new DokuWikiEngine();
+		private DokuWikiClient dokuWikiClient = new DokuWikiClient();
+
+		private List<WikiAccount> knownWikiAccounts = new List<WikiAccount>();
+		private WikiAccount activeAccount = new WikiAccount();
 
 		#endregion
 
@@ -35,18 +42,19 @@ namespace DokuWikiEditor
 			InitializeComponent();
 			this.statusProgress.Visibility = Visibility.Hidden;
 			this.InitializeBackgroundWorker();
+			this.knownWikiAccounts = this.dokuWikiClient.LoadWikiAccounts();
+			this.updateActiveAccountsList();
+			if (this.activeAccountSelector.SelectedItem != null)
+			{
+				this.activeAccount = this.activeAccountSelector.SelectedItem as WikiAccount;
+				this.connectToWikiButton_Click(this, new RoutedEventArgs());
+			}
+			this.activeAccountSelector.SelectionChanged += activeAccountSelector_SelectionChanged;
 		}
 
-		/// <summary>
-		/// Initializes the background worker.
-		/// </summary>
-		private void InitializeBackgroundWorker()
-		{
-			this.worker = new BackgroundWorker();
-			worker.DoWork += this.BeginConnectToWiki;
-			worker.RunWorkerCompleted += this.EndConnectToWiki;
-		}
+		#endregion
 
+		#region private methods
 		#endregion
 
 		#region event handlers
@@ -55,13 +63,20 @@ namespace DokuWikiEditor
 		{
 			this.statusLabel.Content = "Connecting to wiki!";
 			this.statusProgress.Visibility = Visibility.Visible;
-			if (!this.worker.IsBusy)
+			try
 			{
-				this.worker.RunWorkerAsync(this.connectoToWikiText.Text);
+				if (!this.worker.IsBusy)
+				{
+					this.worker.RunWorkerAsync(this.activeAccount.WikiUrlRaw);
+				}
+				else
+				{
+					this.statusLabel.Content = "Dokuwiki client is already working.";
+				}
 			}
-			else
+			catch (CommunicationException ce)
 			{
-				this.statusLabel.Content = "Dokuwiki client is already working.";
+				MessageBox.Show(ce.Message, "Couldn't connect to wiki.", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
 
@@ -137,9 +152,50 @@ namespace DokuWikiEditor
 			browserWindow.Show();
 		}
 
+		private void activeAccountSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			string selectedAccountName = this.activeAccountSelector.SelectedItem as string;
+			this.activeAccount = this.knownWikiAccounts.Find(accountList => accountList.AccountName.Equals(selectedAccountName));
+			this.connectToWikiButton_Click(this, new RoutedEventArgs());
+		}
+
+		#region Commands
+
+		/// <summary>
+		/// Handles the executed event of the menuFileExit item.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.Windows.Input.ExecutedRoutedEventArgs"/> instance containing the event data.</param>
+		private void ApplicationClose_Execute(object sender, ExecutedRoutedEventArgs e)
+		{
+			Environment.Exit(0);
+		}
+
+		/// <summary>
+		/// Determines whether this instance [can execute handler] the specified sender.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.Windows.Input.CanExecuteRoutedEventArgs"/> instance containing the event data.</param>
+		private void CanExecuteHandler(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = true;
+		}
+
+		#endregion
+
 		#endregion
 
 		#region private methods
+
+		/// <summary>
+		/// Initializes the background worker.
+		/// </summary>
+		private void InitializeBackgroundWorker()
+		{
+			this.worker = new BackgroundWorker();
+			worker.DoWork += this.BeginConnectToWiki;
+			worker.RunWorkerCompleted += this.EndConnectToWiki;
+		}
 
 		/// <summary>
 		/// Initializes the connection to the remote Xml - Rpc wiki server. 
@@ -161,9 +217,36 @@ namespace DokuWikiEditor
 		private void EndConnectToWiki(object sender, RunWorkerCompletedEventArgs e)
 		{
 			this.statusProgress.Visibility = Visibility.Hidden;
+			if (e.Error != null)
+			{
+				MessageBox.Show(e.Error.Message, "Couldn't connect to wiki.", MessageBoxButton.OK, MessageBoxImage.Error);
+				return;
+			}
+
 			this.statusLabel.Content = "Connection to wiki established.";
 			this.outputBox.AppendText("Listing server methods: \n" + client.ListServerMethods() + "\n");
 			this.outputBox.AppendText("Listing server capabilites: \n" + client.GetServerCapabilites().Dump() + "\n");
+		}
+
+		/// <summary>
+		/// Handles the Click event of the menuWikiManageAccounts control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+		private void menuWikiManageAccounts_Click(object sender, RoutedEventArgs e)
+		{
+			WikiAccountManagementWindow managementWindow = new WikiAccountManagementWindow(this.knownWikiAccounts);
+			managementWindow.clientToUse = this.dokuWikiClient;
+			managementWindow.Visibility = Visibility.Visible;
+		}
+
+		private void updateActiveAccountsList()
+		{
+			this.activeAccountSelector.Items.Clear();
+			foreach (WikiAccount account in this.knownWikiAccounts)
+			{
+				this.activeAccountSelector.Items.Add(account.AccountName);
+			}
 		}
 
 		#endregion

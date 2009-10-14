@@ -86,7 +86,14 @@ namespace DokuwikiClient.Persistence
 		public void Save<T>(T objectToSave) where T : BusinessObject
 		{
 			List<string> identifiers = this.registry.GetIdentifiers(objectToSave.GetType().Name);
-			objectToSave.Serialize(registryPath + "//WikiObjects//", ".dat");
+			try
+			{
+				objectToSave.Serialize(registryPath + "//WikiObjects//", ".dat");
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+			}
 			if (identifiers.Count == 0 || !identifiers.Contains(objectToSave.ObjectIdentifier))
 			{
 				this.registry.AddWikiObject(objectToSave);
