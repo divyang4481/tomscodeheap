@@ -29,43 +29,6 @@ using log4net;
 namespace CH.Froorider.Codeheap.Http
 {
 	/// <summary>
-	/// Defines all states this HTTP Server can have. Is internal because only the PAC itself
-	/// must have knowledge about the state etc. of this server. The outside world has no interest on it.
-	/// </summary>
-	internal enum HTTPServerState
-	{
-		/// <summary>
-		/// Server state is not set. Default value. Also nessecary to fulfill code rule CA1008.
-		/// </summary>
-		Undefined = 0,
-
-		/// <summary>
-		/// Server is initialized, ready for work but the mian loop is not yet started.
-		/// </summary>
-		Created = 1,
-
-		/// <summary>
-		/// Main loop is running, but does no work and waits for input.
-		/// </summary>
-		Idle = 2,
-
-		/// <summary>
-		/// Main loop is running and waiting for incoming connections.
-		/// </summary>
-		Listening = 3,
-
-		/// <summary>
-		/// The main loop is doing his primary work. Don't interrupt him until he has finished it's work. 
-		/// </summary>
-		Working = 4,
-
-		/// <summary>
-		/// Main loop has ended. Server can be shutdown.
-		/// </summary>
-		Stopped = 5
-	}
-
-	/// <summary>
 	/// Basic implementation of an HTTP - Server. Can be used to avoid the use of .NET Remoting or
 	/// IIS.
 	/// The server can be started and stopped using the similar named methods. It is a non-blocking
@@ -73,11 +36,18 @@ namespace CH.Froorider.Codeheap.Http
 	/// </summary>
 	public class SimpleHttpServer : IDisposable
 	{
+		#region constants
+
 		private const int ExitThread = 0;
 		private const int LookForNextConnection = 1;
-		private const string DefaultPortNumber = "11000";
+		private const int DefaultPortNumber = 80;
+		private const int BiggestWellKnownPortNumber = 1024;
+		private const int BiggestPossiblePortNumber = 65535;
 
-		private static readonly object threadSafer = new object();
+		#endregion
+
+		#region fields
+
 		private static ILog logger = LogManager.GetLogger(typeof(SimpleHttpServer));
 
 		// Messaging & Signaling infrastructure
@@ -90,28 +60,57 @@ namespace CH.Froorider.Codeheap.Http
 		private Thread listeningForConnectionLoop;
 		private HttpListener httpListener;
 
+		#endregion
+
+		#region Properties
+
+		/// <summary>
+		/// Gets the port where this HTTP Server is listening to.
+		/// </summary>
+		/// <value>An integer in the range [1024 - 65535].</value>
+		public int ListeningPort { get; private set; }
+
+		#endregion
+
+		#region constructor
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SimpleHttpServer"/> class.
-		/// If no port is configured the server is listening on port number 11000.
 		/// </summary>
+		/// <remarks>If the port number is in range of the well-known ports [0 - 1024] the default port 80 is taken.</remarks>
 		/// <param name="service">The HTTP Service implementation which can handle the incoming requests.</param>
-		/// <param name="portNumber">The port where this server should listen on incoming connections.</param>
+		/// <param name="portNumber">The port where this server should listen on incoming connections. Must be > 1023.</param>
+		/// <exception cref="PlatformNotSupportedException">Is thrown when the underlying operating system does not support <see cref="HttpListener"/>s.</exception>
+		/// <exception cref="ArgumentNullException">Is thrown when <paramref name="service"/> is a null reference.</exception>
+		/// <exception cref="ArgumentException">Is thrown when <paramref name="portNumber"/> is bigger than 65535.</exception>
 		public SimpleHttpServer(BaseHttpServiceEndpoint service, int portNumber)
 		{
-			if (String.IsNullOrEmpty(portNumber.ToString(CultureInfo.InvariantCulture)) || portNumber == 0)
+			if (service == null)
 			{
-				logger.WarnFormat("Using default port number {0} to listen on XML-RPC messages.", portNumber);
-				portNumber = Convert.ToInt32(DefaultPortNumber, CultureInfo.CurrentCulture);
+				throw new ArgumentNullException("service", "The Service endpoint must be an instance.");
+			}
+
+			if (portNumber > SimpleHttpServer.BiggestPossiblePortNumber)
+			{
+				throw new ArgumentException("The port number must be smaller than "+(SimpleHttpServer.BiggestPossiblePortNumber+1)+".", "portNumber");
+			}
+
+			if (portNumber < SimpleHttpServer.BiggestWellKnownPortNumber)
+			{
+				logger.WarnFormat("Using default port number {0} to listen on HTTP requests.", portNumber);
+				this.ListeningPort = DefaultPortNumber;
 			}
 
 			this.httpListener = new HttpListener();
-			this.httpListener.Prefixes.Add(String.Concat("http://+:", portNumber, "/"));
-			logger.DebugFormat(CultureInfo.CurrentCulture, "HTTP Listener created on port: " + portNumber);
+			this.httpListener.Prefixes.Add(String.Concat("http://+:", this.ListeningPort, "/"));
 			this.serviceEndpoint = service;
+			logger.DebugFormat(CultureInfo.CurrentCulture, "HTTP Listener created on port: " + portNumber);
 
 			this.signals[ExitThread] = this.stopThreadEvent;
 			this.signals[LookForNextConnection] = this.listenForConnection;
 		}
+
+		#endregion
 
 		#region public methods
 
@@ -145,26 +144,23 @@ namespace CH.Froorider.Codeheap.Http
 		}
 
 		/// <summary>
-		/// Signal the HTTP Server to stop. Blocks until all server parts have been stopped.<br></br><b>This method is thread-safe.</b>
+		/// Signal the HTTP Server to stop.
 		/// </summary>
 		public void Stop()
 		{
-			lock (threadSafer)
+			this.stopThreadEvent.Set();
+			try
 			{
-				this.stopThreadEvent.Set();
-				try
-				{
-					this.httpListener.Stop();
-					this.httpListener.Close();
-				}
-				catch (ObjectDisposedException ode)
-				{
-					logger.DebugFormat(CultureInfo.CurrentCulture, "Http Listener was already disposed. {0}", ode.Message);
-				}
-
-				this.listeningForConnectionLoop.Join();
-				logger.Info("HTTP server stopped");
+				this.httpListener.Stop();
+				this.httpListener.Close();
 			}
+			catch (ObjectDisposedException ode)
+			{
+				logger.DebugFormat(CultureInfo.CurrentCulture, "Http Listener was already disposed. {0}", ode.Message);
+			}
+
+			this.listeningForConnectionLoop.Join();
+			logger.Info("HTTP server stopped");
 		}
 
 		/// <summary>
@@ -218,7 +214,7 @@ namespace CH.Froorider.Codeheap.Http
 				logger.DebugFormat(CultureInfo.CurrentCulture, "Client name: {0}", connection.Request.UserHostName);
 				logger.Debug("Processing input.");
 
-				// It is possible that this server host another service than an Pac Service
+				// It is possible that this server host another service than an a base service
 				// so we filter this out here.
 				if (this.serviceEndpoint.GetType().Equals(typeof(BaseHttpServiceEndpoint)))
 				{
@@ -231,9 +227,7 @@ namespace CH.Froorider.Codeheap.Http
 				}
 				else
 				{
-					// ATTENTION: This is blocking => Runs in the same thread!
-					// HAT: Should we really do this, or actively refuse the incoming request?
-					this.serviceEndpoint.ProcessRequest(connection);
+					SimpleHttpServer.logger.WarnFormat("Unsupported service endpoint type. Type: {0}", this.serviceEndpoint.GetType().ToString());
 				}
 
 				this.listenForConnection.Set();

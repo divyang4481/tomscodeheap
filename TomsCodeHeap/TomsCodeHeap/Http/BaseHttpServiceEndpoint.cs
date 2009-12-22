@@ -40,8 +40,20 @@ namespace CH.Froorider.Codeheap.Http
 
 		#region properties
 
-		/// <summary>Gets or sets the Http context which contains the request and response streams, settings etc.</summary>
+		/// <summary>
+		/// Gets or sets the Http listener context which contains the request and response streams, settings etc.
+		/// </summary>
+		/// <value>An instance of <see cref="HttpListenerContext"/>.</value>
 		public HttpListenerContext Context { get; set; }
+
+		/// <summary>
+		/// Gets the logger, which can be used to write log messages.
+		/// </summary>
+		/// <value>An instance of <see cref="ILog"/> from the Apache log4net framework.</value>
+		protected static ILog Logger 
+		{
+			get { return BaseHttpServiceEndpoint.logger; }
+		}
 
 		#endregion
 
@@ -60,8 +72,8 @@ namespace CH.Froorider.Codeheap.Http
 
 		/// <summary>
 		/// Wrapper method to use the class in a multithreaded environment. 
-		/// <b>If compiled with LOG_NETWORK_TRAFFIC - variable then all HTTP Traffic is logged.</b>
 		/// </summary>
+		/// <remarks><b>If compiled with LOG_NETWORK_TRAFFIC - variable then all HTTP Traffic is logged.</b></remarks>
 		/// <param name="message">A message given by the HTTP Server to transfer some information. E.g. how to deal with the connection.</param>
 		public void ProcessConnection(object message)
 		{
@@ -76,7 +88,7 @@ namespace CH.Froorider.Codeheap.Http
 		/// <summary>
 		/// Processes the incoming HTTP request and sends back the HTTP response to the sender.
 		/// </summary>
-		/// <param name="requestContext">The context in which this request arrived.</param>
+		/// <param name="requestContext">The <see cref="HttpListenerContext"/> in which this request arrived.</param>
 		public abstract void ProcessRequest(HttpListenerContext requestContext);
 
 		#endregion
@@ -84,7 +96,7 @@ namespace CH.Froorider.Codeheap.Http
 		#region private methods
 
 		/// <summary>
-		/// Logs the HTTP traffic with all headers. Is appended to the log file with level "VERBOSE".
+		/// Logs the HTTP traffic with all headers. Is appended to the log file with level "DEBUG".
 		/// </summary>
 		/// <remarks>Activate the "LOG_NETWORK_TRAFFIC" variable to enable this.</remarks>
 		[Conditional("LOG_NETWORK_TRAFFIC")]

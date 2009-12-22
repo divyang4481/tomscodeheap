@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <TestRunConfiguration name="Local Test Run" id="296bd03c-df60-4383-8ac7-cf425cea06af" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
   <Description>This is a default test run configuration for a local test run.</Description>
-  <CodeCoverage enabled="true">
+  <CodeCoverage enabled="true" keyFile="TomsCodeHeap\TomsCodeHeap.snk">
     <Regular>
       <CodeCoverageItem binaryFile="TomsCodeHeap\bin\Debug\TomsCodeHeap.dll" pdbFile="TomsCodeHeap\bin\Debug\TomsCodeHeap.pdb" instrumentInPlace="true" />
     </Regular>

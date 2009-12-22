@@ -31,7 +31,7 @@
     </StartupObject>
     <ApplicationIcon>codeheap.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>TomsCodeHeapKeyFile.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>TomsCodeHeap.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,18 +44,19 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\TomsCodeHeap.XML</DocumentationFile>
     <CodeAnalysisRules>-Microsoft.Design#CA1012;-Microsoft.Design#CA1020;-Microsoft.Design#CA1004;-Microsoft.Design#CA1014;-Microsoft.Naming#CA1709</CodeAnalysisRules>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>bin\Release\TomsCodeHeap.XML</DocumentationFile>
     <CodeAnalysisRules>-Microsoft.Design#CA1012;-Microsoft.Design#CA1020;-Microsoft.Design#CA1004;-Microsoft.Design#CA1014;-Microsoft.Naming#CA1709</CodeAnalysisRules>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -138,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CodeHeapClasses.cd" />
-    <None Include="TomsCodeHeapKeyFile.pfx" />
+    <None Include="PublicKey.key" />
+    <None Include="TomsCodeHeap.snk" />
   </ItemGroup>
 </Project>
