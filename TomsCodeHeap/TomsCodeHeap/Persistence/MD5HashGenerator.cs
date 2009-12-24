@@ -38,15 +38,6 @@ namespace CH.Froorider.Codeheap.Persistence
 	/// </summary>
 	public sealed class MD5HashGenerator
 	{
-		#region fields
-
-		/// <summary>
-		/// Lock to synchronize the access over multiple threads.
-		/// </summary>
-		private static readonly object locker = new object();
-
-		#endregion
-
 		#region Constructors
 
 		/// <summary>
@@ -115,13 +106,7 @@ namespace CH.Froorider.Codeheap.Persistence
 
 			try
 			{
-				// Here's the core functionality! One Line!
-				// To be thread-safe we lock the object
-				lock (locker)
-				{
-					formatter.Serialize(fs, objectToSerialize);
-				}
-
+				formatter.Serialize(fs, objectToSerialize);
 				return fs.ToArray();
 			}
 			catch (SerializationException se)

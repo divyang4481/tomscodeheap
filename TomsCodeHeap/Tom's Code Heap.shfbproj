@@ -19,12 +19,14 @@
     <ProjectSummary>Tom%27s collection of useful C# classes</ProjectSummary>
     <DocumentationSources>
       <DocumentationSource sourceFile="TomsCodeHeap\bin\Debug\TomsCodeHeap.dll" xmlns="" />
-<DocumentationSource sourceFile="TomsCodeHeap\bin\Debug\TomsCodeHeap.XML" xmlns="" /></DocumentationSources>
+      <DocumentationSource sourceFile="TomsCodeHeap\bin\Debug\TomsCodeHeap.XML" xmlns="" />
+    </DocumentationSources>
     <HelpFileFormat>HtmlHelp1x</HelpFileFormat>
     <FrameworkVersion>3.5</FrameworkVersion>
     <FeedbackEMailAddress>froorider%40gmail.com</FeedbackEMailAddress>
     <FeedbackEMailLinkText>Feedback to developer</FeedbackEMailLinkText>
     <HelpTitle>Tom%27s collection of useful C# classes</HelpTitle>
+    <PresentationStyle>Prototype</PresentationStyle>
   </PropertyGroup>
   <!-- There are no properties for these two groups but they need to appear in
        order for Visual Studio to perform the build. -->
