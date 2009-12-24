@@ -217,7 +217,10 @@ namespace TomsCodeHeapTesting
                 do
                 {
                     ISchedule currentSchedule = actual.Current;
-                    Assert.IsTrue(schedules.Contains(currentSchedule),"The scheduler does not contain the schedule: "+currentSchedule.NextDueTime);
+                    if (currentSchedule != null)
+                    {
+                        Assert.IsTrue(schedules.Contains(currentSchedule), "The scheduler does not contain the schedule: " + currentSchedule.NextDueTime);
+                    }
                 }
                 while (actual.MoveNext());
             }
