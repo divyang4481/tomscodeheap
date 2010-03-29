@@ -50,7 +50,7 @@ namespace CH.Froorider.Codeheap.Http
 		/// Gets the logger, which can be used to write log messages.
 		/// </summary>
 		/// <value>An instance of <see cref="ILog"/> from the Apache log4net framework.</value>
-		protected static ILog Logger 
+		protected static ILog Logger
 		{
 			get { return BaseHttpServiceEndpoint.logger; }
 		}
