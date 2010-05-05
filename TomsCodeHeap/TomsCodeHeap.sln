@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
 		Tom's Code Heap.shfbproj = Tom's Code Heap.shfbproj
 		TomsCodeHeap.vsmdi = TomsCodeHeap.vsmdi
+		TomsCodeHeap1.vsmdi = TomsCodeHeap1.vsmdi
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomsCodeHeapTesting", "TomsCodeHeapTesting\TomsCodeHeapTesting.csproj", "{44CB2594-7F31-45DC-ADB4-274861DDD24C}"
@@ -28,7 +29,7 @@ Global
 		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = TomsCodeHeap.vsmdi
+		CategoryFile = TomsCodeHeap1.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

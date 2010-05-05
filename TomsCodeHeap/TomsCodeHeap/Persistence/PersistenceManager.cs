@@ -44,7 +44,7 @@ namespace CH.Froorider.Codeheap.Persistence
 		/// <summary>
 		/// Path where to store the object (as files).
 		/// </summary>
-		private static readonly string CommonFilePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "//" + Assembly.GetExecutingAssembly().GetName().Name + "//";
+		private static readonly string CommonFilePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "//" + Assembly.GetCallingAssembly().GetName().Name + "//";
 
 		/// <summary>
 		/// Locks the multithreaded access on the directory creation.
@@ -66,25 +66,7 @@ namespace CH.Froorider.Codeheap.Persistence
 		/// The filename extension is '.dat'.</remarks>
 		public static string Serialize(this BusinessObject objectToSerialize)
 		{
-			CreateDirectoryIfNotExisting();
-
-			if (objectToSerialize.GetType().IsSerializable)
-			{
-				string filename = MD5HashGenerator.GenerateKey(objectToSerialize);
-				XmlSerializer serializer = new XmlSerializer(objectToSerialize.GetType());
-				using (TextWriter textWriter = new StreamWriter(CommonFilePath + filename + CommonFileNameExtension))
-				{
-					serializer.Serialize(textWriter, objectToSerialize);
-					textWriter.Close();
-				}
-
-				objectToSerialize.ObjectIdentifier = filename;
-				return filename;
-			}
-			else
-			{
-				throw new InvalidOperationException("Only types which are marked as Serializable are supported.");
-			}
+            return PersistenceManager.SerializeObject(objectToSerialize, CommonFilePath, CommonFileNameExtension);
 		}
 
 		/// <summary>
@@ -115,25 +97,7 @@ namespace CH.Froorider.Codeheap.Persistence
 				throw new ArgumentNullException("extension", "Extension cannot be null.");
 			}
 
-			PersistenceManager.CreateDirectoryIfNotExisting(filePath);
-
-			if (objectToSerialize.GetType().IsSerializable)
-			{
-				string filename = MD5HashGenerator.GenerateKey(objectToSerialize);
-				XmlSerializer serializer = new XmlSerializer(objectToSerialize.GetType());
-				using (TextWriter textWriter = new StreamWriter(filePath + filename + extension))
-				{
-					serializer.Serialize(textWriter, objectToSerialize);
-					textWriter.Close();
-				}
-
-				objectToSerialize.ObjectIdentifier = filename;
-				return filename;
-			}
-			else
-			{
-				throw new InvalidOperationException("Only types which are marked as Serializable are supported.");
-			}
+            return PersistenceManager.SerializeObject(objectToSerialize,filePath, extension);
 		}
 
 		/// <summary>
@@ -232,6 +196,46 @@ namespace CH.Froorider.Codeheap.Persistence
 				}
 			}
 		}
+
+        /// <summary>
+        /// Serializes the object.
+        /// </summary>
+        /// <param name="objectToSerialize">The object to serialize.</param>
+        /// <param name="filePath">The file path.</param>
+        /// <param name="extension">The extension.</param>
+        /// <returns></returns>
+        private static string SerializeObject(BusinessObject objectToSerialize,string filePath, string extension)
+        {
+            PersistenceManager.CreateDirectoryIfNotExisting(filePath);
+
+            if (objectToSerialize.GetType().IsSerializable)
+            {
+                string fileName = String.Empty;
+
+                if (String.IsNullOrEmpty(objectToSerialize.ObjectIdentifier))
+                {
+                    fileName = MD5HashGenerator.GenerateKey(objectToSerialize);
+                }
+                else
+                {
+                    fileName = objectToSerialize.ObjectIdentifier;
+                }
+
+                XmlSerializer serializer = new XmlSerializer(objectToSerialize.GetType());
+                using (TextWriter textWriter = new StreamWriter(filePath + fileName + extension))
+                {
+                    serializer.Serialize(textWriter, objectToSerialize);
+                    textWriter.Close();
+                }
+
+                objectToSerialize.ObjectIdentifier = fileName;
+                return fileName;
+            }
+            else
+            {
+                throw new InvalidOperationException("Only types which are marked as Serializable are supported.");
+            }
+        }
 
 		#endregion
 	}
