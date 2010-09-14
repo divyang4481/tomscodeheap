@@ -92,7 +92,7 @@ namespace CH.Froorider.Codeheap.Http
 
 			if (portNumber > SimpleHttpServer.BiggestPossiblePortNumber)
 			{
-				throw new ArgumentException("The port number must be smaller than "+(SimpleHttpServer.BiggestPossiblePortNumber+1)+".", "portNumber");
+				throw new ArgumentException("The port number must be smaller than " + (SimpleHttpServer.BiggestPossiblePortNumber + 1) + ".", "portNumber");
 			}
 
 			if (portNumber < SimpleHttpServer.BiggestWellKnownPortNumber)

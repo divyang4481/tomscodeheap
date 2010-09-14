@@ -21,3 +21,8 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Codeheap", Scope = "namespace", Target = "CH.Froorider.Codeheap.Http")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Codeheap", Scope = "namespace", Target = "CH.Froorider.Codeheap.Persistence")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Codeheap", Scope = "namespace", Target = "CH.Froorider.Codeheap.Testing")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Codeheap", Scope = "namespace", Target = "CH.Froorider.Codeheap.StateMachine")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Codeheap", Scope = "namespace", Target = "CH.Froorider.Codeheap.StateMachine.Activities")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Codeheap", Scope = "namespace", Target = "CH.Froorider.Codeheap.StateMachine.Events")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Codeheap", Scope = "namespace", Target = "CH.Froorider.Codeheap.StateMachine.States")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Codeheap", Scope = "namespace", Target = "CH.Froorider.Codeheap.StateMachine.Transitions")]

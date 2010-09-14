@@ -76,6 +76,13 @@
     <Compile Include="Persistence\MD5HashGenerator.cs" />
     <Compile Include="Persistence\PersistenceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StateMachine\Activities\ActivityType.cs" />
+    <Compile Include="StateMachine\Activities\IActivity.cs" />
+    <Compile Include="StateMachine\Events\EventMessage.cs" />
+    <Compile Include="StateMachine\Events\StateChangedEventArgs.cs" />
+    <Compile Include="StateMachine\IStateMachine.cs" />
+    <Compile Include="StateMachine\States\IState.cs" />
+    <Compile Include="StateMachine\Transitions\ITransition.cs" />
     <Compile Include="Testing\AsserException.cs" />
     <Compile Include="Threading\ISchedule.cs" />
     <Compile Include="Threading\IScheduler.cs" />

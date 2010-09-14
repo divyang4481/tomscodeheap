@@ -66,7 +66,7 @@ namespace CH.Froorider.Codeheap.Persistence
 		/// The filename extension is '.dat'.</remarks>
 		public static string Serialize(this BusinessObject objectToSerialize)
 		{
-            return PersistenceManager.SerializeObject(objectToSerialize, CommonFilePath, CommonFileNameExtension);
+			return PersistenceManager.SerializeObject(objectToSerialize, CommonFilePath, CommonFileNameExtension);
 		}
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace CH.Froorider.Codeheap.Persistence
 				throw new ArgumentNullException("extension", "Extension cannot be null.");
 			}
 
-            return PersistenceManager.SerializeObject(objectToSerialize,filePath, extension);
+			return PersistenceManager.SerializeObject(objectToSerialize, filePath, extension);
 		}
 
 		/// <summary>
@@ -169,20 +169,6 @@ namespace CH.Froorider.Codeheap.Persistence
 		#region private methods
 
 		/// <summary>
-		/// Creates the common directory if not existing.
-		/// </summary>
-		private static void CreateDirectoryIfNotExisting()
-		{
-			lock (filePathLock)
-			{
-				if (!Directory.Exists(CommonFilePath))
-				{
-					Directory.CreateDirectory(CommonFilePath);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Creates the directory if not existing.
 		/// </summary>
 		/// <param name="directoryPath">The directory path.</param>
@@ -197,45 +183,45 @@ namespace CH.Froorider.Codeheap.Persistence
 			}
 		}
 
-        /// <summary>
-        /// Serializes the object.
-        /// </summary>
-        /// <param name="objectToSerialize">The object to serialize.</param>
-        /// <param name="filePath">The file path.</param>
-        /// <param name="extension">The extension.</param>
-        /// <returns></returns>
-        private static string SerializeObject(BusinessObject objectToSerialize,string filePath, string extension)
-        {
-            PersistenceManager.CreateDirectoryIfNotExisting(filePath);
+		/// <summary>
+		/// Serializes the object.
+		/// </summary>
+		/// <param name="objectToSerialize">The object to serialize.</param>
+		/// <param name="filePath">The file path.</param>
+		/// <param name="extension">The extension.</param>
+		/// <returns>The file name of the serilaized object.</returns>
+		private static string SerializeObject(BusinessObject objectToSerialize, string filePath, string extension)
+		{
+			PersistenceManager.CreateDirectoryIfNotExisting(filePath);
 
-            if (objectToSerialize.GetType().IsSerializable)
-            {
-                string fileName = String.Empty;
+			if (objectToSerialize.GetType().IsSerializable)
+			{
+				string fileName = String.Empty;
 
-                if (String.IsNullOrEmpty(objectToSerialize.ObjectIdentifier))
-                {
-                    fileName = MD5HashGenerator.GenerateKey(objectToSerialize);
-                }
-                else
-                {
-                    fileName = objectToSerialize.ObjectIdentifier;
-                }
+				if (String.IsNullOrEmpty(objectToSerialize.ObjectIdentifier))
+				{
+					fileName = MD5HashGenerator.GenerateKey(objectToSerialize);
+				}
+				else
+				{
+					fileName = objectToSerialize.ObjectIdentifier;
+				}
 
-                XmlSerializer serializer = new XmlSerializer(objectToSerialize.GetType());
-                using (TextWriter textWriter = new StreamWriter(filePath + fileName + extension))
-                {
-                    serializer.Serialize(textWriter, objectToSerialize);
-                    textWriter.Close();
-                }
+				XmlSerializer serializer = new XmlSerializer(objectToSerialize.GetType());
+				using (TextWriter textWriter = new StreamWriter(filePath + fileName + extension))
+				{
+					serializer.Serialize(textWriter, objectToSerialize);
+					textWriter.Close();
+				}
 
-                objectToSerialize.ObjectIdentifier = fileName;
-                return fileName;
-            }
-            else
-            {
-                throw new InvalidOperationException("Only types which are marked as Serializable are supported.");
-            }
-        }
+				objectToSerialize.ObjectIdentifier = fileName;
+				return fileName;
+			}
+			else
+			{
+				throw new InvalidOperationException("Only types which are marked as Serializable are supported.");
+			}
+		}
 
 		#endregion
 	}

@@ -483,7 +483,6 @@ namespace CH.Froorider.Codeheap.Threading
 			{
 				if (this.listLock.TryEnterReadLock(Scheduler.WaitOnLockInMilliseconds))
 				{
-					scheduleArray = new ISchedule[this.triggerList.Count];
 					scheduleArray = this.triggerList.ToArray();
 				}
 				else
@@ -535,8 +534,11 @@ namespace CH.Froorider.Codeheap.Threading
 				{
 					this.timer.Enabled = false;
 					this.timer.Dispose();
+					this.timer = null;
 					this.listLock.Dispose();
+					this.listLock = null;
 					this.timerLock.Dispose();
+					this.timerLock = null;
 				}
 			}
 

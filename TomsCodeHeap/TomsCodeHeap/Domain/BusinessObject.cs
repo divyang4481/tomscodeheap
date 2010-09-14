@@ -54,7 +54,7 @@ namespace CH.Froorider.Codeheap.Domain
 		/// <summary>
 		/// Occurs when a property value changes.
 		/// </summary>
-		[field:NonSerialized]
+		[field: NonSerialized]
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>
