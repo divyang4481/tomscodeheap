@@ -41,53 +41,35 @@ namespace CH.Froorider.Codeheap.StateMachine.States
 		string Name { get; }
 
 		/// <summary>
-		/// Adds a <see cref="ITransition"/> to this <see cref="IState"/>.
+		/// Determines whether this instance is composite.
 		/// </summary>
-		/// <param name="transition">An instance of <see cref="ITransition"/>.</param>
-		/// <exception cref="ArgumentNullException">Is thrown when <paramref name="transition"/> is a <see langword="null"/> reference.</exception>
-		void AddTransition(ITransition transition);
-
-		/// <summary>
-		/// Adds an <see cref="CH.Froorider.Codeheap.StateMachine.Activities.IActivity"/> to this state. The <see cref="ActivityType"/> defines if
-		/// it should be added as an enty,exit or do activtiy.
-		/// </summary>
-		/// <param name="activity">The activity as an instance of <see cref="IActivity"/>.</param>
-		/// <param name="typeOfActivity">One of the values of <see cref="ActivityType"/>.</param>
-		/// <exception cref="ArgumentException">Is thrown when this <see cref="IState"/> already has an <see cref="IActivity"/> of type <see cref="ActivityType"/>.</exception>
-		/// <exception cref="ArgumentNullException">Is thrown when <paramref name="activity"/> is a <see langword="null"/> reference.</exception>
-		void AddActivity(IActivity activity, ActivityType typeOfActivity);
-
-		/// <summary>
-		/// Determines whether this <see cref="IState"/> has a <see cref="ITransition"/> for the given trigger name.
-		/// </summary>
-		/// <param name="triggerName">Name of the trigger as a string.</param>
 		/// <returns>
-		/// 	Returns <see langword="true"/> if it has transition for trigger with the specified trigger name; otherwise, <see langword="false"/>.
+		/// 	<see langword="true"/> if this instance is composite; otherwise, <see langword="false"/>.
 		/// </returns>
-		/// <exception cref="ArgumentException">Is thrown when <paramref name="triggerName"/> is a null or empty string.</exception>
-		bool HasTransitionForTrigger(string triggerName);
+		bool IsComposite();
 
 		/// <summary>
-		/// Fires the trigger towards this <see cref="IState"/>.
+		/// Determines whether this instance is orthogonal.
 		/// </summary>
-		/// <param name="trigger">The trigger as an instance of <see cref="EventMessage"/>.</param>
-		/// <returns>The reference to the <see cref="IState"/> which has been reached after the transition.</returns>
-		/// <exception cref="ArgumentNullException">Is thrown when <paramref name="trigger"/> is a <see langword="null"/> reference.</exception>
-		IState ProcessTrigger(EventMessage trigger);
+		/// <returns>
+		/// 	<see langword="true"/> if this instance is orthogonal; otherwise, <see langword="false"/>.
+		/// </returns>
+		bool IsOrthogonal();
 
 		/// <summary>
-		/// Performs the entry <see cref="CH.Froorider.Codeheap.StateMachine.Activities.IActivity"/> of this <see cref="IState"/>.
+		/// Determines whether this instance is simple.
 		/// </summary>
-		void PerformEntryActivity();
+		/// <returns>
+		/// 	<see langword="true"/> if this instance is simple; otherwise, <see langword="false"/>.
+		/// </returns>
+		bool IsSimple();
 
 		/// <summary>
-		/// Performs the do <see cref="CH.Froorider.Codeheap.StateMachine.Activities.IActivity"/> of this <see cref="IState"/>.
+		/// Determines whether this instance is an <see cref="IState"/> of an <see cref="IState"/>.
 		/// </summary>
-		void PerformDoActivity();
-
-		/// <summary>
-		/// Performs the exit <see cref="CH.Froorider.Codeheap.StateMachine.Activities.IActivity"/> of this <see cref="IState"/>.
-		/// </summary>
-		void PerformExitActivity();
+		/// <returns>
+		/// 	<see langword="true"/> if [is submachine state]; otherwise, <see langword="false"/>.
+		/// </returns>
+		bool IsSubmachineState();
 	}
 }

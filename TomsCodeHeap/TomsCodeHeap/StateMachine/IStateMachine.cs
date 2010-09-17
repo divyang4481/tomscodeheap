@@ -39,6 +39,12 @@ namespace CH.Froorider.Codeheap.StateMachine
 		string Name { get; }
 
 		/// <summary>
+		/// Gets the acutal <see cref="IState"/>.
+		/// </summary>
+		/// <value>The actual state as an <see cref="IState"/>.</value>
+		IState ActualState { get; }
+
+		/// <summary>
 		/// Adds an <see cref="IState"/> to this <see cref="IStateMachine"/>.
 		/// </summary>
 		/// <param name="state">The state to add.</param>

@@ -81,8 +81,14 @@
     <Compile Include="StateMachine\Events\EventMessage.cs" />
     <Compile Include="StateMachine\Events\StateChangedEventArgs.cs" />
     <Compile Include="StateMachine\IStateMachine.cs" />
+    <Compile Include="StateMachine\StateMachine.cs" />
+    <Compile Include="StateMachine\StateMachineFactory.cs" />
     <Compile Include="StateMachine\States\IState.cs" />
+    <Compile Include="StateMachine\States\PseudoStateKind.cs" />
+    <Compile Include="StateMachine\States\SimpleState.cs" />
+    <Compile Include="StateMachine\States\State.cs" />
     <Compile Include="StateMachine\Transitions\ITransition.cs" />
+    <Compile Include="StateMachine\Transitions\TransitionKind.cs" />
     <Compile Include="Testing\AsserException.cs" />
     <Compile Include="Threading\ISchedule.cs" />
     <Compile Include="Threading\IScheduler.cs" />
