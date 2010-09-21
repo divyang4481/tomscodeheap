@@ -56,6 +56,7 @@ namespace CH.Froorider.Codeheap.StateMachine
 		/// </summary>
 		/// <param name="eventToHandle">The <see cref="EventMessage"/> to handle.</param>
 		/// <exception cref="ArgumentNullException">Is thrown when <paramref name="eventToHandle"/> is a <see langword="null"/> reference.</exception>
+		/// <exception cref="ArgumentException">Is thrown when the name of the trigger is null or empty.</exception>
 		void HandleEvent(EventMessage eventToHandle);
 
 		/// <summary>

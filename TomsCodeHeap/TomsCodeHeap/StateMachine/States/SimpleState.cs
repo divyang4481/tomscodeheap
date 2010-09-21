@@ -34,7 +34,7 @@ namespace CH.Froorider.Codeheap.StateMachine.States
 	/// <summary>
 	/// Base implemenation of a very simple state. This kind of state contains no submachines.
 	/// </summary>
-	class SimpleState : State
+	internal class SimpleState : State
 	{
 		#region fields
 

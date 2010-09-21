@@ -83,6 +83,7 @@
     <Compile Include="StateMachine\IStateMachine.cs" />
     <Compile Include="StateMachine\StateMachine.cs" />
     <Compile Include="StateMachine\StateMachineFactory.cs" />
+    <Compile Include="StateMachine\States\InitialState.cs" />
     <Compile Include="StateMachine\States\IState.cs" />
     <Compile Include="StateMachine\States\PseudoStateKind.cs" />
     <Compile Include="StateMachine\States\SimpleState.cs" />

@@ -40,8 +40,9 @@ namespace CH.Froorider.Codeheap.StateMachine.States
 
 		private static ILog logger = LogManager.GetLogger(typeof(State));
 		private readonly string name = String.Empty;
-		private Dictionary<string, ITransition> transitions = new Dictionary<string, ITransition>();
-		private Dictionary<ActivityType, IActivity> activities = new Dictionary<ActivityType, IActivity>();
+
+		protected Dictionary<string, ITransition> transitions = new Dictionary<string, ITransition>();
+		protected Dictionary<ActivityType, IActivity> activities = new Dictionary<ActivityType, IActivity>();
 
 		#endregion
 
