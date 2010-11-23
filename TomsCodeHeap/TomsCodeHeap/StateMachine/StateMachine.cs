@@ -73,11 +73,7 @@ namespace CH.Froorider.Codeheap.StateMachine
 		/// <param name="owner">The owner of this <see cref="IStateMachine"/>.</param>
 		/// <param name="name">The name of the <see cref="IStateMachine"/>.</param>
 		/// <exception cref="ArgumentException">Is thrown when <paramref name="name"/> is null or empty.</exception>
-		/// <exception cref="ArgumentNullException"> Is thrown when
-		///		<para><paramref name="owner"/> is a <see langword="null"/> reference</para>
-		///		<para>- or -</para>
-		///		<para><paramref name="startState"/> is a <see langword="null"/> reference.</para>
-		/// </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="owner"/> is a <see langword="null"/> reference.</exception>
 		public StateMachine(object owner, string name)
 			: this(owner)
 		{

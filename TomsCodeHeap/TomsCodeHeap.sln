@@ -1,8 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomsCodeHeap", "TomsCodeHeap\TomsCodeHeap.csproj", "{109A8D24-D00F-4D41-B668-F6222CF56D50}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libraries", "libraries", "{E52FAE7C-6E08-4ECA-8911-66398782D3B0}"
 	ProjectSection(SolutionItems) = preProject
 		3th Party Libs\log4net.dll = 3th Party Libs\log4net.dll
@@ -19,7 +17,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Tom%27s Code Heap.shfbproj = Tom%27s Code Heap.shfbproj
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomsCodeHeap", "TomsCodeHeap\TomsCodeHeap.csproj", "{109A8D24-D00F-4D41-B668-F6222CF56D50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomsCodeHeapTesting", "TomsCodeHeapTesting\TomsCodeHeapTesting.csproj", "{44CB2594-7F31-45DC-ADB4-274861DDD24C}"
+EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = TomsCodeHeap1.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -29,8 +38,13 @@ Global
 		{109A8D24-D00F-4D41-B668-F6222CF56D50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{109A8D24-D00F-4D41-B668-F6222CF56D50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{109A8D24-D00F-4D41-B668-F6222CF56D50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44CB2594-7F31-45DC-ADB4-274861DDD24C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44CB2594-7F31-45DC-ADB4-274861DDD24C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44CB2594-7F31-45DC-ADB4-274861DDD24C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44CB2594-7F31-45DC-ADB4-274861DDD24C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = TomsCodeHeap\TomsCodeHeap.csproj
@@ -70,15 +84,5 @@ Global
 		$10.LineAlign = 0
 		$9.inheritsSet = Mono
 		version = 0.3
-	EndGlobalSection
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = TomsCodeHeap1.vsmdi
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

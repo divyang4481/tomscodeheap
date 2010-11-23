@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
 [assembly: AssemblyTitle("Tom's Code Heap")]
-[assembly: AssemblyDescription("Needful things for C# developing")]
+[assembly: AssemblyDescription("Needful things for C# developping")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("KGB Racing Team")]
 [assembly: AssemblyProduct("Tom's Code Heap")]
@@ -28,6 +28,6 @@ using System.Runtime.InteropServices;
 //      Nebenversion 
 //      Buildnummer
 //      Revision
-[assembly: AssemblyVersion("0.3.*")]
-[assembly: AssemblyFileVersion("0.3")]
+[assembly: AssemblyVersion("0.4.*")]
+[assembly: AssemblyFileVersion("0.4")]
 [assembly: NeutralResourcesLanguageAttribute("de-CH")]
