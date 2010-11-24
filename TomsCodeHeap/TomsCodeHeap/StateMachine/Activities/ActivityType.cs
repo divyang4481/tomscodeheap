@@ -22,30 +22,30 @@
 
 namespace CH.Froorider.Codeheap.StateMachine.Activities
 {
-	/// <summary>
-	/// Defines if the <see cref="IActivity"/> is used in an <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/> 
-	/// either as an entry, exit, or do action.
-	/// </summary>
-	public enum ActivityType
-	{
-		/// <summary>
-		/// Default value.
-		/// </summary>
-		Undefined = 0,
+    /// <summary>
+    /// Defines if the <see cref="IActivity"/> is used in an <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/> 
+    /// either as an entry, exit, or do action.
+    /// </summary>
+    public enum ActivityType
+    {
+        /// <summary>
+        /// Default value.
+        /// </summary>
+        Undefined = 0,
 
-		/// <summary>
-		/// Action is an entry action of an <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/>.
-		/// </summary>
-		Entry = 1,
+        /// <summary>
+        /// Action is an entry action of an <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/>.
+        /// </summary>
+        Entry = 1,
 
-		/// <summary>
-		/// Action is an do action of an <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/>.
-		/// </summary>
-		Do = 2,
+        /// <summary>
+        /// Action is an do action of an <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/>.
+        /// </summary>
+        Do = 2,
 
-		/// <summary>
-		/// Action is an exit action of an <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/>.
-		/// </summary>
-		Exit = 3
-	}
+        /// <summary>
+        /// Action is an exit action of an <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/>.
+        /// </summary>
+        Exit = 3
+    }
 }

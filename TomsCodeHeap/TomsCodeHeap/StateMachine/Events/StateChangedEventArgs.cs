@@ -25,75 +25,75 @@ using CH.Froorider.Codeheap.StateMachine.States;
 
 namespace CH.Froorider.Codeheap.StateMachine.Events
 {
-	/// <summary>
-	/// Basic event to inform observers of the <see cref="CH.Froorider.Codeheap.StateMachine.IStateMachine"/> that
-	/// it's <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/> has been changed.
-	/// </summary>
-	public class StateChangedEventArgs : EventArgs
-	{
-		#region Fields
+    /// <summary>
+    /// Basic event to inform observers of the <see cref="CH.Froorider.Codeheap.StateMachine.IStateMachine"/> that
+    /// it's <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/> has been changed.
+    /// </summary>
+    public class StateChangedEventArgs : EventArgs
+    {
+        #region Fields
 
-		private IState fromState;
-		private IState toState;
+        private IState fromState;
+        private IState toState;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		/// <summary>
-		/// Gets the name of the <see cref="IState"/> where the transition has been started.
-		/// </summary>
-		/// <value>The name of the <see cref="IState"/> as a string.</value>
-		public string FromState
-		{
-			get
-			{
-				return this.fromState.Name;
-			}
-		}
+        /// <summary>
+        /// Gets the name of the <see cref="IState"/> where the transition has been started.
+        /// </summary>
+        /// <value>The name of the <see cref="IState"/> as a string.</value>
+        public string FromState
+        {
+            get
+            {
+                return this.fromState.Name;
+            }
+        }
 
-		/// <summary>
-		///  Gets the name of the <see cref="IState"/> where the transition has been endend.
-		/// </summary>
-		/// <value>The name of the <see cref="IState"/> as a string.</value>
-		public string ToState
-		{
-			get
-			{
-				return this.toState.Name;
-			}
-		}
+        /// <summary>
+        ///  Gets the name of the <see cref="IState"/> where the transition has been endend.
+        /// </summary>
+        /// <value>The name of the <see cref="IState"/> as a string.</value>
+        public string ToState
+        {
+            get
+            {
+                return this.toState.Name;
+            }
+        }
 
-		#endregion
+        #endregion
 
-		#region Constructor
+        #region Constructor
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="StateChangedEventArgs"/> class.
-		/// </summary>
-		/// <param name="fromState">The <see cref="IState"/> in which the <see cref="IStateMachine"/> was before.</param>
-		/// <param name="toState">The <see cref="IState"/> in which the <see cref="IStateMachine"/> is now.</param>
-		/// <exception cref="ArgumentNullException"> Is thrown when
-		///		<para><paramref name="fromState"/> is a <see langword="null"/> reference</para>
-		///		<para>- or -</para>
-		///		<para><paramref name="toState"/> is a <see langword="null"/> reference.</para>
-		/// </exception>
-		public StateChangedEventArgs(IState fromState, IState toState)
-		{
-			if (fromState == null)
-			{
-				throw new ArgumentNullException("fromState");
-			}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StateChangedEventArgs"/> class.
+        /// </summary>
+        /// <param name="fromState">The <see cref="IState"/> in which the <see cref="IStateMachine"/> was before.</param>
+        /// <param name="toState">The <see cref="IState"/> in which the <see cref="IStateMachine"/> is now.</param>
+        /// <exception cref="ArgumentNullException"> Is thrown when
+        ///		<para><paramref name="fromState"/> is a <see langword="null"/> reference</para>
+        ///		<para>- or -</para>
+        ///		<para><paramref name="toState"/> is a <see langword="null"/> reference.</para>
+        /// </exception>
+        public StateChangedEventArgs(IState fromState, IState toState)
+        {
+            if (fromState == null)
+            {
+                throw new ArgumentNullException("fromState");
+            }
 
-			if (toState == null)
-			{
-				throw new ArgumentNullException("toState");
-			}
+            if (toState == null)
+            {
+                throw new ArgumentNullException("toState");
+            }
 
-			this.fromState = fromState;
-			this.toState = toState;
-		}
+            this.fromState = fromState;
+            this.toState = toState;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

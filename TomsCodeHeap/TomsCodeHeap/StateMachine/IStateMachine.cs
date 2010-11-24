@@ -26,42 +26,42 @@ using CH.Froorider.Codeheap.StateMachine.States;
 
 namespace CH.Froorider.Codeheap.StateMachine
 {
-	/// <summary>
-	/// Defines the functionality a state machine offers.
-	/// According to the UML definition an <see cref="IStateMachine"/> represents the state chart diagram type.
-	/// </summary>
-	public interface IStateMachine
-	{
-		/// <summary>
-		/// Gets the name this state machine identifies.
-		/// </summary>
-		/// <value>The name of the <see cref="IStateMachine"/> as a string.</value>
-		string Name { get; }
+    /// <summary>
+    /// Defines the functionality a state machine offers.
+    /// According to the UML definition an <see cref="IStateMachine"/> represents the state chart diagram type.
+    /// </summary>
+    public interface IStateMachine
+    {
+        /// <summary>
+        /// Gets the name this state machine identifies.
+        /// </summary>
+        /// <value>The name of the <see cref="IStateMachine"/> as a string.</value>
+        string Name { get; }
 
-		/// <summary>
-		/// Gets the acutal <see cref="IState"/>.
-		/// </summary>
-		/// <value>The actual state as an <see cref="IState"/>.</value>
-		IState ActualState { get; }
+        /// <summary>
+        /// Gets the acutal <see cref="IState"/>.
+        /// </summary>
+        /// <value>The actual state as an <see cref="IState"/>.</value>
+        IState ActualState { get; }
 
-		/// <summary>
-		/// Adds an <see cref="IState"/> to this <see cref="IStateMachine"/>.
-		/// </summary>
-		/// <param name="state">The state to add.</param>
-		/// <exception cref="ArgumentNullException">Is thrown when <paramref name="state"/> is a <see langword="null"/> reference.</exception>
-		void AddState(IState state);
+        /// <summary>
+        /// Adds an <see cref="IState"/> to this <see cref="IStateMachine"/>.
+        /// </summary>
+        /// <param name="state">The state to add.</param>
+        /// <exception cref="ArgumentNullException">Is thrown when <paramref name="state"/> is a <see langword="null"/> reference.</exception>
+        void AddState(IState state);
 
-		/// <summary>
-		/// Triggers the <see cref="IStateMachine"/> to handle the given <see cref="CH.Froorider.Codeheap.StateMachine.Events.EventMessage"/> according to the actual <see cref="IState"/>.
-		/// </summary>
-		/// <param name="eventToHandle">The <see cref="EventMessage"/> to handle.</param>
-		/// <exception cref="ArgumentNullException">Is thrown when <paramref name="eventToHandle"/> is a <see langword="null"/> reference.</exception>
-		/// <exception cref="ArgumentException">Is thrown when the name of the trigger is null or empty.</exception>
-		void HandleEvent(EventMessage eventToHandle);
+        /// <summary>
+        /// Triggers the <see cref="IStateMachine"/> to handle the given <see cref="CH.Froorider.Codeheap.StateMachine.Events.EventMessage"/> according to the actual <see cref="IState"/>.
+        /// </summary>
+        /// <param name="eventToHandle">The <see cref="EventMessage"/> to handle.</param>
+        /// <exception cref="ArgumentNullException">Is thrown when <paramref name="eventToHandle"/> is a <see langword="null"/> reference.</exception>
+        /// <exception cref="ArgumentException">Is thrown when the name of the trigger is null or empty.</exception>
+        void HandleEvent(EventMessage eventToHandle);
 
-		/// <summary>
-		/// Occurs when the actual <see cref="IState"/> has been changed.
-		/// </summary>
-		event EventHandler<StateChangedEventArgs> StateChanged;
-	}
+        /// <summary>
+        /// Occurs when the actual <see cref="IState"/> has been changed.
+        /// </summary>
+        event EventHandler<StateChangedEventArgs> StateChanged;
+    }
 }

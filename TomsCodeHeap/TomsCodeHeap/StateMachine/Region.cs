@@ -19,7 +19,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ========================================================================
-          
+
 using System;
 using System.Collections.Generic;
 using CH.Froorider.Codeheap.StateMachine.States;
@@ -36,8 +36,10 @@ namespace CH.Froorider.Codeheap.StateMachine
 
         private IStateMachine stateMachineContext;
         private IState stateContext;
+        // private Region extendedRegion;
         private List<IState> states = new List<IState>();
         private List<ITransition> transitions = new List<ITransition>();
+        private List<Vertex> subvertex = new List<Vertex>();
 
         #endregion
 
@@ -83,6 +85,41 @@ namespace CH.Froorider.Codeheap.StateMachine
             }
 
             this.stateContext = context;
+        }
+
+        #endregion
+
+        #region public methods
+
+        /// <summary>
+        /// Gets the state machine this region belongs to.
+        /// </summary>
+        /// <returns>An instance of <see cref="IStateMachine"/>.</returns>
+        public IStateMachine ContainingStateMachine()
+        {
+            if (this.stateMachineContext != null)
+            {
+                return this.stateMachineContext;
+            }
+            else
+            {
+                return this.stateContext.ContainingStateMachine();
+            }
+        }
+
+        /// <summary>
+        /// Adds the vertices to this region.
+        /// </summary>
+        /// <param name="verticesToAdd">A list of <see cref="Vertex"/>'s which belongs to this region.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="verticesToAdd"/> is a <see langword="null"/> reference.</exception>
+        public void AddVertices(List<Vertex> verticesToAdd)
+        {
+            if (verticesToAdd == null)
+            {
+                throw new ArgumentNullException("verticesToAdd");
+            }
+
+            this.subvertex = verticesToAdd;
         }
 
         #endregion

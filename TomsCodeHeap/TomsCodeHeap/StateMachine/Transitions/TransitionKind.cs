@@ -22,29 +22,29 @@
 
 namespace CH.Froorider.Codeheap.StateMachine.Transitions
 {
-	/// <summary>
-	/// Enumerates the kinds of pseudo <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/>'s.
-	/// </summary>
-	public enum TransitionKind
-	{
-		/// <summary>
-		/// Default value.
-		/// </summary>
-		Undefined = 0,
+    /// <summary>
+    /// Enumerates the kinds of pseudo <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/>'s.
+    /// </summary>
+    public enum TransitionKind
+    {
+        /// <summary>
+        /// Default value.
+        /// </summary>
+        Undefined = 0,
 
-		/// <summary>
-		/// Transition is an internal transistion.
-		/// </summary>
-		Internal = 1,
+        /// <summary>
+        /// Transition is an internal transistion.
+        /// </summary>
+        Internal = 1,
 
-		/// <summary>
-		/// Transistion is a local transition.
-		/// </summary>
-		Local = 2,
+        /// <summary>
+        /// Transistion is a local transition.
+        /// </summary>
+        Local = 2,
 
-		/// <summary>
-		/// Transition is an external transition.
-		/// </summary>
-		External = 3
-	}
+        /// <summary>
+        /// Transition is an external transition.
+        /// </summary>
+        External = 3
+    }
 }

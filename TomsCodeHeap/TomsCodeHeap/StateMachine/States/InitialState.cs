@@ -20,68 +20,64 @@
 // limitations under the License.
 // ========================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using log4net;
 using CH.Froorider.Codeheap.StateMachine.Activities;
+using log4net;
 
 namespace CH.Froorider.Codeheap.StateMachine.States
 {
-	/// <summary>
-	/// Pseudo state representing the intial state of an <see cref="IStateMachine"/>.
-	/// </summary>
-	internal class InitialState : State
-	{
-		#region fields
+    /// <summary>
+    /// Pseudo state representing the intial state of an <see cref="IStateMachine"/>.
+    /// </summary>
+    internal class InitialState : State
+    {
+        #region fields
 
-		private static ILog logger = LogManager.GetLogger(typeof(InitialState));
-		private PseudoStateKind stateKind = PseudoStateKind.Initial;
+        private static ILog logger = LogManager.GetLogger(typeof(InitialState));
+        // private PseudoStateKind stateKind = PseudoStateKind.Initial;
 
-		#endregion
+        #endregion
 
-		#region Constructor
+        #region Constructor
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="InitialState"/> class.
-		/// </summary>
-		protected internal InitialState()
-			: base("InitialState")
-		{
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InitialState"/> class.
+        /// </summary>
+        protected internal InitialState()
+            : base("InitialState")
+        {
+        }
 
-		#endregion
+        #endregion
 
-		#region State implementation
+        #region State implementation
 
-		/// <summary>
-		/// Performs the entry <see cref="CH.Froorider.Codeheap.StateMachine.Activities.IActivity"/> of this <see cref="IState"/>.
-		/// </summary>
-		protected internal override void PerformEntryActivity()
-		{
-			logger.Debug("Nothing to do here");
-		}
+        /// <summary>
+        /// Performs the entry <see cref="CH.Froorider.Codeheap.StateMachine.Activities.IActivity"/> of this <see cref="IState"/>.
+        /// </summary>
+        protected internal override void PerformEntryActivity()
+        {
+            logger.Debug("Nothing to do here");
+        }
 
-		/// <summary>
-		/// Performs the do <see cref="CH.Froorider.Codeheap.StateMachine.Activities.IActivity"/> of this <see cref="IState"/>.
-		/// </summary>
-		protected internal override void PerformDoActivity()
-		{
-			if (this.activities.ContainsKey(ActivityType.Do))
-			{
-				this.activities[ActivityType.Do].PerformActivity();
-			}
-		}
+        /// <summary>
+        /// Performs the do <see cref="CH.Froorider.Codeheap.StateMachine.Activities.IActivity"/> of this <see cref="IState"/>.
+        /// </summary>
+        protected internal override void PerformDoActivity()
+        {
+            if (this.activities.ContainsKey(ActivityType.Do))
+            {
+                this.activities[ActivityType.Do].PerformActivity();
+            }
+        }
 
-		/// <summary>
-		/// Performs the exit <see cref="CH.Froorider.Codeheap.StateMachine.Activities.IActivity"/> of this <see cref="IState"/>.
-		/// </summary>
-		protected internal override void PerformExitActivity()
-		{
-			logger.Debug("Nothing to do here");
-		}
+        /// <summary>
+        /// Performs the exit <see cref="CH.Froorider.Codeheap.StateMachine.Activities.IActivity"/> of this <see cref="IState"/>.
+        /// </summary>
+        protected internal override void PerformExitActivity()
+        {
+            logger.Debug("Nothing to do here");
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

@@ -19,38 +19,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ========================================================================
-          
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using CH.Froorider.Codeheap.StateMachine.States;
 
 namespace CH.Froorider.Codeheap.StateMachine
 {
-	/// <summary>
-	/// Factory class to generate the desired <see cref="IStateMachine"/>.
-	/// </summary>
-	public static class StateMachineFactory
-	{
-		/// <summary>
-		/// Creates an instance of <see cref="IStateMachine"/>.
-		/// </summary>
-		/// <param name="owner">The owner of this created <see cref="IStateMachine"/>.</param>
-		/// <param name="startState">The <see cref="IState"/> which should be reached after initialization.</param>
-		/// <param name="name">The name of the <see cref="IStateMachine"/>.</param>
-		/// <returns>An instance of <see cref="IStateMachine"/>.</returns>
-		/// <exception cref="ArgumentNullException"> Is thrown when
-		///		<para><paramref name="owner"/> is a <see langword="null"/> reference</para>
-		///		<para>- or -</para>
-		///		<para><paramref name="startState"/> is a <see langword="null"/> reference.</para>
-		/// </exception>
-		/// <exception cref="ArgumentException">Is thrown when <paramref name="name"/> is null or empty.</exception>
-		public static IStateMachine CreateStateMachine(object owner, IState startState, string name)
-		{
-			StateMachine machine = new StateMachine(owner,name);
-			machine.AddState(startState as State);
-			return machine;
-		}
-	}
+    /// <summary>
+    /// Factory class to generate the desired <see cref="IStateMachine"/>.
+    /// </summary>
+    public static class StateMachineFactory
+    {
+        /// <summary>
+        /// Creates an instance of <see cref="IStateMachine"/>.
+        /// </summary>
+        /// <param name="owner">The owner of this created <see cref="IStateMachine"/>.</param>
+        /// <param name="startState">The <see cref="IState"/> which should be reached after initialization.</param>
+        /// <param name="name">The name of the <see cref="IStateMachine"/>.</param>
+        /// <returns>An instance of <see cref="IStateMachine"/>.</returns>
+        /// <exception cref="ArgumentNullException"> Is thrown when
+        ///		<para><paramref name="owner"/> is a <see langword="null"/> reference</para>
+        ///		<para>- or -</para>
+        ///		<para><paramref name="startState"/> is a <see langword="null"/> reference.</para>
+        /// </exception>
+        /// <exception cref="ArgumentException">Is thrown when <paramref name="name"/> is null or empty.</exception>
+        public static IStateMachine CreateStateMachine(object owner, IState startState, string name)
+        {
+            StateMachine machine = new StateMachine(owner, name);
+            machine.AddState(startState as State);
+            return machine;
+        }
+    }
 }

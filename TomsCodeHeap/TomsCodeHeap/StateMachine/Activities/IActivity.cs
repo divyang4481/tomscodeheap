@@ -22,21 +22,21 @@
 
 namespace CH.Froorider.Codeheap.StateMachine.Activities
 {
-	/// <summary>
-	/// An <see cref="IActivity"/> contains / implements the logic either an entry, do or exit action of an <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/>
-	/// should execute.
-	/// </summary>
-	public interface IActivity
-	{
-		/// <summary>
-		/// Gets the name (identifier) of this <see cref="IActivity"/>.
-		/// </summary>
-		/// <value>The name (identifier) as a string.</value>
-		string Name { get; }
+    /// <summary>
+    /// An <see cref="IActivity"/> contains / implements the logic either an entry, do or exit action of an <see cref="CH.Froorider.Codeheap.StateMachine.States.IState"/>
+    /// should execute.
+    /// </summary>
+    public interface IActivity
+    {
+        /// <summary>
+        /// Gets the name (identifier) of this <see cref="IActivity"/>.
+        /// </summary>
+        /// <value>The name (identifier) as a string.</value>
+        string Name { get; }
 
-		/// <summary>
-		/// Performs the logic this <see cref="IActivity"/> defines / implements.
-		/// </summary>
-		void PerformActivity();
-	}
+        /// <summary>
+        /// Performs the logic this <see cref="IActivity"/> defines / implements.
+        /// </summary>
+        void PerformActivity();
+    }
 }
