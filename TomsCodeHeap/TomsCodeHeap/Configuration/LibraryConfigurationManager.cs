@@ -93,8 +93,13 @@ namespace CH.Froorider.Codeheap.Configuration
 
 			// Now we are ready to do the main work
 			logger.Debug("Loading config file into XDocument");
-			XElement document = XElement.Load(XmlReader.Create(configFile), LoadOptions.None);
-			logger.Info("Loaded document: " + document.ToString());
+            XElement document;
+            using (XmlReader reader = XmlReader.Create(configFile))
+            {
+                document = XElement.Load(reader, LoadOptions.None);
+                logger.Info("Loaded document: " + document.ToString());
+            }
+			
 			IEnumerable<XElement> elements = from element in document.Elements("appSettings") select element;
 			foreach (XElement currentElement in elements)
 			{

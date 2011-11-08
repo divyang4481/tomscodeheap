@@ -119,7 +119,6 @@ namespace CH.Froorider.Codeheap.Persistence
 			using (TextReader textReader = new StreamReader(CommonFilePath + fileName + CommonFileNameExtension))
 			{
 				deserializedObject = (T)serializer.Deserialize(textReader);
-				textReader.Close();
 			}
 
 			return deserializedObject;
@@ -158,7 +157,6 @@ namespace CH.Froorider.Codeheap.Persistence
 			using (TextReader textReader = new StreamReader(filePath + fileName + extension))
 			{
 				deserializedObject = (T)serializer.Deserialize(textReader);
-				textReader.Close();
 			}
 
 			return deserializedObject;
@@ -211,7 +209,6 @@ namespace CH.Froorider.Codeheap.Persistence
 				using (TextWriter textWriter = new StreamWriter(filePath + fileName + extension))
 				{
 					serializer.Serialize(textWriter, objectToSerialize);
-					textWriter.Close();
 				}
 
 				objectToSerialize.ObjectIdentifier = fileName;

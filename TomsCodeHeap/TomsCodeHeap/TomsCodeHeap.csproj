@@ -48,9 +48,9 @@
     <CodeAnalysisRules>
     </CodeAnalysisRules>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisRuleSet>ExtendedCorrectnessRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>TomsRuleset.ruleset</CodeAnalysisRuleSet>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -64,7 +64,7 @@
     </CodeAnalysisRules>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisRuleSet>Migrated rules for TomsCodeHeap.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>TomsRuleset.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -82,9 +82,19 @@
     <Compile Include="Http\BaseHttpServiceEndpoint.cs" />
     <Compile Include="Http\SimpleHttpServer.cs" />
     <Compile Include="NotNull.cs" />
+    <Compile Include="Persistence\FileRepository.cs" />
+    <Compile Include="Persistence\IRepository.cs" />
     <Compile Include="Persistence\MD5HashGenerator.cs" />
     <Compile Include="Persistence\PersistenceManager.cs" />
+    <Compile Include="Persistence\RepositoryException.cs" />
+    <Compile Include="Persistence\RepositoryFactory.cs" />
+    <Compile Include="Persistence\RepositoryType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="StateMachine\Activities\ActivityType.cs" />
     <Compile Include="StateMachine\Activities\IActivity.cs" />
     <Compile Include="StateMachine\Events\EventMessage.cs" />
@@ -111,6 +121,9 @@
     <Compile Include="Threading\SignalSchedule.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
       <HintPath>..\..\..\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
     </Reference>
@@ -122,10 +135,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\3th Party Libs\log4net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -168,7 +177,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CodeHeapClasses.cd" />
+    <None Include="packages.config" />
     <None Include="PublicKey.key" />
     <None Include="TomsCodeHeap.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

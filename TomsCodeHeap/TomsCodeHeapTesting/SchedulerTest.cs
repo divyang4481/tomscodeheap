@@ -109,9 +109,9 @@ namespace TomsCodeHeapTesting
             Assert.IsFalse(theScheduler.Contains(scheduleToRemove));
 
             scheduleIndex = -1;
-            AssertException.Throws<ArgumentOutOfRangeException,int>(theScheduler.RemoveAt,scheduleIndex);
+            AssertException.Throws<ArgumentOutOfRangeException,int>(new ArgumentOutOfRangeException(),theScheduler.RemoveAt,scheduleIndex);
             scheduleIndex = theScheduler.Count + 1;
-            AssertException.Throws<ArgumentOutOfRangeException, int>(theScheduler.RemoveAt, scheduleIndex);
+            AssertException.Throws<ArgumentOutOfRangeException, int>(new ArgumentOutOfRangeException(),theScheduler.RemoveAt, scheduleIndex);
         }
 
         /// <summary>

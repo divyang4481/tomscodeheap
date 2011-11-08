@@ -101,28 +101,26 @@ namespace CH.Froorider.Codeheap.Persistence
 		/// <exception cref="SecurityException">Is thrown when the caller has not the needed permissions to serialize the object to the stream.</exception>
 		private static byte[] ObjectToByteArray(object objectToSerialize)
 		{
-			MemoryStream fs = new MemoryStream();
-			BinaryFormatter formatter = new BinaryFormatter();
+            using (MemoryStream fs = new MemoryStream())
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
 
-			try
-			{
-				formatter.Serialize(fs, objectToSerialize);
-				return fs.ToArray();
-			}
-			catch (SerializationException se)
-			{
-				Console.WriteLine("Error occured during serialization. Message: " + se.Message);
-				throw;
-			}
-			catch (SecurityException sece)
-			{
-				Console.WriteLine("Error occured during serialization. Message: " + sece.Message);
-				throw;
-			}
-			finally
-			{
-				fs.Close();
-			}
+                try
+                {
+                    formatter.Serialize(fs, objectToSerialize);
+                    return fs.ToArray();
+                }
+                catch (SerializationException se)
+                {
+                    Console.WriteLine("Error occured during serialization. Message: " + se.Message);
+                    throw;
+                }
+                catch (SecurityException sece)
+                {
+                    Console.WriteLine("Error occured during serialization. Message: " + sece.Message);
+                    throw;
+                }
+            }
 		}
 
 		/// <summary>
@@ -135,31 +133,33 @@ namespace CH.Froorider.Codeheap.Persistence
 		/// <exception cref="ObjectDisposedException">Is thrown when the byte array has already been disposed.</exception>
 		private static string ComputeHash(byte[] objectAsBytes)
 		{
-			MD5 md5 = new MD5CryptoServiceProvider();
-			try
-			{
-				byte[] result = md5.ComputeHash(objectAsBytes);
+            using (MD5 md5 = new MD5CryptoServiceProvider())
+            {
+                try
+                {
+                    byte[] result = md5.ComputeHash(objectAsBytes);
 
-				// Build the final string by converting each byte
-				// into hex and appending it to a StringBuilder
-				StringBuilder sb = new StringBuilder();
-				for (int i = 0; i < result.Length; i++)
-				{
-					sb.Append(result[i].ToString("X2", CultureInfo.InvariantCulture));
-				}
+                    // Build the final string by converting each byte
+                    // into hex and appending it to a StringBuilder
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < result.Length; i++)
+                    {
+                        sb.Append(result[i].ToString("X2", CultureInfo.InvariantCulture));
+                    }
 
-				return sb.ToString();
-			}
-			catch (ArgumentNullException ane)
-			{
-				Console.WriteLine("Hash has not been generated. Cause: " + ane.Message);
-				throw;
-			}
-			catch (ObjectDisposedException ode)
-			{
-				Console.WriteLine("Hash has not been generated. Cause: " + ode.Message);
-				throw;
-			}
+                    return sb.ToString();
+                }
+                catch (ArgumentNullException ane)
+                {
+                    Console.WriteLine("Hash has not been generated. Cause: " + ane.Message);
+                    throw;
+                }
+                catch (ObjectDisposedException ode)
+                {
+                    Console.WriteLine("Hash has not been generated. Cause: " + ode.Message);
+                    throw;
+                }
+            }
 		}
 
 		#endregion

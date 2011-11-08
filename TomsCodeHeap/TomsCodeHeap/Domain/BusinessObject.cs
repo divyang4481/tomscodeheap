@@ -75,7 +75,7 @@ namespace CH.Froorider.Codeheap.Domain
 		/// <remarks>
 		/// This constructor is needed for the use with XmlSerializer.
 		/// </remarks>
-		public BusinessObject()
+		protected BusinessObject()
 		{
 		}
 
