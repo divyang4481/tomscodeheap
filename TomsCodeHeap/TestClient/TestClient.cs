@@ -7,9 +7,37 @@ using System.ServiceModel;
 
 namespace TestClient
 {
-    public class TestClient : ClientBase<IProtocol>
+    using System.ServiceModel.Channels;
+
+    public class TestClient : ClientBase<IProtocol>, IProtocol
     {
-        ChannelFactory<IProtocol> factory = new ChannelFactory<IProtocol>();
-        
+        public TestClient()
+        {
+        }
+
+        public TestClient(string endpointConfigurationName) :
+            base(endpointConfigurationName)
+        {
+        }
+
+        public TestClient(string endpointConfigurationName, string remoteAddress) :
+            base(endpointConfigurationName, remoteAddress)
+        {
+        }
+
+        public TestClient(string endpointConfigurationName, EndpointAddress remoteAddress) :
+            base(endpointConfigurationName, remoteAddress)
+        {
+        }
+
+        public TestClient(Binding binding, EndpointAddress remoteAddress) :
+            base(binding, remoteAddress)
+        {
+        }
+
+        public void ProcessMessage()
+        {
+            base.Channel.ProcessMessage();
+        }
     }
 }

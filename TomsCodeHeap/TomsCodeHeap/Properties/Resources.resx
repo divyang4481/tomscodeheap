@@ -98,4 +98,19 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
+    <data name="FilepathCannotBeNull">
+        <value xml:space="preserve">Filepath cannot be null.</value>
+    </data>
+    <data name="ExtensionCannotBeNull">
+        <value xml:space="preserve">Extension cannot be null.</value>
+    </data>
+    <data name="FilenameCannotBeNullOrEmpty">
+        <value xml:space="preserve">Filename cannot be null or empty.</value>
+    </data>
+    <data name="FilePathCannotBeNullOrEmpty">
+        <value xml:space="preserve">FilePath cannot be null or empty.</value>
+    </data>
+    <data name="ExtensionCannotBeNullOrEmpty">
+        <value xml:space="preserve">Extension cannot be null or empty.</value>
+    </data>
 </root>
