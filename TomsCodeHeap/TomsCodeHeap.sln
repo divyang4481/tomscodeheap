@@ -8,9 +8,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		IDisposable.snippet = IDisposable.snippet
 		3th Party Libs\LICENSE-2.0.txt = 3th Party Libs\LICENSE-2.0.txt
 		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
+		TomsCodeHeap.vsmdi = TomsCodeHeap.vsmdi
 		TomsCodeHeap1.vsmdi = TomsCodeHeap1.vsmdi
 		TomsCodeHeap\TomsRuleset.ruleset = TomsCodeHeap\TomsRuleset.ruleset
-		TomsCodeHeap.vsmdi = TomsCodeHeap.vsmdi
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomsCodeHeap", "TomsCodeHeap\TomsCodeHeap.csproj", "{109A8D24-D00F-4D41-B668-F6222CF56D50}"
@@ -83,6 +83,7 @@ Global
 		{25086065-B3C9-4407-82B5-4C204D2139E7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{25086065-B3C9-4407-82B5-4C204D2139E7}.Release|x86.ActiveCfg = Release|Any CPU
 		{FDA1E63A-571A-472E-83EA-30186338D7D7}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{FDA1E63A-571A-472E-83EA-30186338D7D7}.Debug|Any CPU.Build.0 = Debug|x86
 		{FDA1E63A-571A-472E-83EA-30186338D7D7}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{FDA1E63A-571A-472E-83EA-30186338D7D7}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{FDA1E63A-571A-472E-83EA-30186338D7D7}.Debug|x86.ActiveCfg = Debug|x86
@@ -93,6 +94,7 @@ Global
 		{FDA1E63A-571A-472E-83EA-30186338D7D7}.Release|x86.ActiveCfg = Release|x86
 		{FDA1E63A-571A-472E-83EA-30186338D7D7}.Release|x86.Build.0 = Release|x86
 		{793DECC6-6024-4FAA-9BE3-72EE6C1FC92F}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{793DECC6-6024-4FAA-9BE3-72EE6C1FC92F}.Debug|Any CPU.Build.0 = Debug|x86
 		{793DECC6-6024-4FAA-9BE3-72EE6C1FC92F}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{793DECC6-6024-4FAA-9BE3-72EE6C1FC92F}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{793DECC6-6024-4FAA-9BE3-72EE6C1FC92F}.Debug|x86.ActiveCfg = Debug|x86

@@ -1,7 +1,6 @@
 ﻿using CH.Froorider.Codeheap.StateMachine;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using CH.Froorider.Codeheap.StateMachine.States;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 namespace TomsCodeHeapTesting

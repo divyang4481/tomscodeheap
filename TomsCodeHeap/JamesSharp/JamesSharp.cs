@@ -20,14 +20,14 @@
 // limitations under the License.
 // ========================================================================
 
-using System;
-using System.ServiceModel;
-using CH.Froorider.JamesSharpContracts.Protocols;
-using log4net;
-
 namespace CH.Froorider.JamesSharp
 {
-    using System.ServiceModel.Description;
+    using System;
+    using System.ComponentModel.Composition;
+    using System.ComponentModel.Composition.Hosting;
+    using CH.Froorider.JamesSharp.Server;
+    using CH.Froorider.JamesSharpContracts.Protocols;
+    using log4net;
 
     /// <summary>
     /// Main loop of the server. Starts the server and loads all extensions.
@@ -35,33 +35,40 @@ namespace CH.Froorider.JamesSharp
     public class JamesSharp
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(JamesSharp));
+        private CompositionContainer _container;
+
+        [Import(typeof(IProtocol))]
+        private IProtocol _protocol;
 
         public void StartUp()
         {
-            _logger.Info("Starting James Sharp");
-            ServiceHost host;
-            using (host = new ServiceHost(typeof(BaseProtocol), new Uri("net.tcp://localhost:25")))
+            var catalog = new AggregateCatalog();
+            catalog.Catalogs.Add(new AssemblyCatalog(typeof(IProtocol).Assembly));
+
+            //Create the CompositionContainer with the parts in the catalog
+            _container = new CompositionContainer(catalog);
+
+            //Fill the imports of this object
+            try
             {
-                ServiceMetadataBehavior smb = host.Description.Behaviors.Find<ServiceMetadataBehavior>();
-                if (smb == null)
-                {
-                    host.Description.Behaviors.Add(new ServiceMetadataBehavior());
-                }
-
-                // Add MEX endpoint
-                host.AddServiceEndpoint(typeof(IMetadataExchange), MetadataExchangeBindings.CreateMexTcpBinding(), "mex");
-
-                // Add application endpoint
-                NetTcpBinding tcpBinding = new NetTcpBinding();
-                tcpBinding.Security.Mode = SecurityMode.None;
-                //WSHttpBinding httpBinding = new WSHttpBinding { Security = new WSHttpSecurity { Mode = SecurityMode.None } };
-                host.AddServiceEndpoint(typeof(IProtocol), tcpBinding, "");
-
-                _logger.Info("Starting host on port 25");
-                host.Open();
-                foreach (var se in host.Description.Endpoints)
-                    _logger.InfoFormat("Service started on A: {0}, B: {1}, C: {2}", se.Address, se.Binding.Name, se.Contract.Name);
+                _logger.Info("Filling the catalog.");
+                _container.ComposeParts(this);
             }
+            catch (CompositionException compositionException)
+            {
+                Console.WriteLine(compositionException.ToString());
+            }
+
+
+            TcpServer server = new TcpServer(_protocol, 25);
+            _logger.Info("Starting server");
+            server.Start();
+            _logger.Info("\nHit enter to continue...");
+            Console.ReadLine();
+            _logger.Info("Stopping server.");
+            server.Stop();
+            _logger.Info("Hit enter to exit.");
+            Console.ReadLine();
         }
     }
 }

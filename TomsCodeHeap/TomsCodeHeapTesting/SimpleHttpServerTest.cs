@@ -19,13 +19,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ========================================================================
-          
+
 using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CH.Froorider.Codeheap.Http;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 namespace TomsCodeHeapTesting

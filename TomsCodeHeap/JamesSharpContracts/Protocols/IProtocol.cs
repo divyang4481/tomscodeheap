@@ -1,16 +1,15 @@
 ﻿namespace CH.Froorider.JamesSharpContracts.Protocols
 {
-    using System.ServiceModel;
-    using System;
+    using System.Net.Sockets;
 
     /// <summary>
     /// Defines the base things you can do with a protocol.
     /// Protocols are exported, so they can be imported by MEF and added to the servers functionality.
     /// </summary>
-    [ServiceContract]
     public interface IProtocol
     {
-        [OperationContract]
-        void ProcessMessage();
+        NetworkStream StreamToProcess { get; set; }
+
+        void ProcessConnection(object message);
     }
 }

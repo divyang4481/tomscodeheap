@@ -23,7 +23,6 @@
 using System;
 using System.Collections.Generic;
 using CH.Froorider.Codeheap.Testing;
-using CH.Froorider.Codeheap.Persistence;
 using CH.Froorider.Codeheap.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

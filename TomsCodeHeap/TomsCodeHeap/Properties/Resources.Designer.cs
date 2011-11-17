@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CH.Froorider.Codeheap.Properties {
-    using System;
-    
-    
+namespace CH.Froorider.Codeheap.Properties
+{
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>

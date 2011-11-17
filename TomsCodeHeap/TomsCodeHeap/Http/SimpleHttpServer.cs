@@ -218,7 +218,7 @@ namespace CH.Froorider.Codeheap.Http
                 // so we filter this out here.
                 if (this.serviceEndpoint.GetType().Equals(typeof(BaseHttpServiceEndpoint)))
                 {
-                    BaseHttpServiceEndpoint endpoint = (BaseHttpServiceEndpoint)this.serviceEndpoint;
+                    var endpoint = this.serviceEndpoint;
                     connection.Response.SendChunked = false;
                     endpoint.Context = connection;
 
@@ -227,7 +227,7 @@ namespace CH.Froorider.Codeheap.Http
                 }
                 else
                 {
-                    SimpleHttpServer.logger.WarnFormat("Unsupported service endpoint type. Type: {0}", this.serviceEndpoint.GetType().ToString());
+                    SimpleHttpServer.logger.WarnFormat("Unsupported service endpoint type. Type: {0}", this.serviceEndpoint.GetType());
                 }
 
                 this.listenForConnection.Set();
@@ -242,7 +242,7 @@ namespace CH.Froorider.Codeheap.Http
 
         #region IDisposable
 
-        private bool disposed;
+        private bool _disposed;
 
         /// <summary>
         /// Disposes the unmanaged ressources.
@@ -250,19 +250,15 @@ namespace CH.Froorider.Codeheap.Http
         /// <param name="disposing">Always true.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!this._disposed)
             {
                 if (disposing)
                 {
-                    // For AutoResetEvent it is not necessary to implement the Dispose-Pattern. 
-                    // See MSDN -> WaitHandle class; But we do it here to satisfy CA1063
-                    this.stopThreadEvent.Close();
-                    this.listenForConnection.Close();
                     this.httpListener.Close();
                 }
             }
 
-            this.disposed = true;
+            this._disposed = true;
         }
 
         /// <summary>

@@ -19,14 +19,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ========================================================================
-          
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using log4net;
-using CH.Froorider.Codeheap.Domain;
 using System.IO;
+using System.Linq;
+using CH.Froorider.Codeheap.Domain;
+using log4net;
 
 namespace CH.Froorider.Codeheap.Persistence
 {

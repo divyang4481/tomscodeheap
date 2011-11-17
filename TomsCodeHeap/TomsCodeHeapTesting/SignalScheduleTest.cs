@@ -1,7 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading;
+﻿using System;
 using CH.Froorider.Codeheap.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TomsCodeHeapTesting
 {

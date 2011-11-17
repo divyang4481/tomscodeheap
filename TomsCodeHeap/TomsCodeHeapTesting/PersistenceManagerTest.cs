@@ -1,7 +1,5 @@
 ﻿using CH.Froorider.Codeheap.Persistence;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CH.Froorider.Codeheap.Domain;
-using System;
 
 namespace TomsCodeHeapTesting
 {
