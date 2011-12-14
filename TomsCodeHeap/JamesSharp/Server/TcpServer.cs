@@ -104,7 +104,7 @@
                 _tcpListener.Start();
                 _listeningForConnectionLoop = new Thread(this.Execute) { Name = _serviceEndpoint.TypeOfProtocol.ToString() };
                 _listeningForConnectionLoop.Start();
-                _logger.Info("TCP server started.");
+                _logger.Info(_serviceEndpoint.TypeOfProtocol.ToString()+" server started.");
             }
             catch (SocketException se)
             {

@@ -8,8 +8,7 @@
     /// <summary>
     /// Base implemenation of a protocol. Is used by the host to load and start the protocol.
     /// </summary>
-    [Export(typeof(IProtocol))]
-    public class BaseProtocol : IProtocol
+    public abstract class BaseProtocol : IProtocol
     {
         private NetworkStream _stream;
         private byte[] _buffer = new byte[1024];
@@ -29,7 +28,7 @@
             }
         }
 
-        public ProtocolType TypeOfProtocol
+        public virtual ProtocolType TypeOfProtocol
         {
             get
             {
@@ -37,7 +36,7 @@
             }
         }
 
-        public void ProcessConnection(object message)
+        public virtual void ProcessConnection(object message)
         {
             Console.WriteLine("Processing Message.");
             StringBuilder completeMessage = new StringBuilder();

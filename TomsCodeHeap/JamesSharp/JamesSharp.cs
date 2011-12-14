@@ -43,7 +43,7 @@ namespace CH.Froorider.JamesSharp
         public void StartUp()
         {
             var catalog = new AggregateCatalog();
-            catalog.Catalogs.Add(new AssemblyCatalog(typeof(IProtocol).Assembly));
+            catalog.Catalogs.Add(new DirectoryCatalog("C:\\Extensions"));
 
             //Create the CompositionContainer with the parts in the catalog
             _container = new CompositionContainer(catalog);
