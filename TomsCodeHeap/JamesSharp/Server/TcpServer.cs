@@ -8,6 +8,9 @@
     using CH.Froorider.JamesSharpContracts.Protocols;
     using log4net;
 
+    /// <summary>
+    /// Implementation of a basic TCP Server. Incoming connections are "routed" to the protocol implemementation.
+    /// </summary>
     internal class TcpServer : IDisposable
     {
         #region constants
@@ -99,7 +102,7 @@
             {
                 _logger.Info("Starting TCP server.");
                 _tcpListener.Start();
-                _listeningForConnectionLoop = new Thread(this.Execute) { Name = "TCP Server" };
+                _listeningForConnectionLoop = new Thread(this.Execute) { Name = _serviceEndpoint.TypeOfProtocol.ToString() };
                 _listeningForConnectionLoop.Start();
                 _logger.Info("TCP server started.");
             }

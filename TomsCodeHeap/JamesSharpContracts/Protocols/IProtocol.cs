@@ -10,6 +10,8 @@
     {
         NetworkStream StreamToProcess { get; set; }
 
+        ProtocolType TypeOfProtocol { get; }
+
         void ProcessConnection(object message);
     }
 }

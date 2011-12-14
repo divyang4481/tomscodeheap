@@ -29,6 +29,14 @@
             }
         }
 
+        public ProtocolType TypeOfProtocol
+        {
+            get
+            {
+                return ProtocolType.TcpProtocol;
+            }
+        }
+
         public void ProcessConnection(object message)
         {
             Console.WriteLine("Processing Message.");
