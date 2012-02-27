@@ -28,22 +28,36 @@ namespace CH.Froorider.JamesSharp
     using CH.Froorider.JamesSharp.Server;
     using CH.Froorider.JamesSharpContracts.Protocols;
     using log4net;
+    using System.Configuration;
+    using System.Collections;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Main loop of the server. Starts the server and loads all extensions.
     /// </summary>
     public class JamesSharp
     {
+        private static readonly string _defaultDirectoryPath = "C:\\Extensions";
         private static readonly ILog _logger = LogManager.GetLogger(typeof(JamesSharp));
         private CompositionContainer _container;
 
-        [Import(typeof(IProtocol))]
-        private IProtocol _protocol;
+        [ImportMany(typeof(IProtocol))]
+        private IEnumerable<Lazy<IProtocol, IProtocolData>> _protocols;
+        private IList<TcpServer> _servers = new List<TcpServer>();
 
         public void StartUp()
         {
+            _logger.Info("Booting JamesSharp");
+
+            string extensionDirectory = ConfigurationManager.AppSettings["ExtensionsDirectory"];
+            if (string.IsNullOrEmpty(extensionDirectory))
+            {
+                extensionDirectory = _defaultDirectoryPath;
+            }
+            _logger.Debug("Loading extensions from: " + extensionDirectory);
+
             var catalog = new AggregateCatalog();
-            catalog.Catalogs.Add(new DirectoryCatalog("C:\\Extensions"));
+            catalog.Catalogs.Add(new DirectoryCatalog(extensionDirectory));
 
             //Create the CompositionContainer with the parts in the catalog
             _container = new CompositionContainer(catalog);
@@ -59,16 +73,27 @@ namespace CH.Froorider.JamesSharp
                 Console.WriteLine(compositionException.ToString());
             }
 
+            foreach (var protocol in _protocols)
+            {
+                TcpServer server = new TcpServer(protocol.Value, protocol.Metadata.PortNumber);
+                _logger.Info("Starting " + protocol.Metadata.ProtocolName + " server.");
+                server.Start();
+                _servers.Add(server);
+            }
 
-            TcpServer server = new TcpServer(_protocol, 25);
-            _logger.Info("Starting server");
-            server.Start();
-            _logger.Info("\nHit enter to continue...");
+            _logger.Info("Hit enter to continue...");
             Console.ReadLine();
-            _logger.Info("Stopping server.");
-            server.Stop();
+
+            foreach (var server in _servers)
+            {
+                _logger.Info("Stopping server.");
+                server.Stop();
+            }
+
             _logger.Info("Hit enter to exit.");
             Console.ReadLine();
+
+            _logger.Info("Shutting down JamesSharp");
         }
     }
 }
