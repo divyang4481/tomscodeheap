@@ -12,6 +12,7 @@ namespace JamesSharpSmtp
     public class SmtpMock : BaseProtocol
     {
         private byte[] _buffer = new byte[1024];
+        private ReplyCodes _codeTabel = new ReplyCodes();
 
         public override ProtocolType TypeOfProtocol
         {
@@ -24,6 +25,24 @@ namespace JamesSharpSmtp
         public override void ProcessConnection(object message)
         {
             Console.WriteLine("James Sharp SMTP Server is processing message.");
+
+            WriteToStream(_codeTabel.GetMessageForCode(220));
+            
+            string command = this.ReadFromStream();
+            Console.WriteLine("Recieved command: " + command);
+
+            StreamToProcess.Close();
+        }
+
+        private void WriteToStream(string message)
+        {
+            _buffer = Encoding.ASCII.GetBytes(message);
+            StreamToProcess.Write(_buffer, 0, _buffer.Length);
+           
+        }
+
+        private string ReadFromStream()
+        {
             StringBuilder completeMessage = new StringBuilder();
             // Incoming message may be larger than the buffer size.
             do
@@ -34,10 +53,7 @@ namespace JamesSharpSmtp
             while (StreamToProcess.DataAvailable);
 
             Console.WriteLine("Received message: " + completeMessage);
-
-            _buffer = Encoding.ASCII.GetBytes("HELO you!");
-            StreamToProcess.Write(_buffer, 0, _buffer.Length);
-            StreamToProcess.Close();
+            return completeMessage.ToString();
         }
     }
 }

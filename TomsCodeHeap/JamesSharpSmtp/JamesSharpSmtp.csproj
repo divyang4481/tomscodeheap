@@ -52,7 +52,9 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SmtpMock.cs" />
+    <Compile Include="SmtpProtocol\ReplyCodes.cs" />
     <Compile Include="SmtpProtocol\SmtpProtocolType.cs" />
+    <Compile Include="SmtpProtocol\SmtpVerbs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JamesSharpContracts\JamesSharpContracts.csproj">
