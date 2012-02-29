@@ -12,8 +12,8 @@ namespace JamesSharpSmtp
     public class SmtpMock : BaseProtocol
     {
         private byte[] _buffer = new byte[1024];
-        private ReplyCodes _codeTabel = new ReplyCodes();
-
+        private ReplyCodes _codeTable = new ReplyCodes();
+       
         public override ProtocolType TypeOfProtocol
         {
             get
@@ -26,7 +26,7 @@ namespace JamesSharpSmtp
         {
             Console.WriteLine("James Sharp SMTP Server is processing message.");
 
-            WriteToStream(_codeTabel.GetMessageForCode(220));
+            WriteToStream(_codeTable.GetMessageForCode(220));
             
             string command = this.ReadFromStream();
             Console.WriteLine("Recieved command: " + command);
