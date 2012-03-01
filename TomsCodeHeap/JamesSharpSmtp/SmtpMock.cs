@@ -25,27 +25,23 @@ namespace JamesSharpSmtp
 
         public override void ProcessConnection(object message)
         {
-            using (StreamToProcess)
-            {
-                Console.WriteLine("James Sharp SMTP Server is processing message.");
 
-                WriteToStream(_codeTable.GetMessageForCode(220));
+            Console.WriteLine("James Sharp SMTP Server is processing message.");
 
-                string command = this.ReadFromStream();
-                Console.WriteLine("Recieved command: " + command);
+            WriteToStream(_codeTable.GetMessageForCode(220));
 
-                StreamToProcess.Close();
-            }
+            string command = this.ReadFromStream();
+            Console.WriteLine("Recieved command: " + command);
+
+            StreamToProcess.Close();
         }
 
         private void WriteToStream(string message)
         {
             try
             {
-                using (var writer = new StreamWriter(StreamToProcess))
-                {
-                    writer.WriteLine(message);
-                }
+                _buffer = Encoding.ASCII.GetBytes(message);
+                StreamToProcess.Write(_buffer, 0, _buffer.Length);
             }
             catch (Exception e)
             {
@@ -60,20 +56,19 @@ namespace JamesSharpSmtp
             StringBuilder completeMessage = new StringBuilder();
             try
             {
-                using (var reader = new StreamReader(StreamToProcess))
+                do
                 {
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        completeMessage.Append(line);
-                    }
+                    int numberOfBytesRead = StreamToProcess.Read(_buffer, 0, _buffer.Length);
+                    completeMessage.AppendFormat("{0}", Encoding.ASCII.GetString(_buffer, 0, numberOfBytesRead));
                 }
+                while (StreamToProcess.DataAvailable);
             }
             catch (Exception e)
             {
                 // Let the user know what went wrong.
                 Console.WriteLine("The stream could not be read:");
                 Console.WriteLine(e.Message);
+                return string.Empty;
             }
 
             Console.WriteLine("Received message: " + completeMessage);
