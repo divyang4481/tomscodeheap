@@ -2,8 +2,8 @@
 // File:     BusinessObject.cs
 //
 // Author:   $Author$
-// Date:     $LastChangedDate$
-// Revision: $Revision$
+// Date:     $LastChangedDate: 2011-11-08 22:31:40 +0100 (Di, 08 Nov 2011) $
+// Revision: $Revision: 79 $
 // ========================================================================
 // Copyright [2009] [$Author$]
 //

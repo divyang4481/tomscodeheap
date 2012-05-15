@@ -1,11 +1,11 @@
 ﻿// ========================================================================
 // File:     IScheduler.cs
 // 
-// Author:   $Author: froorider@gmail.com $
+// Author:   $Author$
 // Date:     $LastChangedDate$
 // Revision: $Revision: 13 $
 // ========================================================================
-// Copyright [2009] [$Author: froorider@gmail.com $]
+// Copyright [2009] [$Author$]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

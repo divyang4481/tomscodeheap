@@ -2,8 +2,8 @@
 // File:     ActivityType.cs
 // 
 // Author:   $Author$
-// Date:     $LastChangedDate$
-// Revision: $Revision$
+// Date:     $LastChangedDate: 2010-11-24 18:06:57 +0100 (Mi, 24 Nov 2010) $
+// Revision: $Revision: 78 $
 // ========================================================================
 // Copyright [2010] [$Author$]
 // 

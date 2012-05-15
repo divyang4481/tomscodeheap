@@ -2,8 +2,8 @@
 // File:     BaseHttpServiceEndpoint.cs
 //
 // Author:   $Author$
-// Date:     $LastChangedDate$
-// Revision: $Revision$
+// Date:     $LastChangedDate: 2011-11-16 15:16:30 +0100 (Mi, 16 Nov 2011) $
+// Revision: $Revision: 86 $
 // ========================================================================
 // Copyright [2009] [$Author$]
 //

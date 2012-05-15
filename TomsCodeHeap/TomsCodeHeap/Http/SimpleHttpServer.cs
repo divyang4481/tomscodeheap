@@ -2,8 +2,8 @@
 // File:     SimpleHttpServer.cs
 //
 // Author:   $Author$
-// Date:     $LastChangedDate$
-// Revision: $Revision$
+// Date:     $LastChangedDate: 2011-11-17 18:08:21 +0100 (Do, 17 Nov 2011) $
+// Revision: $Revision: 87 $
 // ========================================================================
 // Copyright [$Year] [$Author$]
 //

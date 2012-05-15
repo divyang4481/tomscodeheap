@@ -2,8 +2,8 @@
 // File:     ISchedulerProvider.cs
 // 
 // Author:   $Author$
-// Date:     $LastChangedDate$
-// Revision: $Revision$
+// Date:     $LastChangedDate: 2009-10-08 17:48:00 +0200 (Do, 08 Okt 2009) $
+// Revision: $Revision: 60 $
 // ========================================================================
 // Copyright [2009] [$Author$]
 // 

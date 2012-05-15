@@ -2,8 +2,8 @@
 // File:     Scheduler.cs
 // 
 // Author:   $Author$
-// Date:     $LastChangedDate$
-// Revision: $Revision$
+// Date:     $LastChangedDate: 2010-09-14 11:10:11 +0200 (Di, 14 Sep 2010) $
+// Revision: $Revision: 72 $
 // ========================================================================
 // Copyright [2009] [$Author$]
 // 
