@@ -19,7 +19,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ========================================================================
-          
+
 using System;
 using System.Collections.Generic;
 using CH.Froorider.Codeheap.Domain;
@@ -84,7 +84,7 @@ namespace CH.Froorider.Codeheap.Persistence
         /// </summary>
         /// <returns>An instance of IEnumerable which can be used to identify <see cref="BusinessObject"/>s.</returns>
         /// <exception cref="RepositoryException">Is thrown when there are no identifiers at all.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification="In this case a property"+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "In this case a property" +
             "would  not fit to the usage of the repository.")]
         IEnumerable<string> GetIdentifiers();
     }
