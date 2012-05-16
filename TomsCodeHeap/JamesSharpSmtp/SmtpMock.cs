@@ -33,6 +33,7 @@ namespace JamesSharpSmtp
             string command = this.ReadFromStream();
             Console.WriteLine("Recieved command: " + command);
 
+            WriteToStream(_codeTable.GetMessageForCode(221));
             StreamToProcess.Close();
         }
 

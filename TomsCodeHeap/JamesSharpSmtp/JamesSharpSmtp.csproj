@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SmtpMock.cs" />
+    <Compile Include="SmtpProtocol\Commands\HeloCommand.cs" />
     <Compile Include="SmtpProtocol\Commands\ICommand.cs" />
     <Compile Include="SmtpProtocol\ReplyCodes.cs" />
     <Compile Include="SmtpProtocol\SmtpProcessor.cs" />
