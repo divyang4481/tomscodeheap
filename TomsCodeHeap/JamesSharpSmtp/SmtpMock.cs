@@ -37,12 +37,13 @@ namespace JamesSharpSmtp
             StreamToProcess.Close();
         }
 
-        private void WriteToStream(string message)
+        internal void WriteToStream(string message)
         {
             try
             {
-                _buffer = Encoding.ASCII.GetBytes(message);
-                StreamToProcess.Write(_buffer, 0, _buffer.Length);
+                byte[] encodedMessage = Encoding.ASCII.GetBytes(message);
+                StreamToProcess.Write(encodedMessage, 0, encodedMessage.Length);
+                StreamToProcess.Flush();
             }
             catch (Exception e)
             {
@@ -52,13 +53,14 @@ namespace JamesSharpSmtp
             }
         }
 
-        private string ReadFromStream()
+        internal string ReadFromStream()
         {
             StringBuilder completeMessage = new StringBuilder();
             try
             {
                 do
                 {
+                    _buffer.Initialize();
                     int numberOfBytesRead = StreamToProcess.Read(_buffer, 0, _buffer.Length);
                     completeMessage.AppendFormat("{0}", Encoding.ASCII.GetString(_buffer, 0, numberOfBytesRead));
                 }
