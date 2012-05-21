@@ -8,8 +8,11 @@ namespace JamesSharpSmtp.SmtpProtocol.Commands
     /// <summary>
     /// Contract for an command implementation.
     /// </summary>
-    interface ICommand
+    internal interface ICommand
     {
-        void Execute(string data);
+        string Request { get; set; }
+        string Response { get; set; }
+        bool MoreMessagesExpected();
+        void Execute();
     }
 }

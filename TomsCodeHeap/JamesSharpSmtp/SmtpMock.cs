@@ -25,16 +25,24 @@ namespace JamesSharpSmtp
 
         public override void ProcessConnection(object message)
         {
-
+            SmtpProcessor processor = new SmtpProcessor();
             Console.WriteLine("James Sharp SMTP Server is processing message.");
 
             WriteToStream(_codeTable.GetMessageForCode(220));
 
-            string command = this.ReadFromStream();
-            Console.WriteLine("Recieved command: " + command);
+            do
+            {
+                string request = this.ReadFromStream();
+                Console.WriteLine("Recieved command: " + request);
+                string response = processor.ProcessMessage(request);
+                WriteToStream(response);
+            }
+            while (!processor.CanSessionBeEnded);
 
+            WriteToStream("\n");
             WriteToStream(_codeTable.GetMessageForCode(221));
             StreamToProcess.Close();
+            Console.WriteLine("Closed channel.");
         }
 
         internal void WriteToStream(string message)

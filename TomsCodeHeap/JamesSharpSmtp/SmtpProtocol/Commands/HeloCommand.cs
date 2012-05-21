@@ -5,13 +5,20 @@ using System.Text;
 
 namespace JamesSharpSmtp.SmtpProtocol.Commands
 {
-    internal class HeloCommand : ICommand
+    internal class HeloCommand : Command
     {
+
         #region ICommand Members
 
-        public void Execute(string data)
+        public override void Execute()
         {
-            Console.WriteLine(data);
+            Console.WriteLine("Helo Command called");
+            Response = _replyCodes.GetMessageForCode(250);
+        }
+
+        public override bool MoreMessagesExpected()
+        {
+            return true;
         }
 
         #endregion
