@@ -39,8 +39,6 @@ namespace JamesSharpSmtp
             }
             while (!processor.CanSessionBeEnded);
 
-            WriteToStream("\n");
-            WriteToStream(_codeTable.GetMessageForCode(221));
             StreamToProcess.Close();
             Console.WriteLine("Closed channel.");
         }

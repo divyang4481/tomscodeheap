@@ -66,6 +66,8 @@
     <Compile Include="SmtpProtocol\Commands\Command.cs" />
     <Compile Include="SmtpProtocol\Commands\HeloCommand.cs" />
     <Compile Include="SmtpProtocol\Commands\ICommand.cs" />
+    <Compile Include="SmtpProtocol\Commands\NoopCommand.cs" />
+    <Compile Include="SmtpProtocol\Commands\QuitCommand.cs" />
     <Compile Include="SmtpProtocol\ReplyCodes.cs" />
     <Compile Include="SmtpProtocol\SmtpProcessor.cs" />
     <Compile Include="SmtpProtocol\SmtpProtocolType.cs" />

@@ -19,12 +19,14 @@ namespace JamesSharpSmtp.SmtpProtocol
             var heloCommand = new HeloCommand();
             commandMap.Add(SmtpVerbs.HELO, new HeloCommand());
             commandMap.Add(SmtpVerbs.EHLO, new HeloCommand());
+            commandMap.Add(SmtpVerbs.QUIT, new QuitCommand());
+            commandMap.Add(SmtpVerbs.NOOP, new NoopCommand());
         }
 
         public string ProcessMessage(string message)
         {
             string response = _replyCodes.GetMessageForCode(502);
-            CanSessionBeEnded = true;
+
             foreach (SmtpVerbs verb in Enum.GetValues(typeof(SmtpVerbs)))
             {
                 var verbName = Enum.GetName(typeof(SmtpVerbs), verb);
