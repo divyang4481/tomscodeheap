@@ -1,37 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace JamesSharpSmtp.SmtpProtocol.Commands
+﻿namespace JamesSharpSmtp.SmtpProtocol.Commands
 {
-    abstract class Command : ICommand
+    internal abstract class Command : ICommand
     {
-        private string _request;
-        private string _response;
+        #region Constants and Fields
+
         protected ReplyCodes _replyCodes = new ReplyCodes();
-        #region ICommand Members
 
-        public string Request
-        {
-            get
-            {
-                return _request;
-            }
-            set
-            {
-                _request = value;
-            }
-        }
+        #endregion
 
-        public string Response
-        {
-            get { return _response; }
-            set
-            {
-                _response = value;
-            }
-        }
+        #region Public Properties
+
+        public string Request { get; set; }
+
+        public string Response { get; set; }
+
+        #endregion
+
+        #region Public Methods
+
+        public abstract void Execute();
 
         public virtual bool MoreMessagesExpected()
         {
@@ -39,7 +26,5 @@ namespace JamesSharpSmtp.SmtpProtocol.Commands
         }
 
         #endregion
-
-        public abstract void Execute();
     }
 }

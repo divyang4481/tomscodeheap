@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace JamesSharpSmtp.SmtpProtocol
 {
+    using System.Globalization;
+
     internal class ReplyCodes
     {
-        private Dictionary<int, string> _replyCodes = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> _replyCodes = new Dictionary<int, string>();
 
         internal ReplyCodes()
         {
@@ -42,7 +42,7 @@ namespace JamesSharpSmtp.SmtpProtocol
 
         internal string GetMessageForCode(int code)
         {
-            return String.Format("{0} {1}", code.ToString(), _replyCodes[code]);
+            return String.Format("{0} {1}", code.ToString(CultureInfo.InvariantCulture), _replyCodes[code]);
         }
     }
 }

@@ -29,7 +29,6 @@ namespace CH.Froorider.JamesSharp
     using CH.Froorider.JamesSharpContracts.Protocols;
     using log4net;
     using System.Configuration;
-    using System.Collections;
     using System.Collections.Generic;
 
     /// <summary>
@@ -42,8 +41,19 @@ namespace CH.Froorider.JamesSharp
         private CompositionContainer _container;
 
         [ImportMany(typeof(IProtocol))]
+// ReSharper disable FieldCanBeMadeReadOnly.Local
         private IEnumerable<Lazy<IProtocol, IProtocolData>> _protocols;
-        private IList<TcpServer> _servers = new List<TcpServer>();
+// ReSharper restore FieldCanBeMadeReadOnly.Local
+        private readonly IList<TcpServer> _servers = new List<TcpServer>();
+
+        public JamesSharp(IEnumerable<Lazy<IProtocol, IProtocolData>> protocols)
+        {
+            _protocols = protocols;
+        }
+
+        public JamesSharp()
+        {
+        }
 
         public void StartUp()
         {

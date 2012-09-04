@@ -1,9 +1,8 @@
 ﻿using CH.Froorider.JamesSharpContracts.Protocols;
-using System.ComponentModel.Composition;
-using System;
 using JamesSharpSmtp.SmtpProtocol;
+using System;
+using System.ComponentModel.Composition;
 using System.Text;
-using System.IO;
 
 namespace JamesSharpSmtp
 {
@@ -12,8 +11,8 @@ namespace JamesSharpSmtp
     [ExportMetadata("ProtocolName", "SMTP")]
     public class SmtpMock : BaseProtocol
     {
-        private byte[] _buffer = new byte[1024];
-        private ReplyCodes _codeTable = new ReplyCodes();
+        private readonly byte[] _buffer = new byte[1024];
+        private readonly ReplyCodes _codeTable = new ReplyCodes();
 
         public override ProtocolType TypeOfProtocol
         {

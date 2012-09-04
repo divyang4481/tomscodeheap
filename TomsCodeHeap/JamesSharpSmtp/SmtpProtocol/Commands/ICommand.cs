@@ -1,18 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace JamesSharpSmtp.SmtpProtocol.Commands
+﻿namespace JamesSharpSmtp.SmtpProtocol.Commands
 {
     /// <summary>
     /// Contract for an command implementation.
     /// </summary>
     internal interface ICommand
     {
+        #region Public Properties
+
         string Request { get; set; }
+
         string Response { get; set; }
-        bool MoreMessagesExpected();
+
+        #endregion
+
+        #region Public Methods
+
         void Execute();
+
+        bool MoreMessagesExpected();
+
+        #endregion
     }
 }

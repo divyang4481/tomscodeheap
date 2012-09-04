@@ -1,7 +1,6 @@
 ﻿namespace CH.Froorider.JamesSharpContracts.Protocols
 {
     using System;
-    using System.ComponentModel.Composition;
     using System.Net.Sockets;
     using System.Text;
 

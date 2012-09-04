@@ -1,8 +1,7 @@
-﻿using System;
+﻿using JamesSharpSmtp.SmtpProtocol.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using JamesSharpSmtp.SmtpProtocol.Commands;
 
 namespace JamesSharpSmtp.SmtpProtocol
 {
@@ -11,16 +10,15 @@ namespace JamesSharpSmtp.SmtpProtocol
     /// </summary>
     internal class SmtpProcessor
     {
-        private Dictionary<SmtpVerbs, ICommand> commandMap = new Dictionary<SmtpVerbs, ICommand>();
-        private ReplyCodes _replyCodes = new ReplyCodes();
+        private readonly Dictionary<SmtpVerbs, ICommand> _commandMap = new Dictionary<SmtpVerbs, ICommand>();
+        private readonly ReplyCodes _replyCodes = new ReplyCodes();
 
         internal SmtpProcessor()
         {
-            var heloCommand = new HeloCommand();
-            commandMap.Add(SmtpVerbs.HELO, new HeloCommand());
-            commandMap.Add(SmtpVerbs.EHLO, new HeloCommand());
-            commandMap.Add(SmtpVerbs.QUIT, new QuitCommand());
-            commandMap.Add(SmtpVerbs.NOOP, new NoopCommand());
+            this._commandMap.Add(SmtpVerbs.HELO, new HeloCommand());
+            this._commandMap.Add(SmtpVerbs.EHLO, new HeloCommand());
+            this._commandMap.Add(SmtpVerbs.QUIT, new QuitCommand());
+            this._commandMap.Add(SmtpVerbs.NOOP, new NoopCommand());
         }
 
         public string ProcessMessage(string message)
@@ -33,7 +31,7 @@ namespace JamesSharpSmtp.SmtpProtocol
                 if (message.Contains(verbName))
                 {
                     Console.WriteLine(string.Format("Found {0} in message {1}", verbName, message));
-                    var command = commandMap.FirstOrDefault(x => x.Key == verb).Value;
+                    var command = this._commandMap.FirstOrDefault(x => x.Key == verb).Value;
                     if (command != null)
                     {
                         command.Execute();

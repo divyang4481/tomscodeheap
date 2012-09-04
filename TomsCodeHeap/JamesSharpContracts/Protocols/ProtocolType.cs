@@ -11,8 +11,6 @@
 
         public static readonly ProtocolType TcpProtocol = new ProtocolType("TcpProtocol");
 
-        private ProtocolType() { }
-
         protected ProtocolType(String name)
         {
             _name = name;

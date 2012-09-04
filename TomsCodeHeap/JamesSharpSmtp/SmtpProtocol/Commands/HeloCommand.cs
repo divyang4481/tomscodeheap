@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace JamesSharpSmtp.SmtpProtocol.Commands
+﻿namespace JamesSharpSmtp.SmtpProtocol.Commands
 {
+    using System;
+
     internal class HeloCommand : Command
     {
-
-        #region ICommand Members
+        #region Public Methods
 
         public override void Execute()
         {
             Console.WriteLine("Helo Command called");
-            Response = _replyCodes.GetMessageForCode(250);
+            this.Response = this._replyCodes.GetMessageForCode(250);
         }
 
         public override bool MoreMessagesExpected()
