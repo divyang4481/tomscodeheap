@@ -110,7 +110,7 @@ namespace CH.Froorider.Codeheap.Domain
 							CultureInfo.InvariantCulture,
 							"Name: '{0}' Value: '{1}'",
 							currentProperty.Name,
-							bo.ToString());
+							bo);
 					}
 					else
 					{
@@ -199,7 +199,7 @@ namespace CH.Froorider.Codeheap.Domain
 			{
 				// Do not compare the property if its marked as XmlIgnore 
 				object[] ignoreList = pi.GetCustomAttributes(typeof(XmlIgnoreAttribute), false);
-				if (ignoreList != null && ignoreList.Length == 1)
+				if (ignoreList.Length == 1)
 				{
 					continue;
 				}

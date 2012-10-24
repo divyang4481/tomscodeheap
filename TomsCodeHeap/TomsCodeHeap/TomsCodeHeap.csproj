@@ -115,6 +115,7 @@
     <Compile Include="StateMachine\Transitions\ITransition.cs" />
     <Compile Include="StateMachine\Transitions\TransitionKind.cs" />
     <Compile Include="StateMachine\Vertex.cs" />
+    <Compile Include="TCPClientWrapper.cs" />
     <Compile Include="Testing\AsserException.cs" />
     <Compile Include="Threading\ISchedule.cs" />
     <Compile Include="Threading\IScheduler.cs" />
