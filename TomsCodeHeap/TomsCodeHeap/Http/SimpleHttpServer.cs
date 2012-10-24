@@ -68,7 +68,11 @@ namespace CH.Froorider.Codeheap.Http
         /// Gets the port where this HTTP Server is listening to.
         /// </summary>
         /// <value>An integer in the range [1024 - 65535].</value>
-        public int ListeningPort { get; private set; }
+        public int ListeningPort
+        {
+            get;
+            private set;
+        }
 
         #endregion
 
@@ -126,8 +130,10 @@ namespace CH.Froorider.Codeheap.Http
             {
                 logger.Info("Starting HTTP server.");
                 this.httpListener.Start();
-                this.listeningForConnectionLoop = new Thread(this.Execute);
-                this.listeningForConnectionLoop.Name = "HTTP Server";
+                this.listeningForConnectionLoop = new Thread(this.Execute)
+                {
+                    Name = "HTTP Server"
+                };
                 this.listeningForConnectionLoop.Start();
                 logger.Info("HTTP server started.");
             }

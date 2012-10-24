@@ -124,7 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
       <HintPath>..\..\..\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
@@ -179,7 +179,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CodeHeapClasses.cd" />
-    <None Include="packages.config" />
     <None Include="PublicKey.key" />
     <None Include="TomsCodeHeap.snk" />
   </ItemGroup>
