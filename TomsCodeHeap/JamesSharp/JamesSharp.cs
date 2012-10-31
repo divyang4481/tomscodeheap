@@ -2,7 +2,7 @@
 // File:     JamesSharp.cs
 // 
 // Author:   $Author$
-// Date:     $LastChangeDate$
+// Date:     $LastChangedDate$
 // Revision: $Revision$
 // ========================================================================
 // Copyright [2011] [$Author$]
@@ -38,13 +38,12 @@ namespace CH.Froorider.JamesSharp
     {
         private static readonly string _defaultDirectoryPath = "C:\\Extensions";
         private static readonly ILog _logger = LogManager.GetLogger(typeof(JamesSharp));
-        private CompositionContainer _container;
-
-        [ImportMany(typeof(IProtocol))]
-// ReSharper disable FieldCanBeMadeReadOnly.Local
-        private IEnumerable<Lazy<IProtocol, IProtocolData>> _protocols;
-// ReSharper restore FieldCanBeMadeReadOnly.Local
         private readonly IList<TcpServer> _servers = new List<TcpServer>();
+        private CompositionContainer _container;
+        // ReSharper disable FieldCanBeMadeReadOnly.Local
+        [ImportMany(typeof(IProtocol))]
+        private IEnumerable<Lazy<IProtocol, IProtocolData>> _protocols;
+        // ReSharper restore FieldCanBeMadeReadOnly.Local
 
         public JamesSharp(IEnumerable<Lazy<IProtocol, IProtocolData>> protocols)
         {

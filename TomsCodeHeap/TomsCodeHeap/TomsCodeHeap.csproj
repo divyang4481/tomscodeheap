@@ -51,7 +51,7 @@
     </CodeAnalysisRules>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>TomsRuleset.ruleset</CodeAnalysisRuleSet>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -97,6 +97,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Shell\CommandMetadataAttribute.cs" />
+    <Compile Include="Shell\ICommand.cs" />
+    <Compile Include="Shell\ICommandMetadata.cs" />
+    <Compile Include="Shell\PingCommand.cs" />
+    <Compile Include="Shell\Shell.cs" />
     <Compile Include="StateMachine\Activities\ActivityType.cs" />
     <Compile Include="StateMachine\Activities\IActivity.cs" />
     <Compile Include="StateMachine\Events\EventMessage.cs" />
@@ -131,6 +136,8 @@
       <HintPath>..\..\..\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -189,5 +196,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>

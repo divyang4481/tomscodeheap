@@ -5,7 +5,7 @@
 // Date:     $LastChangedDate$
 // Revision: $Revision$
 // ========================================================================
-// Copyright [2009] [$Author$]
+// Copyright [2012] [$Author$]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,18 +30,12 @@ namespace CH.Froorider.Codeheap
     public class TCPClientWrapper : IDisposable
     {
         private readonly TcpClient client;
-
         private readonly Byte[] receiveBuffer = new byte[1024];
-
-        private Byte[] sendBuffer;
-
-        private Int32 receivedBytes;
-
         private readonly NetworkStream stream;
-
+        private Byte[] sendBuffer;
+        private Int32 receivedBytes;
         private String responseData = String.Empty;
-
-        private bool isDisposed = false;
+        private bool isDisposed;
 
         internal TCPClientWrapper(string hostname, int port)
         {
@@ -72,6 +66,16 @@ namespace CH.Froorider.Codeheap
         {
             this.Write(telegram);
             return this.Read();
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="TCPClientWrapper"/> class.
+        /// Releases unmanaged resources and performs other cleanup operations before the
+        /// <see cref="TCPClientWrapper"/> is reclaimed by garbage collection.
+        /// </summary>
+        ~TCPClientWrapper()
+        {
+            this.Dispose(false);
         }
 
         /// <summary>
